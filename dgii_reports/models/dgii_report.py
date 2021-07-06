@@ -397,36 +397,36 @@ class DgiiReport(models.Model):
 
     def process_606_report_data(self, values):
 
-        RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "")
+        RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "").strip()
         ID_TYPE = str(values['identification_type']
-                      if values['identification_type'] else "").ljust(1)
+                      if values['identification_type'] else "").strip()
         EXP_TYPE = str(
-            values['expense_type'] if values['expense_type'] else "").ljust(2)
-        NCF = str(values['fiscal_invoice_number']).ljust(11)
+            values['expense_type'] if values['expense_type'] else "").strip()
+        NCF = str(values['fiscal_invoice_number']).strip()
         NCM = str(values['modified_invoice_number']
-                  if values['modified_invoice_number'] else "").ljust(19)
+                  if values['modified_invoice_number'] else "").strip()
         INV_DATE = str(self._get_formated_date(
-            values['invoice_date'])).ljust(8)
+            values['invoice_date'])).strip()
         PAY_DATE = str(self._get_formated_date(
-            values['payment_date'])).ljust(8)
-        SERV_AMOUNT = self._get_formated_amount(values['service_total_amount'])
-        GOOD_AMOUNT = self._get_formated_amount(values['good_total_amount'])
-        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount'])
-        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis'])
-        WH_ITBIS = self._get_formated_amount(values['withholded_itbis'])
-        PROP_ITBIS = self._get_formated_amount(values['proportionality_tax'])
-        COST_ITBIS = self._get_formated_amount(values['cost_itbis'])
-        ADV_ITBIS = self._get_formated_amount(values['advance_itbis'])
+            values['payment_date'])).strip()
+        SERV_AMOUNT = self._get_formated_amount(values['service_total_amount']).strip()
+        GOOD_AMOUNT = self._get_formated_amount(values['good_total_amount']).strip()
+        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount']).strip()
+        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis']).strip()
+        WH_ITBIS = self._get_formated_amount(values['withholded_itbis']).strip()
+        PROP_ITBIS = self._get_formated_amount(values['proportionality_tax']).strip()
+        COST_ITBIS = self._get_formated_amount(values['cost_itbis']).strip()
+        ADV_ITBIS = self._get_formated_amount(values['advance_itbis']).strip()
         PP_ITBIS = ''
         WH_TYPE = str(values['isr_withholding_type']
-                      if values['isr_withholding_type'] else "")
-        INC_WH = self._get_formated_amount(values['income_withholding'])
+                      if values['isr_withholding_type'] else "").strip()
+        INC_WH = self._get_formated_amount(values['income_withholding']).strip()
         PP_ISR = ''
-        ISC = self._get_formated_amount(values['selective_tax'])
-        OTHR = self._get_formated_amount(values['other_taxes'])
-        LEG_TIP = self._get_formated_amount(values['legal_tip'])
+        ISC = self._get_formated_amount(values['selective_tax']).strip()
+        OTHR = self._get_formated_amount(values['other_taxes']).strip()
+        LEG_TIP = self._get_formated_amount(values['legal_tip']).strip()
         PAY_FORM = str(
-            values['payment_type'] if values['payment_type'] else "").ljust(2)
+            values['payment_type'] if values['payment_type'] else "").strip()
 
         return "|".join([
             RNC, ID_TYPE, EXP_TYPE, NCF, NCM, INV_DATE, PAY_DATE, SERV_AMOUNT,
@@ -442,7 +442,7 @@ class DgiiReport(models.Model):
                              '%m%Y').strftime('%Y%m')
 
         header = "606|{}|{}|{}".format(
-            str(company_vat).ljust(11), period, qty) + '\n'
+            str(company_vat), period, qty) + '\n'
         data = header + records
 
         file_path = '/tmp/DGII_606_{}_{}.txt'.format(company_vat, period)
@@ -726,34 +726,33 @@ class DgiiReport(models.Model):
 
     def process_607_report_data(self, values):
 
-        RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "").ljust(
-            11)
+        RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "").strip()
         ID_TYPE = str(values['identification_type']
-                      if values['identification_type'] else "")
-        NCF = str(values['fiscal_invoice_number']).ljust(11)
+                      if values['identification_type'] else "").strip()
+        NCF = str(values['fiscal_invoice_number']).strip()
         NCM = str(values['modified_invoice_number']
-                  if values['modified_invoice_number'] else "").ljust(19)
-        INCOME_TYPE = str(values['income_type']).ljust(2)
+                  if values['modified_invoice_number'] else "").strip()
+        INCOME_TYPE = str(values['income_type']).strip()
         INV_DATE = str(self._get_formated_date(
-            values['invoice_date'])).ljust(8)
+            values['invoice_date'])).strip()
         WH_DATE = str(self._get_formated_date(
-            values['withholding_date'])).ljust(8)
-        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount'])
-        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis'])
-        WH_ITBIS = self._get_formated_amount(values['third_withheld_itbis'])
+            values['withholding_date'])).strip()
+        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount']).strip()
+        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis']).strip()
+        WH_ITBIS = self._get_formated_amount(values['third_withheld_itbis']).strip()
         PRC_ITBIS = ''
-        WH_ISR = self._get_formated_amount(values['third_income_withholding'])
+        WH_ISR = self._get_formated_amount(values['third_income_withholding']).strip()
         PCR_ISR = ''
-        ISC = self._get_formated_amount(values['selective_tax'])
-        OTH_TAX = self._get_formated_amount(values['other_taxes'])
-        LEG_TIP = self._get_formated_amount(values['legal_tip'])
-        CASH = self._get_formated_amount(values['cash'])
-        BANK = self._get_formated_amount(values['bank'])
-        CARD = self._get_formated_amount(values['card'])
-        CRED = self._get_formated_amount(values['credit'])
-        SWAP = self._get_formated_amount(values['swap'])
-        BOND = self._get_formated_amount(values['bond'])
-        OTHR = self._get_formated_amount(values['others'])
+        ISC = self._get_formated_amount(values['selective_tax']).strip()
+        OTH_TAX = self._get_formated_amount(values['other_taxes']).strip()
+        LEG_TIP = self._get_formated_amount(values['legal_tip']).strip()
+        CASH = self._get_formated_amount(values['cash']).strip()
+        BANK = self._get_formated_amount(values['bank']).strip()
+        CARD = self._get_formated_amount(values['card']).strip()
+        CRED = self._get_formated_amount(values['credit']).strip()
+        SWAP = self._get_formated_amount(values['swap']).strip()
+        BOND = self._get_formated_amount(values['bond']).strip()
+        OTHR = self._get_formated_amount(values['others']).strip()
 
         return "|".join([
             RNC, ID_TYPE, NCF, NCM, INCOME_TYPE, INV_DATE, WH_DATE, INV_AMOUNT,
@@ -768,7 +767,7 @@ class DgiiReport(models.Model):
             dt.strptime(self.name.replace('/', ''), '%m%Y').strftime('%Y%m')
 
         header = "607|{}|{}|{}".format(
-            str(company_vat).ljust(11), period, qty) + '\n'
+            str(company_vat), period, qty) + '\n'
         data = header + records
 
         file_path = '/tmp/DGII_607_{}_{}.txt'.format(company_vat, period)
