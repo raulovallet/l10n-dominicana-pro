@@ -15,7 +15,7 @@
               "iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '12.0.1.1.0',
+    'version': '16.0.1.1.0',
 
     # any module necessary for this one to work correctly
     'depends': ['l10n_do_accounting'],
@@ -35,4 +35,6 @@
         'views/account_tax_views.xml',
         'wizard/dgii_report_regenerate_wizard_views.xml',
     ],
+
+    'installable': False,
 }

@@ -8,7 +8,7 @@
     'license': 'LGPL-3',
     'website': "https://github.com/odoo-dominicana",
     'category': 'Localization',
-    'version': '12.0.1.0.0',
+    'version': '16.0.1.0.0',
 
     'depends': ['l10n_do_accounting',
                 'account_cancel'],
