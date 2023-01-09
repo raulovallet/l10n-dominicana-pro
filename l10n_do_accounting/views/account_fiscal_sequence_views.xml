@@ -28,14 +28,11 @@
                             <span class="o_stat_text">Sequence</span>
                         </button>
                     </div>
-                    <group>
-                        <div class="oe_title">
-                            <h2>
-                                <field name="name"
-                                       placeholder="Eg : 8001695033"/>
-                            </h2>
-                        </div>
-                    </group>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Eg : 8001695033"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
                             <field name="fiscal_type_id"
@@ -136,7 +133,6 @@
         <field name="name">Fiscal Sequences</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.fiscal.sequence</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="account_fiscal_sequence_search"/>
         <field name="context">{'search_default_active': 1}</field>
@@ -193,7 +189,7 @@
         <field name="name">Fiscal Types</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.fiscal.type</field>
-        <field name="view_type">form</field>
+
         <field name="view_mode">tree,form</field>
     </record>
 

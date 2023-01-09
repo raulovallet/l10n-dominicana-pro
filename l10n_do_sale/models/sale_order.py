@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.multi
+    
     def _prepare_invoice(self):
         """
         Prepare the dict of values to create the new invoice for a sales order.
@@ -51,15 +51,15 @@ class SaleOrder(models.Model):
 
         return invoice_vals
 
-    def _finalize_invoices(self, invoices, references):
+    def _finalize_invoices(self, invoices, refs):
         """
         Invoked after creating invoices at the end of action_invoice_create.
         :param invoices: {group_key: invoice}
-        :param references: {invoice: order}
+        :param refs: {invoice: order}
         """
         for invoice in invoices.values():
             if invoice.journal_id.l10n_do_fiscal_journal:
                 invoice.write({
-                    'reference': False
+                    'ref': False
                 })
-        super(SaleOrder, self)._finalize_invoices(invoices, references)
+        super(SaleOrder, self)._finalize_invoices(invoices, refs)

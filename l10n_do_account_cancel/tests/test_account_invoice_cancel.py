@@ -6,7 +6,7 @@ class AccountInvoiceTests(TransactionCase):
     def setUp(self):
         super(AccountInvoiceTests, self).setUp()
 
-        self.invoice_obj = self.env['account.invoice']
+        self.invoice_obj = self.env['account.move']
         self.journal_obj = self.env['account.journal']
 
         journals = self.journal_obj.search([('type', '=', 'sale')])

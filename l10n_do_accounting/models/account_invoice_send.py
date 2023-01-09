@@ -9,7 +9,7 @@ class AccountInvoiceSend(models.TransientModel):
         res = super(AccountInvoiceSend, self).default_get(fields)
 
         active_ids = self._context.get("active_ids")
-        invoice_ids = self.env["account.invoice"].browse(active_ids)
+        invoice_ids = self.env["account.move"].browse(active_ids)
         company_id = invoice_ids.mapped("company_id")[0]
 
         l10n_do_coa = self.env.ref("l10n_do.do_chart_template")

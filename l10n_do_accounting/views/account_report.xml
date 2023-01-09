@@ -3,7 +3,7 @@
 
     <report
             id="l10n_do_account_invoice"
-            model="account.invoice"
+            model="account.move"
             string="Fiscal Invoices without Payment"
             report_type="qweb-pdf"
             name="l10n_do_accounting.l10n_do_report_invoice"
@@ -14,7 +14,7 @@
 
     <report
             id="account_invoices_with_payment"
-            model="account.invoice"
+            model="account.move"
             string="Fiscal Invoices"
             report_type="qweb-pdf"
             name="l10n_do_accounting.l10n_do_report_invoice_with_payments"

@@ -15,7 +15,7 @@
             </xpath>
 
             <group name="sale" position ="inside">
-                <field name="sale_fiscal_type_id" attrs="{'required': [('customer', '=', 'True')]}"/>
+                <field name="sale_fiscal_type_id"/>
             </group>
             <group name="purchase" position ="inside">
                 <field name="expense_type"/>

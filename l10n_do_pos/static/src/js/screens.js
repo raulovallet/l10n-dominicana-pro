@@ -529,7 +529,7 @@ odoo.define('l10n_do_pos.screens', function (require) {
                     ['returned_order', '=', false],
                 ];
                 var fields = [
-                    'pos_history_reference_uid',
+                    'pos_history_ref_uid',
                 ];
                 self.pos.loading_screen_on();
                 rpc.query({
@@ -562,7 +562,7 @@ odoo.define('l10n_do_pos.screens', function (require) {
                 }).done(function () {
                     self.pos.loading_screen_off();
                     if (order_custom && order_custom.length) {
-                        _super(order_custom[0].pos_history_reference_uid);
+                        _super(order_custom[0].pos_history_ref_uid);
                     } else {
                         self.gui.show_popup('error', {
                             'title': _t('Error: Could not find the Order'),

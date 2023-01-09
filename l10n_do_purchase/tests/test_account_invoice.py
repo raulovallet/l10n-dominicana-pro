@@ -8,7 +8,7 @@ class AccountInvoiceTests(TransactionCase):
     def setUp(self):
         super(AccountInvoiceTests, self).setUp()
 
-        self.invoice_obj = self.env['account.invoice']
+        self.invoice_obj = self.env['account.move']
         self.journal_obj = self.env['account.journal']
         self.purchase_obj = self.env['purchase.order']
 
@@ -46,4 +46,4 @@ class AccountInvoiceTests(TransactionCase):
         invoice_id.purchase_order_change()
 
         self.assertEqual(invoice_id.name, ref)
-        self.assertFalse(invoice_id.reference)
+        self.assertFalse(invoice_id.ref)

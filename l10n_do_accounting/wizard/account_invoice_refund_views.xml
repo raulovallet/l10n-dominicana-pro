@@ -2,8 +2,8 @@
 <odoo>
     
     <record id="view_account_invoice_refund_inherited" model="ir.ui.view">
-        <field name="name">view.account.invoice.refund.inherited</field>
-        <field name="model">account.invoice.refund</field>
+        <field name="name">view.account.move.reversal.inherited</field>
+        <field name="model">account.move.reversal</field>
         <field name="inherit_id" ref="account.view_account_invoice_refund"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='filter_refund']" position="before">
@@ -20,7 +20,7 @@
             </xpath>
             <xpath expr="//field[@name='description']" position="after">
                 <field name="is_vendor_refund" invisible="1"/>
-                <field name="refund_reference" attrs="{'invisible': [('is_vendor_refund', '=', False)], 'required': [('is_fiscal_refund', '=', True), ('is_vendor_refund', '=', True)]}"/>
+                <field name="refund_ref" attrs="{'invisible': [('is_vendor_refund', '=', False)], 'required': [('is_fiscal_refund', '=', True), ('is_vendor_refund', '=', True)]}"/>
                 <field name="percentage"
                        attrs="{'invisible': [('refund_type', '!=', 'percentage')],
                        'required': [('refund_type', '=', 'percentage')]}"/>
@@ -52,8 +52,8 @@
     </record>
 
     <record id="view_account_invoice_debit" model="ir.ui.view">
-        <field name="name">account.invoice.refund.form</field>
-        <field name="model">account.invoice.refund</field>
+        <field name="name">account.move.reversal.form</field>
+        <field name="model">account.move.reversal</field>
         <field name="arch" type="xml">
             <form string="Debit Note">
                 <group>
@@ -79,7 +79,7 @@
                      <group>
                          <field name="description"/>
                          <field name="is_vendor_refund" invisible="1"/>
-                         <field name="refund_reference" string="Debit Note reference"
+                         <field name="refund_ref" string="Debit Note ref"
                                 attrs="{'invisible': [('is_vendor_refund', '=', False)], 'required': [('is_vendor_refund', '=', True), ('is_fiscal_refund', '=', True)]}"/>
                          <field name="percentage"
                                 attrs="{'invisible': [('refund_type', '!=', 'percentage')],
@@ -107,8 +107,8 @@
 
     <record id="action_account_invoice_debit" model="ir.actions.act_window">
         <field name="name">Debit Note</field>
-        <field name="res_model">account.invoice.refund</field>
-        <field name="view_type">form</field>
+        <field name="res_model">account.move.reversal</field>
+
         <field name="view_mode">tree,form</field>
        <field name="view_id" ref="view_account_invoice_debit"/>
        <field name="target">new</field>

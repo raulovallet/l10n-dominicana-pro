@@ -14,8 +14,8 @@ class DgiiReportsControllers(Controller):
         base_url = env['ir.config_parameter'].sudo().get_param('web.base.url')
 
         if str(ncf_rnc)[:1] == 'B':
-            invoice_id = env['account.invoice'].search([
-                ('reference', '=', ncf_rnc)
+            invoice_id = env['account.move'].search([
+                ('ref', '=', ncf_rnc)
                 ], limit=1)
             if invoice_id:
                 # Get action depending on invoice type
@@ -33,8 +33,8 @@ class DgiiReportsControllers(Controller):
                         'account.action_invoice_in_refund'
                         )
                 }
-                action = action_map[invoice_id.type]
-                url = "%s/web#id=%s&action=%s&model=account.invoice&view" \
+                action = action_map[invoice_id.move_type]
+                url = "%s/web#id=%s&action=%s&model=account.move&view" \
                       "_type=form" % (base_url, invoice_id.id, action.id)
 
                 return redirect(url)  # Returns invoice form view

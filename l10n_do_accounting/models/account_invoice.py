@@ -27,7 +27,7 @@ ncf_dict = {
 
 
 class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     fiscal_type_id = fields.Many2one(
         "account.fiscal.type", string="Fiscal Type", index=True,
@@ -102,22 +102,24 @@ class AccountInvoice(models.Model):
         ],
         compute="_compute_fiscal_sequence_status",
     )
-    is_debit_note = fields.Boolean()
+    is_debit_note = fields.Boolean(
+        string="is_debit_note"
+    )
 
-    @api.multi
+    
     @api.depends("state", "journal_id")
     def _compute_is_l10n_do_fiscal_invoice(self):
         for inv in self:
             inv.is_l10n_do_fiscal_invoice = inv.journal_id.l10n_do_fiscal_journal
 
-    @api.multi
+    
     @api.depends(
         "journal_id",
         "is_l10n_do_fiscal_invoice",
         "state",
         "fiscal_type_id",
-        "date_invoice",
-        "type",
+        "invoice_date",
+        "move_type",
         "is_debit_note",
     )
     def _compute_fiscal_sequence(self):
@@ -128,12 +130,12 @@ class AccountInvoice(models.Model):
             if inv.is_debit_note:
                 debit_map = {"in_invoice": "in_debit", "out_invoice": "out_debit"}
                 fiscal_type = self.env["account.fiscal.type"].search(
-                    [("type", "=", debit_map[inv.type])], limit=1
+                    [("type", "=", debit_map[inv.move_type])], limit=1
                 )
                 inv.fiscal_type_id = fiscal_type.id
-            elif inv.type in ("out_refund", "in_refund"):
+            elif inv.move_type in ("out_refund", "in_refund"):
                 fiscal_type = self.env["account.fiscal.type"].search(
-                    [("type", "=", inv.type)], limit=1
+                    [("type", "=", inv.move_type)], limit=1
                 )
                 inv.fiscal_type_id = fiscal_type.id
             else:
@@ -153,7 +155,7 @@ class AccountInvoice(models.Model):
                     ("fiscal_type_id", "=", fiscal_type.id),
                     ("state", "=", "active"),
                 ]
-                if inv.date_invoice:
+                if inv.invoice_date:
                     domain.append(("expiration_date", ">=", inv.date_invoice))
                 else:
                     today = fields.Date.context_today(inv)
@@ -172,7 +174,7 @@ class AccountInvoice(models.Model):
             else:
                 inv.fiscal_sequence_id = False
 
-    @api.multi
+    
     @api.depends(
         "fiscal_sequence_id",
         "fiscal_sequence_id.sequence_remaining",
@@ -204,7 +206,7 @@ class AccountInvoice(models.Model):
                 else:
                     inv.fiscal_sequence_status = "no_sequence"
 
-    @api.multi
+    
     @api.constrains("state", "tax_line_ids")
     def validate_special_exempt(self):
         """ Validates an invoice with Regímenes Especiales fiscal type
@@ -213,7 +215,7 @@ class AccountInvoice(models.Model):
         """
         for inv in self.filtered(lambda i: i.is_l10n_do_fiscal_invoice):
             if (
-                inv.type == "out_invoice"
+                inv.move_type == "out_invoice"
                 and inv.state in ("open", "cancel")
                 and ncf_dict.get(inv.fiscal_type_id.prefix) == "especial"
             ):
@@ -237,7 +239,7 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-    @api.multi
+    
     @api.constrains("state", "invoice_line_ids", "partner_id")
     def validate_products_export_ncf(self):
         """ Validates that an invoices with a partner from country != DO
@@ -246,7 +248,7 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             if (
-                inv.type == "out_invoice"
+                inv.move_type == "out_invoice"
                 and inv.state in ("open", "cancel")
                 and inv.partner_id.country_id
                 and inv.partner_id.country_id.code != "DO"
@@ -274,7 +276,7 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-    @api.multi
+    
     @api.constrains("state", "tax_line_ids")
     def validate_informal_withholding(self):
         """ Validates an invoice with Comprobante de Compras has 100% ITBIS
@@ -282,7 +284,7 @@ class AccountInvoice(models.Model):
             See DGII Norma 05-19, Art 7 for further information.
         """
         for inv in self.filtered(
-            lambda i: i.type == "in_invoice" and i.state == "open"
+            lambda i: i.move_type == "in_invoice" and i.state == "open"
         ):
             if (
                 ncf_dict.get(inv.fiscal_type_id.prefix) == "informal"
@@ -331,18 +333,18 @@ class AccountInvoice(models.Model):
             invoice, making it a a fiscal invoice for l10n_do.
         """
         if self.is_l10n_do_fiscal_invoice:
-            if self.partner_id and self.type == "out_invoice":
+            if self.partner_id and self.move_type == "out_invoice":
                 if not self.fiscal_type_id:
                     self.fiscal_type_id = self.partner_id.sale_fiscal_type_id
                 if not self.partner_id.customer:
                     self.partner_id.customer = True
-            elif self.partner_id and self.type == "in_invoice":
+            elif self.partner_id and self.move_type == "in_invoice":
                 self.expense_type = self.partner_id.expense_type
                 if not self.partner_id.supplier:
                     self.partner_id.supplier = True
                 if self.partner_id.id == self.company_id.partner_id.id:
                     fiscal_type = self.env["account.fiscal.type"].search(
-                        [("type", "=", self.type), ("prefix", "=", "B13")], limit=1
+                        [("type", "=", self.move_type), ("prefix", "=", "B13")], limit=1
                     )
                     if not fiscal_type:
                         raise ValidationError(
@@ -357,22 +359,22 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self)._onchange_partner_id()
 
-    @api.onchange("reference")
+    @api.onchange("ref")
     def _onchange_ncf(self):
-        if self.is_l10n_do_fiscal_invoice and self.type in ('in_invoice',) and \
-                self.reference:
+        if self.is_l10n_do_fiscal_invoice and self.move_type in ('in_invoice',) and \
+                self.ref:
             if not self.fiscal_type_id.assigned_sequence:
-                if self.fiscal_type_id.prefix != self.reference[:3]:
+                if self.fiscal_type_id.prefix != self.ref[:3]:
                     raise UserError(
                         _("The prefix of the fiscal sequence %s must be %s")
                         % (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
 
-                if self.fiscal_type_id.padding != len(self.reference[3:]):
+                if self.fiscal_type_id.padding != len(self.ref[3:]):
                     raise UserError(
                         _("The length of the fiscal sequence %s must be %s")
                         % (self.fiscal_type_id.name, str(self.fiscal_type_id.padding),))
 
-    @api.multi
+    
     def action_invoice_open(self):
         """ Before an invoice is changed to the 'open' state, validate that all
             informations are valid regarding Norma 05-19 and if there are
@@ -395,7 +397,7 @@ class AccountInvoice(models.Model):
                 # on invoice validate.
                 inv._compute_fiscal_sequence()
 
-                if not inv.reference \
+                if not inv.ref \
                         and not inv.fiscal_sequence_id \
                         and inv.fiscal_type_id.assigned_sequence:
                     raise ValidationError(
@@ -405,11 +407,11 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-                if inv.type == "out_invoice":
+                if inv.move_type == "out_invoice":
                     if not inv.partner_id.sale_fiscal_type_id:
                         inv.partner_id.sale_fiscal_type_id = inv.fiscal_type_id
 
-                if inv.type == "in_invoice":
+                if inv.move_type == "in_invoice":
 
                     if not inv.partner_id.purchase_fiscal_type_id:
                         inv.partner_id.purchase_fiscal_type_id = inv.fiscal_type_id
@@ -428,7 +430,7 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-                elif inv.type in ("out_invoice", "out_refund"):
+                elif inv.move_type in ("out_invoice", "out_refund"):
                     if (
                         inv.amount_untaxed_signed >= 250000
                         and inv.fiscal_type_id.prefix != "B12"
@@ -445,12 +447,12 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self).action_invoice_open()
 
-    @api.multi
+    
     def validate_fiscal_purchase(self):
         for inv in self.filtered(
-            lambda i: i.type == "in_invoice" and i.state == "draft"
+            lambda i: i.move_type == "in_invoice" and i.state == "draft"
         ):
-            ncf = inv.reference if inv.reference else None
+            ncf = inv.ref if inv.ref else None
             if ncf and ncf_dict.get(inv.fiscal_type_id.prefix) == "fiscal":
                 if ncf[-10:-8] == "02" or ncf[1:3] == "32":
                     raise ValidationError(
@@ -481,32 +483,15 @@ class AccountInvoice(models.Model):
                         ).format(ncf)
                     )
 
-                # TODO move this to l10n_do_external_validation_ncf
-                elif (
-                    len(ncf) == 11
-                    and self.journal_id.l10n_do_ncf_remote_validation
-                    and not ncf_validation.check_dgii(self.partner_id.vat, ncf)
-                ):
-                    raise ValidationError(
-                        _(
-                            "NCF rejected by DGII\n\n"
-                            "NCF *{}* of supplier *{}* was rejected by DGII's "
-                            "validation service. Please validate if the NCF and "
-                            "the supplier RNC are type correctly. Otherwhise "
-                            "your supplier might not have this sequence approved "
-                            "yet."
-                        ).format(ncf, self.partner_id.name)
-                    )
-
                 ncf_in_invoice = (
                     inv.search_count(
                         [
                             ("id", "!=", inv.id),
                             ("company_id", "=", inv.company_id.id),
                             ("partner_id", "=", inv.partner_id.id),
-                            ("reference", "=", ncf),
+                            ("ref", "=", ncf),
                             ("state", "in", ("draft", "open", "paid", "cancel")),
-                            ("type", "in", ("in_invoice", "in_refund")),
+                            ("move_type", "in", ("in_invoice", "in_refund")),
                         ]
                     )
                     if inv.id
@@ -514,9 +499,9 @@ class AccountInvoice(models.Model):
                         [
                             ("partner_id", "=", inv.partner_id.id),
                             ("company_id", "=", inv.company_id.id),
-                            ("reference", "=", ncf),
+                            ("ref", "=", ncf),
                             ("state", "in", ("draft", "open", "paid", "cancel")),
-                            ("type", "in", ("in_invoice", "in_refund")),
+                            ("move_type", "in", ("in_invoice", "in_refund")),
                         ]
                     )
                 )
@@ -531,39 +516,39 @@ class AccountInvoice(models.Model):
                         ).format(ncf)
                     )
 
-    @api.multi
-    def _get_computed_reference(self):
+    
+    def _get_computed_ref(self):
         self.ensure_one()
         if self.is_l10n_do_fiscal_invoice:
             return False
         else:
-            return super(AccountInvoice, self)._get_computed_reference()
+            return super(AccountInvoice, self)._get_computed_ref()
 
-    @api.multi
+    
     def invoice_validate(self):
         """ After all invoice validation routine, consume a NCF sequence and
-            write it into reference field.
+            write it into ref field.
          """
         res = super(AccountInvoice, self).invoice_validate()
 
         for inv in self:
             if inv.is_l10n_do_fiscal_invoice \
-                    and not inv.reference \
+                    and not inv.ref \
                     and inv.fiscal_type_id.assigned_sequence\
                     and res:
                 inv.state = 'draft'
                 inv.write({
                     'state': 'open',
-                    'reference': inv.fiscal_sequence_id.get_fiscal_number(),
+                    'ref': inv.fiscal_sequence_id.get_fiscal_number(),
                     'ncf_expiration_date': inv.fiscal_sequence_id.expiration_date
                 })
                 inv.move_id.write({
-                    'ref': inv.reference
+                    'ref': inv.ref
                 })
 
         return res
 
-    @api.multi
+    
     def invoice_print(self):
         # Companies which has installed l10n_do localization use
         # l10n_do fiscal invoice template
@@ -585,7 +570,7 @@ class AccountInvoice(models.Model):
         refund_type = context.get("refund_type")
         amount = context.get("amount")
         account = context.get("account")
-        refund_reference = context.get("refund_reference")
+        refund_ref = context.get("refund_ref")
 
         res = super(AccountInvoice, self)._prepare_refund(
             invoice,
@@ -611,7 +596,7 @@ class AccountInvoice(models.Model):
         fiscal_type = {"out_invoice": "out_refund", "in_invoice": "in_refund"}
 
         fiscal_type_id = self.env["account.fiscal.type"].search(
-            [("type", "=", fiscal_type[self.type])], limit=1
+            [("type", "=", fiscal_type[self.move_type])], limit=1
         )
 
         if not fiscal_type_id:
@@ -619,8 +604,8 @@ class AccountInvoice(models.Model):
 
         res.update(
             {
-                "reference": refund_reference,
-                "origin_out": self.reference,
+                "ref": refund_ref,
+                "origin_out": self.ref,
                 "income_type": self.income_type,
                 "expense_type": self.expense_type,
                 "fiscal_type_id": fiscal_type_id.id,
@@ -629,7 +614,7 @@ class AccountInvoice(models.Model):
 
         return res
 
-    @api.multi
+    
     @api.returns("self")
     def refund(self, date_invoice=None, date=None, description=None, journal_id=None):
 
@@ -659,16 +644,16 @@ class AccountInvoice(models.Model):
                 journal_id=journal_id,
             )
             refund_invoice = self.create(values)
-            if invoice.type == "out_invoice":
+            if invoice.move_type == "out_invoice":
                 message = _(
                     "This customer invoice credit note has been created from: "
-                    "<a href=# data-oe-model=account.invoice data-oe-id=%d>%s"
+                    "<a href=# data-oe-model=account.move data-oe-id=%d>%s"
                     "</a><br>Reason: %s"
                 ) % (invoice.id, invoice.number, description)
             else:
                 message = _(
                     "This vendor bill credit note has been created from: <a "
-                    "href=# data-oe-model=account.invoice data-oe-id=%d>%s</a>"
+                    "href=# data-oe-model=account.move data-oe-id=%d>%s</a>"
                     "<br>Reason: %s"
                 ) % (invoice.id, invoice.number, description)
 
