@@ -18,7 +18,7 @@ class AccountFiscalSequenceValidateWizard(models.TransientModel):
         "account.fiscal.sequence", string="Fiscal sequence",
     )
 
-    @api.multi
+    
     def confirm_cancel(self):
         self.ensure_one()
         if self.fiscal_sequence_id:

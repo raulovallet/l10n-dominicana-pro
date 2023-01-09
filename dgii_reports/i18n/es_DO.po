@@ -242,7 +242,7 @@ msgid "Anulation type"
 msgstr "Tipo de anulación"
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Arrendamientos"
 msgstr ""
 
@@ -282,7 +282,7 @@ msgid "Card"
 msgstr "Tarjeta"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__cash
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_cash
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__cash
@@ -290,7 +290,7 @@ msgid "Cash"
 msgstr "Efectivo"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__bank
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_bank
 msgid "Check / Transfer / Deposit"
@@ -365,7 +365,7 @@ msgid "Created on"
 msgstr "Creado en"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__credit
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_credit
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__credit
@@ -373,14 +373,14 @@ msgid "Credit"
 msgstr "A Crédito"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__card
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_card
 msgid "Credit Card / Debit Card"
 msgstr "Tarjeta Débito / Crédito"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__credit_note
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__credit_note
 msgid "Credit Note"
@@ -545,37 +545,37 @@ msgid "Followers (Partners)"
 msgstr "Seguidores (Empresas)"
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos Financieros"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos de Activos Fijos"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos de Personal"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos de Representación"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos de Seguros"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos por Regalías y otros Intangibles"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.invoice,service_type:0
+#: selection:account.move,service_type:0
 msgid "Gastos por Trabajos, Suministros y Servicios"
 msgstr ""
 
@@ -740,7 +740,7 @@ msgid "Income type"
 msgstr "Tipo de ingreso"
 
 #. module: dgii_reports
-#: model:ir.model,name:dgii_reports.model_account_invoice
+#: model:ir.model,name:dgii_reports.model_account_move
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__invoice_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__invoice_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__invoice_id
@@ -927,7 +927,7 @@ msgid "Messages"
 msgstr "Mensajes"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 msgid "Mixed"
 msgstr "Mixto"
 
@@ -954,7 +954,7 @@ msgid "Not Related"
 msgstr "No Relacionada"
 
 #. module: dgii_reports
-#: selection:account.invoice,fiscal_status:0
+#: selection:account.move,fiscal_status:0
 msgid "Not Sent"
 msgstr "No enviada"
 
@@ -1071,7 +1071,7 @@ msgid "Parent Code"
 msgstr "Código padre"
 
 #. module: dgii_reports
-#: selection:account.invoice,fiscal_status:0
+#: selection:account.move,fiscal_status:0
 msgid "Partial"
 msgstr "Parcial"
 
@@ -1250,7 +1250,7 @@ msgid "Report"
 msgstr "Reporte"
 
 #. module: dgii_reports
-#: selection:account.invoice,fiscal_status:0
+#: selection:account.move,fiscal_status:0
 msgid "Reported"
 msgstr "Reportada"
 
@@ -1389,7 +1389,7 @@ msgid "Statements"
 msgstr "Extractos"
 
 #. module: dgii_reports
-#: selection:account.invoice,payment_form:0
+#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_swap
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__swap
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__swap

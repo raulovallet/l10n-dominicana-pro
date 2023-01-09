@@ -4,9 +4,9 @@ from odoo.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
-    @api.multi
+    
     def action_invoice_cancel(self):
 
         fiscal_invoice = self.filtered(

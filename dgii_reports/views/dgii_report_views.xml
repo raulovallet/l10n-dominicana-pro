@@ -16,14 +16,13 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,generated,sent"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="company_id" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                        <group>
-                            <div class="oe_title">
-                                <h1>
-                                    <field name="company_id" readonly="1"/>
-                                </h1>
-                            </div>
-                        </group>
+
                         <field name="previous_report_pending" invisible="1"/>
                         <group attrs="{'invisible': [('previous_report_pending', '=', False)]}">
                             <div class="alert alert-warning info_icon" role="alert">
@@ -218,7 +217,7 @@
     <record id="dgii_report_action" model="ir.actions.act_window">
         <field name="name">Reports</field>
         <field name="res_model">dgii.reports</field>
-        <field name="view_type">form</field>
+
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="dgii_report_search_view"/>
         <field name="help" type="html">

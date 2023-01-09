@@ -18,26 +18,25 @@
     # always loaded
     "data": [
         "data/ir_config_parameters.xml",
-        "security/ir.model.access.csv",
-        "security/res_groups.xml",
         "data/ir_cron_data.xml",
         "data/account_fiscal_type_data.xml",
-        "wizard/account_invoice_refund_views.xml",
-        "views/account_fiscal_sequence_views.xml",
+        # "data/report_layout_data.xml",
+        # "data/mail_template_data.xml",
+
+        "security/ir.model.access.csv",
+        "security/res_groups.xml",
+
         "wizard/account_fiscal_sequence_validate_wizard_views.xml",
-        "views/report_templates.xml",
-        "data/report_layout_data.xml",
+        # "wizard/account_invoice_refund_views.xml",
+
         "views/account_report.xml",
-        "views/report_invoice.xml",
-        "data/mail_template_data.xml",
         "views/account_invoice_views.xml",
         "views/account_journal_views.xml",
         "views/res_partner_views.xml",
-        "views/assets.xml",
-        "views/backend_js.xml",
-    ],
-    "qweb": [
-        "static/src/xml/fiscal_sequence_warning_template.xml",
+        "views/account_fiscal_sequence_views.xml",
+        # "views/backend_js.xml",
+        # "views/report_templates.xml",
+        # "views/report_invoice.xml",
     ],
     # only loaded in demonstration mode
     "demo": [

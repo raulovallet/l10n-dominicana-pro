@@ -28,14 +28,14 @@ class AccountInvoiceTests(AccountInvoiceCommon):
             {
                 "partner_id": self.partner_demo_2,
                 "fiscal_type_id": self.fiscal_type_informal,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         self.assertEqual(invoice_2_id.fiscal_sequence_id.id, self.seq_informal)
 
         # Customer refund
         invoice_3_id = self.invoice_obj.create(
-            {"partner_id": self.partner_demo_3, "type": "out_refund"}
+            {"partner_id": self.partner_demo_3, "move_type": "out_refund"}
         )
         self.assertEqual(invoice_3_id.fiscal_sequence_id.id, self.seq_credit_note)
 
@@ -43,7 +43,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         invoice_4_id = self.invoice_obj.create(
             {
                 "partner_id": self.partner_demo_4,
-                "type": "out_invoice",
+                "move_type": "out_invoice",
                 "is_debit_note": True,
             }
         )
@@ -139,7 +139,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         """
 
         invoice_id = self.invoice_obj.create(
-            {"partner_id": self.partner_demo_4, "type": "in_invoice"}
+            {"partner_id": self.partner_demo_4, "move_type": "in_invoice"}
         )
         invoice_id.partner_id = self.partner_demo_5
         invoice_id._onchange_partner_id()
@@ -234,7 +234,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "fiscal_type_id": self.fiscal_type_informal,
                 "expense_type": "02",
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -344,14 +344,14 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         )
         refund_wizard_id.invoice_refund()
 
-        credit_note_id = self.invoice_obj.search([("type", "=", "out_refund")], limit=1)
+        credit_note_id = self.invoice_obj.search([("move_type", "=", "out_refund")], limit=1)
         credit_note_id.action_invoice_open()
 
         cn_type = self.fiscal_type_obj.browse(self.fiscal_type_cn)
 
         self.assertEqual(credit_note_id.fiscal_type_id.id, self.fiscal_type_cn)
-        self.assertEqual(str(credit_note_id.reference)[:3], cn_type.prefix)
-        self.assertEqual(credit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(str(credit_note_id.ref)[:3], cn_type.prefix)
+        self.assertEqual(credit_note_id.origin_out, invoice_id.ref)
         self.assertTrue(
             float_is_zero(
                 credit_note_id.amount_total - (invoice_id.amount_total * 0.1),
@@ -386,14 +386,14 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         )
         refund_wizard_id.invoice_refund()
 
-        credit_note_id = self.invoice_obj.search([("type", "=", "out_refund")], limit=1)
+        credit_note_id = self.invoice_obj.search([("move_type", "=", "out_refund")], limit=1)
         credit_note_id.action_invoice_open()
 
         cn_type = self.fiscal_type_obj.browse(self.fiscal_type_cn)
 
         self.assertEqual(credit_note_id.fiscal_type_id.id, self.fiscal_type_cn)
-        self.assertEqual(str(credit_note_id.reference)[:3], cn_type.prefix)
-        self.assertEqual(credit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(str(credit_note_id.ref)[:3], cn_type.prefix)
+        self.assertEqual(credit_note_id.origin_out, invoice_id.ref)
         self.assertEqual(credit_note_id.amount_total, 100)
 
     def test_015_fiscal_vendor_refund_percentage(self):
@@ -407,7 +407,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_informal,
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -420,18 +420,18 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "filter_refund": "refund",
                 "description": "Discount",
                 "percentage": 10,
-                "refund_reference": "B0400000001",
+                "refund_ref": "B0400000001",
             }
         )
         refund_wizard_id.invoice_refund()
 
-        credit_note_id = self.invoice_obj.search([("type", "=", "in_refund")], limit=1)
+        credit_note_id = self.invoice_obj.search([("move_type", "=", "in_refund")], limit=1)
         credit_note_id.action_invoice_open()
 
-        self.assertEqual(credit_note_id.reference, "B0400000001")
+        self.assertEqual(credit_note_id.ref, "B0400000001")
 
         self.assertEqual(credit_note_id.fiscal_type_id.id, self.fiscal_type_cn_purchase)
-        self.assertEqual(credit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(credit_note_id.origin_out, invoice_id.ref)
         self.assertTrue(
             float_is_zero(
                 credit_note_id.amount_total - (invoice_id.amount_total * 0.1),
@@ -450,7 +450,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_informal,
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -463,18 +463,18 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "filter_refund": "refund",
                 "description": "Discount",
                 "amount": 100,
-                "refund_reference": "B0400000001",
+                "refund_ref": "B0400000001",
             }
         )
         refund_wizard_id.invoice_refund()
 
-        credit_note_id = self.invoice_obj.search([("type", "=", "in_refund")], limit=1)
+        credit_note_id = self.invoice_obj.search([("move_type", "=", "in_refund")], limit=1)
         credit_note_id.action_invoice_open()
 
-        self.assertEqual(credit_note_id.reference, "B0400000001")
+        self.assertEqual(credit_note_id.ref, "B0400000001")
 
         self.assertEqual(credit_note_id.fiscal_type_id.id, self.fiscal_type_cn_purchase)
-        self.assertEqual(credit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(credit_note_id.origin_out, invoice_id.ref)
         self.assertEqual(credit_note_id.amount_total, 100)
 
     def test_017_fiscal_customer_debit_note_percentage(self):
@@ -509,15 +509,15 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         refund_wizard_id.invoice_debit_note()
 
         debit_note_id = self.invoice_obj.search(
-            [("type", "=", "out_invoice"), ("is_debit_note", "=", True)], limit=1
+            [("move_type", "=", "out_invoice"), ("is_debit_note", "=", True)], limit=1
         )
         debit_note_id.action_invoice_open()
 
         dn_type = self.fiscal_type_obj.browse(self.fiscal_type_dn)
 
         self.assertEqual(debit_note_id.fiscal_type_id.id, self.fiscal_type_dn)
-        self.assertEqual(str(debit_note_id.reference)[:3], dn_type.prefix)
-        self.assertEqual(debit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(str(debit_note_id.ref)[:3], dn_type.prefix)
+        self.assertEqual(debit_note_id.origin_out, invoice_id.ref)
         self.assertTrue(
             float_is_zero(
                 debit_note_id.amount_total - (invoice_id.amount_total * 0.1),
@@ -557,15 +557,15 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         refund_wizard_id.invoice_debit_note()
 
         debit_note_id = self.invoice_obj.search(
-            [("type", "=", "out_invoice"), ("is_debit_note", "=", True)], limit=1
+            [("move_type", "=", "out_invoice"), ("is_debit_note", "=", True)], limit=1
         )
         debit_note_id.action_invoice_open()
 
         dn_type = self.fiscal_type_obj.browse(self.fiscal_type_dn)
 
         self.assertEqual(debit_note_id.fiscal_type_id.id, self.fiscal_type_dn)
-        self.assertEqual(str(debit_note_id.reference)[:3], dn_type.prefix)
-        self.assertEqual(debit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(str(debit_note_id.ref)[:3], dn_type.prefix)
+        self.assertEqual(debit_note_id.origin_out, invoice_id.ref)
         self.assertEqual(debit_note_id.amount_total, 100)
 
     def test_019_fiscal_vendor_debit_note_percentage(self):
@@ -579,7 +579,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_informal,
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -601,12 +601,12 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         refund_wizard_id.invoice_debit_note()
 
         debit_note_id = self.invoice_obj.search(
-            [("type", "=", "in_invoice"), ("is_debit_note", "=", True)], limit=1
+            [("move_type", "=", "in_invoice"), ("is_debit_note", "=", True)], limit=1
         )
         debit_note_id.action_invoice_open()
 
         self.assertEqual(debit_note_id.fiscal_type_id.id, self.fiscal_type_dn_purchase)
-        self.assertEqual(debit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(debit_note_id.origin_out, invoice_id.ref)
         self.assertTrue(
             float_is_zero(
                 debit_note_id.amount_total - (invoice_id.amount_total * 0.1),
@@ -625,7 +625,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_informal,
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -647,12 +647,12 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         refund_wizard_id.invoice_debit_note()
 
         debit_note_id = self.invoice_obj.search(
-            [("type", "=", "in_invoice"), ("is_debit_note", "=", True)], limit=1
+            [("move_type", "=", "in_invoice"), ("is_debit_note", "=", True)], limit=1
         )
         debit_note_id.action_invoice_open()
 
         self.assertEqual(debit_note_id.fiscal_type_id.id, self.fiscal_type_dn_purchase)
-        self.assertEqual(debit_note_id.origin_out, invoice_id.reference)
+        self.assertEqual(debit_note_id.origin_out, invoice_id.ref)
         self.assertEqual(debit_note_id.amount_total, 100)
 
     def test_021_fiscal_vendor_refund_percentage(self):
@@ -666,7 +666,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_informal,
                 "invoice_line_ids": self.invoice_line_data,
-                "type": "in_invoice",
+                "move_type": "in_invoice",
             }
         )
         invoice_id.action_invoice_open()
@@ -678,7 +678,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
                 "refund_type": "full_refund",
                 "filter_refund": "refund",
                 "description": "Full Refund",
-                "refund_reference": "B0400000001",
+                "refund_ref": "B0400000001",
             }
         )
 
@@ -687,9 +687,9 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         assert refund_wizard_id.is_fiscal_refund
 
         refund_wizard_id.invoice_refund()
-        credit_note_id = self.invoice_obj.search([("type", "=", "in_refund")], limit=1)
+        credit_note_id = self.invoice_obj.search([("move_type", "=", "in_refund")], limit=1)
 
-        self.assertEqual(credit_note_id.reference, "B0400000001")
+        self.assertEqual(credit_note_id.ref, "B0400000001")
 
     def test_022_invoice_ncf_expiration_date(self):
         """

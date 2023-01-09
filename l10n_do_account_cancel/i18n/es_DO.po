@@ -38,7 +38,7 @@ msgid "Cancel Selected Invoice"
 msgstr "Cancelar Factura Seleccionada"
 
 #. module: l10n_do_account_cancel
-#: model:ir.model,name:l10n_do_account_cancel.model_account_invoice_cancel
+#: model:ir.model,name:l10n_do_account_cancel.model_account_move_cancel
 msgid "Cancel the Selected Invoice"
 msgstr "Cancelar la Factura Seleccionada "
 
@@ -70,7 +70,7 @@ msgid "ID"
 msgstr ""
 
 #. module: l10n_do_account_cancel
-#: model:ir.model,name:l10n_do_account_cancel.model_account_invoice
+#: model:ir.model,name:l10n_do_account_cancel.model_account_move
 msgid "Invoice"
 msgstr "Factura"
 

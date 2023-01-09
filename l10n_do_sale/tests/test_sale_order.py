@@ -8,7 +8,7 @@ class SaleOrderTests(TransactionCase):
         super(SaleOrderTests, self).setUp()
 
         self.sale_obj = self.env['sale.order']
-        self.invoice_obj = self.env['account.invoice']
+        self.invoice_obj = self.env['account.move']
         self.journal_obj = self.env['account.journal']
 
         journals = self.journal_obj.search([('type', '=', 'sale')])

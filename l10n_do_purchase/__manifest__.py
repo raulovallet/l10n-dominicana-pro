@@ -4,7 +4,7 @@
     'name': "Fiscal Purchases (Rep. Dominicana)",
 
     'summary': """
-        This is a technical module which uses the available reference in
+        This is a technical module which uses the available ref in
         purchases and use it as the invoice name.
     """,
 

@@ -21,7 +21,7 @@ class InvoiceServiceTypeDetail(models.Model):
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
     def _get_invoice_payment_widget(self):
         j = json.loads(self.payments_widget)
@@ -39,7 +39,7 @@ class AccountInvoice(models.Model):
                     inv.payment_date = max_date if max_date >= date_invoice \
                         else date_invoice
 
-    @api.multi
+    
     @api.constrains('tax_line_ids')
     def _check_isr_tax(self):
         """Restrict one ISR tax per invoice"""
@@ -54,7 +54,7 @@ class AccountInvoice(models.Model):
                                         'withholding taxes.'))
 
     def _convert_to_local_currency(self, amount):
-        sign = -1 if self.type in ['in_refund', 'out_refund'] else 1
+        sign = -1 if self.move_type in ['in_refund', 'out_refund'] else 1
         if self.currency_id != self.company_id.currency_id:
             currency_id = self.currency_id.with_context(date=self.date_invoice)
             round_curr = currency_id.round
@@ -67,7 +67,7 @@ class AccountInvoice(models.Model):
     def _get_tax_line_ids(self):
         return self.tax_line_ids
 
-    @api.multi
+    
     @api.depends('tax_line_ids', 'tax_line_ids.amount', 'state')
     def _compute_taxes_fields(self):
         """Compute invoice common taxes fields"""
@@ -111,26 +111,26 @@ class AccountInvoice(models.Model):
                             lambda tax: tax.account_id.account_fiscal_type ==
                             'A51').mapped('amount')))
 
-                if inv.type == 'out_invoice' and any([
+                if inv.move_type == 'out_invoice' and any([
                     inv.third_withheld_itbis,
                     inv.third_income_withholding
                         ]):
                     # Fecha Pago
                     inv._compute_invoice_payment_date()
 
-                if inv.type == 'in_invoice' and any([
+                if inv.move_type == 'in_invoice' and any([
                     inv.withholded_itbis,
                     inv.income_withholding
                         ]):
                     # Fecha Pago
                     inv._compute_invoice_payment_date()
 
-    @api.multi
+    
     @api.depends('invoice_line_ids', 'invoice_line_ids.product_id', 'state')
     def _compute_amount_fields(self):
         """Compute Purchase amount by product type"""
         for inv in self:
-            if inv.type in [
+            if inv.move_type in [
                 'in_invoice', 'in_refund'
                     ] and inv.state != 'draft':
                 service_amount = 0
@@ -139,7 +139,7 @@ class AccountInvoice(models.Model):
                 for line in inv.invoice_line_ids:
 
                     # Monto calculado en bienes
-                    if line.product_id.type in ['product', 'consu']:
+                    if line.product_id.move_type in ['product', 'consu']:
                         good_amount += line.price_subtotal
 
                     # Si la linea no tiene un producto
@@ -156,7 +156,7 @@ class AccountInvoice(models.Model):
                 inv.good_total_amount = inv._convert_to_local_currency(
                     good_amount)
 
-    @api.multi
+    
     @api.depends('invoice_line_ids', 'invoice_line_ids.product_id', 'state')
     def _compute_isr_withholding_type(self):
         """Compute ISR Withholding Type
@@ -172,7 +172,7 @@ class AccountInvoice(models.Model):
         08 -- Juegos Telefónicos
         """
         for inv in self:
-            if inv.type == 'in_invoice' and inv.state != 'draft':
+            if inv.move_type == 'in_invoice' and inv.state != 'draft':
                 isr = [
                     tax_line.tax_id
                     for tax_line in inv.tax_line_ids
@@ -201,7 +201,7 @@ class AccountInvoice(models.Model):
                 payment.get('account_payment_id'))
             move_id = False
             if payment_id:
-                if payment_id.journal_id.type in ['cash', 'bank']:
+                if payment_id.journal_id.move_type in ['cash', 'bank']:
                     p_string = payment_id.journal_id.payment_form
 
             if not payment_id:
@@ -221,7 +221,7 @@ class AccountInvoice(models.Model):
         elif len(methods) > 1:
             return 'mixed'
 
-    @api.multi
+    
     @api.depends('state')
     def _compute_in_invoice_payment_form(self):
         for inv in self:
@@ -233,7 +233,7 @@ class AccountInvoice(models.Model):
             else:
                 inv.payment_form = '04'
 
-    @api.multi
+    
     @api.depends('tax_line_ids', 'tax_line_ids.amount', 'state')
     def _compute_invoiced_itbis(self):
         """Compute invoice invoiced_itbis taking into account the currency"""
@@ -281,7 +281,7 @@ class AccountInvoice(models.Model):
                         witheld_type
                     ]
 
-    @api.multi
+    
     @api.depends('state')
     def _compute_withheld_taxes(self):
         for inv in self:
@@ -292,7 +292,7 @@ class AccountInvoice(models.Model):
                 witheld_isr_types = ['ISR', 'A38']
                 tax_line_ids = inv._get_tax_line_ids()
 
-                if inv.type == 'out_invoice':
+                if inv.move_type == 'out_invoice':
                     # ITBIS Retenido por Terceros
                     inv.third_withheld_itbis = abs(
                         inv._convert_to_local_currency(
@@ -309,7 +309,7 @@ class AccountInvoice(models.Model):
                                     lambda tax: tax.account_id.account_fiscal_type in witheld_isr_types
                                 ).mapped('amount'))))
 
-                elif inv.type == 'in_invoice':
+                elif inv.move_type == 'in_invoice':
 
                     # ITBIS Retenido a Terceros
                     inv.withholded_itbis = abs(
@@ -330,35 +330,35 @@ class AccountInvoice(models.Model):
                 # TODO: Esta parte esta comentada porque solo funciona para v10-v11 podria funcionar en un futuro
                 # for payment in inv._get_invoice_payment_widget():
                 #
-                #     if inv.type == 'out_invoice':
+                #     if inv.move_type == 'out_invoice':
                 #         # ITBIS Retenido por Terceros
                 #         inv.third_withheld_itbis += sum(
                 #             self._get_payment_move_iterator(
-                #                 payment, inv.type, witheld_itbis_types))
+                #                 payment, inv.move_type, witheld_itbis_types))
                 #
                 #         # Retención de Renta pr Terceros
                 #         inv.third_income_withholding += sum(
                 #             self._get_payment_move_iterator(
-                #                 payment, inv.type, witheld_isr_types))
-                #     elif inv.type == 'in_invoice':
+                #                 payment, inv.move_type, witheld_isr_types))
+                #     elif inv.move_type == 'in_invoice':
                 #         # ITBIS Retenido a Terceros
                 #         inv.withholded_itbis += sum(
                 #             self._get_payment_move_iterator(
-                #                 payment, inv.type, witheld_itbis_types))
+                #                 payment, inv.move_type, witheld_itbis_types))
                 #
                 #         # Retención de Renta a Terceros
                 #         inv.income_withholding += sum(
                 #             self._get_payment_move_iterator(
-                #                 payment, inv.type, witheld_isr_types))
+                #                 payment, inv.move_type, witheld_isr_types))
 
-    @api.multi
+    
     @api.depends('invoiced_itbis', 'cost_itbis', 'state')
     def _compute_advance_itbis(self):
         for inv in self:
             if inv.state != 'draft':
                 inv.advance_itbis = inv.invoiced_itbis - inv.cost_itbis
 
-    @api.multi
+    
     @api.depends('fiscal_type_id.purchase_type')
     def _compute_is_exterior(self):
         for inv in self:

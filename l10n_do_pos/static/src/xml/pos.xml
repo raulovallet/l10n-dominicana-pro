@@ -77,7 +77,7 @@
             </t>
             <t t-if="!widget.pos.invoice_journal.l10n_do_fiscal_journal">
                 <span class='details'>
-                    <t t-esc='order.pos_reference'/>
+                    <t t-esc='order.pos_ref'/>
                 </span>
             </t>
         </t>
