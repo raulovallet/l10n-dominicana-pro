@@ -106,13 +106,11 @@ class AccountInvoice(models.Model):
         string="is_debit_note"
     )
 
-    
     @api.depends("state", "journal_id")
     def _compute_is_l10n_do_fiscal_invoice(self):
         for inv in self:
             inv.is_l10n_do_fiscal_invoice = inv.journal_id.l10n_do_fiscal_journal
 
-    
     @api.depends(
         "journal_id",
         "is_l10n_do_fiscal_invoice",
@@ -156,7 +154,7 @@ class AccountInvoice(models.Model):
                     ("state", "=", "active"),
                 ]
                 if inv.invoice_date:
-                    domain.append(("expiration_date", ">=", inv.date_invoice))
+                    domain.append(("expiration_date", ">=", inv.invoice_date))
                 else:
                     today = fields.Date.context_today(inv)
                     domain.append(("expiration_date", ">=", today))
@@ -174,7 +172,6 @@ class AccountInvoice(models.Model):
             else:
                 inv.fiscal_sequence_id = False
 
-    
     @api.depends(
         "fiscal_sequence_id",
         "fiscal_sequence_id.sequence_remaining",
@@ -206,7 +203,6 @@ class AccountInvoice(models.Model):
                 else:
                     inv.fiscal_sequence_status = "no_sequence"
 
-    
     @api.constrains("state", "tax_line_ids")
     def validate_special_exempt(self):
         """ Validates an invoice with Regímenes Especiales fiscal type
@@ -239,7 +235,6 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-    
     @api.constrains("state", "invoice_line_ids", "partner_id")
     def validate_products_export_ncf(self):
         """ Validates that an invoices with a partner from country != DO
@@ -249,7 +244,7 @@ class AccountInvoice(models.Model):
         for inv in self:
             if (
                 inv.move_type == "out_invoice"
-                and inv.state in ("open", "cancel")
+                and inv.state in ("posted", "cancel")
                 and inv.partner_id.country_id
                 and inv.partner_id.country_id.code != "DO"
                 and inv.is_l10n_do_fiscal_invoice
@@ -276,7 +271,6 @@ class AccountInvoice(models.Model):
                         )
                     )
 
-    
     @api.constrains("state", "tax_line_ids")
     def validate_informal_withholding(self):
         """ Validates an invoice with Comprobante de Compras has 100% ITBIS
@@ -336,8 +330,6 @@ class AccountInvoice(models.Model):
             if self.partner_id and self.move_type == "out_invoice":
                 if not self.fiscal_type_id:
                     self.fiscal_type_id = self.partner_id.sale_fiscal_type_id
-                if not self.partner_id.customer:
-                    self.partner_id.customer = True
             elif self.partner_id and self.move_type == "in_invoice":
                 self.expense_type = self.partner_id.expense_type
                 if not self.partner_id.supplier:
@@ -374,8 +366,7 @@ class AccountInvoice(models.Model):
                         _("The length of the fiscal sequence %s must be %s")
                         % (self.fiscal_type_id.name, str(self.fiscal_type_id.padding),))
 
-    
-    def action_invoice_open(self):
+    def _post(self, soft=True):
         """ Before an invoice is changed to the 'open' state, validate that all
             informations are valid regarding Norma 05-19 and if there are
             available sequences to be used just before validation
@@ -390,7 +381,7 @@ class AccountInvoice(models.Model):
                     )
                 )
 
-            if inv.is_l10n_do_fiscal_invoice:
+            if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
 
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again
@@ -400,12 +391,7 @@ class AccountInvoice(models.Model):
                 if not inv.ref \
                         and not inv.fiscal_sequence_id \
                         and inv.fiscal_type_id.assigned_sequence:
-                    raise ValidationError(
-                        _(
-                            "There is not active Fiscal Sequence for this type"
-                            "of document."
-                        )
-                    )
+                    raise ValidationError(_("There is not active Fiscal Sequence for this type of document."))
 
                 if inv.move_type == "out_invoice":
                     if not inv.partner_id.sale_fiscal_type_id:
@@ -445,9 +431,21 @@ class AccountInvoice(models.Model):
                             )
                         )
 
-        return super(AccountInvoice, self).action_invoice_open()
+        res = super(AccountInvoice, self)._post(soft)
 
-    
+        for inv in self:
+            if inv.is_l10n_do_fiscal_invoice \
+                    and not inv.ref \
+                    and inv.fiscal_type_id.assigned_sequence \
+                    and inv.is_invoice()\
+                    and inv.state == "posted":
+                inv.write({
+                    'ref': inv.fiscal_sequence_id.get_fiscal_number(),
+                    'ncf_expiration_date': inv.fiscal_sequence_id.expiration_date
+                })
+
+        return res
+
     def validate_fiscal_purchase(self):
         for inv in self.filtered(
             lambda i: i.move_type == "in_invoice" and i.state == "draft"
@@ -516,39 +514,6 @@ class AccountInvoice(models.Model):
                         ).format(ncf)
                     )
 
-    
-    def _get_computed_ref(self):
-        self.ensure_one()
-        if self.is_l10n_do_fiscal_invoice:
-            return False
-        else:
-            return super(AccountInvoice, self)._get_computed_ref()
-
-    
-    def invoice_validate(self):
-        """ After all invoice validation routine, consume a NCF sequence and
-            write it into ref field.
-         """
-        res = super(AccountInvoice, self).invoice_validate()
-
-        for inv in self:
-            if inv.is_l10n_do_fiscal_invoice \
-                    and not inv.ref \
-                    and inv.fiscal_type_id.assigned_sequence\
-                    and res:
-                inv.state = 'draft'
-                inv.write({
-                    'state': 'open',
-                    'ref': inv.fiscal_sequence_id.get_fiscal_number(),
-                    'ncf_expiration_date': inv.fiscal_sequence_id.expiration_date
-                })
-                inv.move_id.write({
-                    'ref': inv.ref
-                })
-
-        return res
-
-    
     def invoice_print(self):
         # Companies which has installed l10n_do localization use
         # l10n_do fiscal invoice template
@@ -561,7 +526,7 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _prepare_refund(
-        self, invoice, date_invoice=None, date=None, description=None, journal_id=None
+        self, invoice, invoice_date=None, date=None, description=None, journal_id=None
     ):
         """ Inherit Odoo's _prepare_refund() method to allow the use of fiscal
             types and other required fields for l10n_do.
@@ -574,7 +539,7 @@ class AccountInvoice(models.Model):
 
         res = super(AccountInvoice, self)._prepare_refund(
             invoice,
-            date_invoice=date_invoice,
+            invoice_date=invoice_date,
             date=date,
             description=description,
             journal_id=journal_id,
@@ -613,10 +578,9 @@ class AccountInvoice(models.Model):
         )
 
         return res
-
     
     @api.returns("self")
-    def refund(self, date_invoice=None, date=None, description=None, journal_id=None):
+    def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
 
         context = dict(self._context or {})
         refund_type = context.get("refund_type")
@@ -625,7 +589,7 @@ class AccountInvoice(models.Model):
 
         if not refund_type:
             return super(AccountInvoice, self).refund(
-                date_invoice=date_invoice,
+                invoice_date=invoice_date,
                 date=date,
                 description=description,
                 journal_id=journal_id,
@@ -638,7 +602,7 @@ class AccountInvoice(models.Model):
                 refund_type=refund_type, amount=amount, account=account
             )._prepare_refund(
                 invoice,
-                date_invoice=date_invoice,
+                invoice_date=invoice_date,
                 date=date,
                 description=description,
                 journal_id=journal_id,

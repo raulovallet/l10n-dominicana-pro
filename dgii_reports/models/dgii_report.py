@@ -360,13 +360,13 @@ class DgiiReport(models.Model):
         end_date = '{}-{}-{}'.format(year, month, last_day)
 
         invoice_ids = self.env['account.move'].search(
-            [('date_invoice', '>=', start_date),
-             ('date_invoice', '<=', end_date),
+            [('invoice_date', '>=', start_date),
+             ('invoice_date', '<=', end_date),
              ('company_id', '=', self.company_id.id),
              ('is_l10n_do_fiscal_invoice', '=', True),
              ('state', 'in', states),
              ('type', 'in', types)],
-            order='date_invoice asc').filtered(
+            order='invoice_date asc').filtered(
             lambda inv: inv.fiscal_type_id.purchase_type != 'others')
 
         # Append pending invoces (fiscal_status = Partial, state = Paid)
@@ -505,7 +505,7 @@ class DgiiReport(models.Model):
                     'fiscal_invoice_number': inv.ref,
                     'modified_invoice_number': inv.origin_out if
                     inv.move_type == 'in_refund' else False,
-                    'invoice_date': inv.date_invoice,
+                    'invoice_date': inv.invoice_date,
                     'payment_date': inv.payment_date if
                     show_payment_date else False,
                     'service_total_amount': inv.service_total_amount,
@@ -558,7 +558,7 @@ class DgiiReport(models.Model):
         """ Returns True if payment date is on or before current period """
 
         p_date = payment_id.payment_date
-        i_date = invoice_id.date_invoice
+        i_date = invoice_id.invoice_date
 
         return True if (p_date.year <= i_date.year) and (
             p_date.month <= i_date.month) else False
@@ -577,26 +577,26 @@ class DgiiReport(models.Model):
                             payments_dict[key] += self._convert_to_user_currency(
                                 invoice_id.currency_id,
                                 payment['amount'],
-                                invoice_id.date_invoice,
+                                invoice_id.invoice_date,
                             )
                         else:
                             payments_dict['credit'] += self._convert_to_user_currency(
                                 invoice_id.currency_id,
                                 payment['amount'],
-                                invoice_id.date_invoice,
+                                invoice_id.invoice_date,
                             )
                 else:
                     payments_dict['swap'] += self._convert_to_user_currency(
-                        invoice_id.currency_id, payment['amount'], invoice_id.date_invoice)
+                        invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
             payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.residual, invoice_id.date_invoice)
+                invoice_id.currency_id, invoice_id.residual, invoice_id.invoice_date)
         else:
             for payment in invoice_id._get_invoice_payment_widget():
                 payments_dict['swap'] += self._convert_to_user_currency(
-                    invoice_id.currency_id, payment['amount'], invoice_id.date_invoice)
+                    invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
 
             payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.residual, invoice_id.date_invoice)
+                invoice_id.currency_id, invoice_id.residual, invoice_id.invoice_date)
 
         return payments_dict
 
@@ -838,7 +838,7 @@ class DgiiReport(models.Model):
                         inv.origin_out[-10:-8] in ['01', '02', '14', '15'] else
                         False,
                     'income_type': inv.income_type,
-                    'invoice_date': inv.date_invoice,
+                    'invoice_date': inv.invoice_date,
                     'withholding_date': inv.payment_date if (
                         inv.move_type != 'out_refund' and
                         show_payment_date) else False,
@@ -963,7 +963,7 @@ class DgiiReport(models.Model):
                         'line': line,
                         'invoice_partner_id': inv.partner_id.id,
                         'fiscal_invoice_number': inv.ref,
-                        'invoice_date': inv.date_invoice,
+                        'invoice_date': inv.invoice_date,
                         'anulation_type': inv.anulation_type,
                         'invoice_id': inv.id
                     }
@@ -1047,7 +1047,7 @@ class DgiiReport(models.Model):
                     'service_type_detail': inv.service_type_detail.code,
                     'related_part': int(inv.partner_id.related),
                     'doc_number': inv.number,
-                    'doc_date': inv.date_invoice,
+                    'doc_date': inv.invoice_date,
                     'invoiced_amount': inv.amount_untaxed_signed,
                     'isr_withholding_date': inv.payment_date if
                     inv.payment_date else False,
