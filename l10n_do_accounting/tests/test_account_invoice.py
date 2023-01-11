@@ -49,7 +49,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
         )
         self.assertEqual(invoice_4_id.fiscal_sequence_id.id, self.seq_debit_note)
 
-    def test_002_date_invoice_expired_sequence(self):
+    def test_002_invoice_date_expired_sequence(self):
         """
         Check that an invoice which date is >= fiscal sequence expiration
         date does not get any fiscal sequence
@@ -59,7 +59,7 @@ class AccountInvoiceTests(AccountInvoiceCommon):
             {
                 "partner_id": self.partner_demo_1,
                 "fiscal_type_id": self.fiscal_type_fiscal,
-                "date_invoice": fields.Date.today() + td(weeks=156),
+                "invoice_date": fields.Date.today() + td(weeks=156),
             }
         )
         self.assertFalse(invoice_id.fiscal_sequence_id)

@@ -35,9 +35,9 @@ class AccountInvoice(models.Model):
                 ]
                 if dates:
                     max_date = max(dates)
-                    date_invoice = inv.date_invoice
-                    inv.payment_date = max_date if max_date >= date_invoice \
-                        else date_invoice
+                    invoice_date = inv.invoice_date
+                    inv.payment_date = max_date if max_date >= invoice_date \
+                        else invoice_date
 
     
     @api.constrains('tax_line_ids')
@@ -56,11 +56,11 @@ class AccountInvoice(models.Model):
     def _convert_to_local_currency(self, amount):
         sign = -1 if self.move_type in ['in_refund', 'out_refund'] else 1
         if self.currency_id != self.company_id.currency_id:
-            currency_id = self.currency_id.with_context(date=self.date_invoice)
+            currency_id = self.currency_id.with_context(date=self.invoice_date)
             round_curr = currency_id.round
             amount = round_curr(
                 currency_id._convert(amount, self.company_id.currency_id,
-                                     self.company_id, self.date_invoice))
+                                     self.company_id, self.invoice_date))
 
         return amount * sign
 

@@ -143,7 +143,7 @@ class AccountMoveReversal(models.TransientModel):
                     amount=amount,
                     account=wizard.account_id.id,
                     refund_ref=refund_ref,
-                ).refund(wizard.date_invoice, date, description, inv.journal_id.id)
+                ).refund(wizard.invoice_date, date, description, inv.journal_id.id)
 
                 if wizard.refund_method == "apply_refund":
                     refund.action_invoice_open()
@@ -184,7 +184,7 @@ class AccountMoveReversal(models.TransientModel):
 
                 debit_map = {"out_debit": "out_invoice", "in_debit": "in_invoice"}
 
-                date = wizard.date or wizard.date_invoice
+                date = wizard.date or wizard.invoice_date
                 description = wizard.description or inv.name
                 refund_type = wizard.refund_type
                 vendor_ref = wizard.refund_ref
@@ -201,7 +201,7 @@ class AccountMoveReversal(models.TransientModel):
                 values = {
                     "partner_id": inv.partner_id.id,
                     "ref": vendor_ref,
-                    "date_invoice": date,
+                    "invoice_date": date,
                     "income_type": inv.income_type,
                     "expense_type": inv.expense_type,
                     "is_debit_note": True,
