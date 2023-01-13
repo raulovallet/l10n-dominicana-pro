@@ -1,6 +1,7 @@
 # TODO: poner authorship en todos los archivos .py (xml tamb?)
 
 import logging
+import json
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -30,17 +31,25 @@ class AccountInvoice(models.Model):
     _inherit = "account.move"
 
     fiscal_type_id = fields.Many2one(
-        "account.fiscal.type", string="Fiscal Type", index=True,
+        comodel_name="account.fiscal.type",
+        string="Fiscal Type",
+        index=True,
+    )
+    available_fiscal_type_ids = fields.Many2many(
+        comodel_name="account.fiscal.type",
+        string="Fiscal Type",
+        compute='_compute_available_fiscal_type'
     )
     fiscal_sequence_id = fields.Many2one(
-        "account.fiscal.sequence",
+        comodel_name="account.fiscal.sequence",
         string="Fiscal Sequence",
         copy=False,
         compute="_compute_fiscal_sequence",
         store=True,
     )
     income_type = fields.Selection(
-        [
+        string="Income Type",
+        selection=[
             ("01", "01 - Ingresos por Operaciones (No Financieros)"),
             ("02", "02 - Ingresos Financieros"),
             ("03", "03 - Ingresos Extraordinarios"),
@@ -48,12 +57,12 @@ class AccountInvoice(models.Model):
             ("05", "05 - Ingresos por Venta de Activo Depreciable"),
             ("06", "06 - Otros Ingresos"),
         ],
-        string="Income Type",
+        copy=False,
         default=lambda self: self._context.get("income_type", "01"),
     )
-
     expense_type = fields.Selection(
-        [
+        copy=False,
+        selection=[
             ("01", "01 - Gastos de Personal"),
             ("02", "02 - Gastos por Trabajo, Suministros y Servicios"),
             ("03", "03 - Arrendamientos"),
@@ -68,9 +77,9 @@ class AccountInvoice(models.Model):
         ],
         string="Cost & Expense Type",
     )
-
-    anulation_type = fields.Selection(
-        [
+    annulation_type = fields.Selection(
+        string="Annulment Type",
+        selection=[
             ("01", "01 - Deterioro de Factura Pre-impresa"),
             ("02", u"02 - Errores de Impresión (Factura Pre-impresa)"),
             ("03", u"03 - Impresión Defectuosa"),
@@ -82,19 +91,27 @@ class AccountInvoice(models.Model):
             ("09", "09 - Por Cese de Operaciones"),
             ("10", u"10 - Pérdida o Hurto de Talonarios"),
         ],
-        string="Annulment Type",
         copy=False,
     )
-    origin_out = fields.Char("Affects",)
-    ncf_expiration_date = fields.Date("Valid until", store=True,)
+    origin_out = fields.Char(
+        string="Affects",
+        copy=False,
+    )
+    ncf_expiration_date = fields.Date(
+        string="Valid until",
+        store=True,
+        copy=False,
+    )
     is_l10n_do_fiscal_invoice = fields.Boolean(
+        string="Is Fiscal Invoice",
         compute="_compute_is_l10n_do_fiscal_invoice",
         store=True,
-        string="Is Fiscal Invoice",
     )
-    assigned_sequence = fields.Boolean(related="fiscal_type_id.assigned_sequence",)
+    assigned_sequence = fields.Boolean(
+        related="fiscal_type_id.assigned_sequence",
+    )
     fiscal_sequence_status = fields.Selection(
-        [
+        selection=[
             ("no_fiscal", "No fiscal"),
             ("fiscal_ok", "Ok"),
             ("almost_no_sequence", "Almost no sequence"),
@@ -105,6 +122,15 @@ class AccountInvoice(models.Model):
     is_debit_note = fields.Boolean(
         string="is_debit_note"
     )
+
+    @api.depends("is_l10n_do_fiscal_invoice", "move_type", "journal_id", "partner_id")
+    def _compute_available_fiscal_type(self):
+        self.available_fiscal_type_ids = False
+        for inv in self.filtered(lambda x: x.journal_id and x.is_l10n_do_fiscal_invoice and x.partner_id):
+            inv.available_fiscal_type_ids = self.env['account.fiscal.type'].search(inv._get_fiscal_domain())
+
+    def _get_fiscal_domain(self):
+        return [('type', '=', self.move_type)]
 
     @api.depends("state", "journal_id")
     def _compute_is_l10n_do_fiscal_invoice(self):
@@ -332,8 +358,7 @@ class AccountInvoice(models.Model):
                     self.fiscal_type_id = self.partner_id.sale_fiscal_type_id
             elif self.partner_id and self.move_type == "in_invoice":
                 self.expense_type = self.partner_id.expense_type
-                if not self.partner_id.supplier:
-                    self.partner_id.supplier = True
+
                 if self.partner_id.id == self.company_id.partner_id.id:
                     fiscal_type = self.env["account.fiscal.type"].search(
                         [("type", "=", self.move_type), ("prefix", "=", "B13")], limit=1

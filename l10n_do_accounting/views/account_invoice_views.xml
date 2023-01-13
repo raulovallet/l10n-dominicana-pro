@@ -12,6 +12,8 @@
                 <field name="is_debit_note" invisible="1"/>
                 <field name="is_l10n_do_fiscal_invoice" invisible="1"/>
                 <field name="fiscal_sequence_id" invisible="1"/>
+                <field name="assigned_sequence" invisible="1"/>
+                <field name="available_fiscal_type_ids" invisible="1"/>
             </xpath>
 
             <xpath expr="//form/sheet/div/span" position="after">
@@ -35,47 +37,47 @@
                 <attribute name="groups">l10n_do_accounting.credit_note_group</attribute>
             </xpath>
 
-<!--            <xpath expr="//field[@name='ref']" position="attributes">-->
-<!--                <attribute name="string">NCF</attribute>-->
-<!--                <attribute name="attrs">{-->
-<!--                    'invisible': ['|', '|', ('is_l10n_do_fiscal_invoice', '=', False), ('fiscal_type_id', '=', False), '&amp;', ('assigned_sequence','=', True), ('ref','=', False)],-->
-<!--                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],-->
-<!--                    'readonly': ['|',('state', '!=', 'draft'),('assigned_sequence','=', True)]}-->
-<!--                </attribute>-->
-<!--            </xpath>-->
-
-<!--            <xpath expr="//label[@for='ref']" position="attributes">-->
-<!--                <attribute name="string">NCF</attribute>-->
-<!--                <attribute name="attrs">{-->
-<!--                    'invisible': ['|', '|', ('is_l10n_do_fiscal_invoice', '=', False), ('fiscal_type_id', '=', False), '&amp;', ('assigned_sequence','=', True), ('ref','=', False)],-->
-<!--                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],-->
-<!--                    'readonly': ['|',('state', '!=', 'draft'),('assigned_sequence','=', True)]}-->
-<!--                </attribute>-->
-<!--            </xpath>-->
+            <xpath expr="//label[@for='ref']" position="replace"/>
+            <xpath expr="//field[@name='ref']" position="replace"/>
 
             <xpath expr="//field[@name='partner_id']" position="after">
-                <!--sale invoices-->
-                <field name="fiscal_type_id"
-                       attrs="{
-                       'invisible':['|', '|',('move_type','!=','out_invoice'), ('is_l10n_do_fiscal_invoice','=',False), ('is_debit_note', '=', True)],
-                       'required': [('is_l10n_do_fiscal_invoice','=',True), ('move_type','=','out_invoice'), ('is_debit_note', '=', False)],
-                       'readonly': ['|',('state','!=','draft'),('ref','!=',False)]}"
-                       domain="[('type', '=', 'out_invoice')]"/>
+
+                <field name="fiscal_type_id" domain="[('id', 'in', available_fiscal_type_ids)]" attrs="{
+                    'invisible':['|', '|', ('move_type', 'not in', ('in_invoice', 'out_invoice')), ('is_l10n_do_fiscal_invoice', '=', False), ('is_debit_note', '=', True)],
+                    'required': [('is_l10n_do_fiscal_invoice','=',True), ('move_type', '=', 'in_invoice'), ('is_debit_note', '=', False)],
+                    'readonly': [('state','!=','draft')]}"/>
+
                 <field name="income_type"
                        attrs="{
-                       'invisible':[('move_type','!=','out_invoice'), ('is_l10n_do_fiscal_invoice','!=',True)],
+                       'invisible':['|', ('move_type', '!=', 'out_invoice'), ('is_l10n_do_fiscal_invoice', '=', False)],
                        'required': [('is_l10n_do_fiscal_invoice','=',True), ('move_type','=','out_invoice')],
                        'readonly': [('state','!=','draft')]}"/>
-                <field name="ref" string="NCF" readonly="1" attrs="{'invisible': [('move_type','not in', ('out_invoice', 'out_refund')), ('ref', '=', False)]}"/>
-                <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': [('move_type','not in', ('out_invoice', 'out_refund')), ('ncf_expiration_date', '=', False)]}"/>
+                <field name="expense_type" attrs="{
+                           'invisible':['|', ('move_type', '!=', 'in_invoice'),('is_l10n_do_fiscal_invoice', '=', False)],
+                           'required': [('is_l10n_do_fiscal_invoice', '=', True), ('move_type', '=', 'in_invoice')],
+                           'readonly': [('state', '!=', 'draft')]}"/>
+
+                <field name="ref" string="NCF" readonly="1" attrs="{'invisible': ['|', ('ref', '=', False), ('assigned_sequence', '=', False)]}"/>
+
+                <field name="ref" string="NCF" attrs="{
+                    'invisible': ['|', ('assigned_sequence', '=', True), ('fiscal_type_id', '=', False)],
+                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],
+                    'readonly': [('state', '!=', 'draft')]
+                }"/>
+
+                <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/>
+
+                <field name="ncf_expiration_date" attrs="{
+                    'invisible': ['|', ('assigned_sequence', '=', True), ('fiscal_type_id', '=', False)],
+                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],
+                    'readonly': [('state', '!=', 'draft')]
+                }"/>
+
                 <field name="origin_out"
                        groups="base.group_user"
                        attrs="{
-                       'invisible': [('move_type', '!=', 'out_refund'), ('is_debit_note', '=', False)],
-                       'readonly': [('state', '!=', 'draft')],
+                       'invisible': ['|', ('move_type', 'no in',('out_refund', 'in_refund')), ('is_debit_note', '=', False)],
                        'required': ['|', '&amp;', ('move_type', '=', 'out_refund'), ('is_l10n_do_fiscal_invoice', '=', True), ('is_debit_note', '=', True)]}"/>
-
-                <!--purchase invoice-->
 
             </xpath>
 
@@ -98,47 +100,6 @@
         </field>
     </record>
 
-    <!--    <record id="l10n_do_accounting_invoice_supplier_form" model="ir.ui.view">-->
-    <!--        <field name="name">l10n.do.accounting.invoice.supplier.form</field>-->
-    <!--        <field name="model">account.move</field>-->
-    <!--        <field name="inherit_id" ref="account.move_supplier_form"/>-->
-    <!--        <field name="arch" type="xml">-->
-
-
-
-    <!--            <xpath expr="//field[@name='ref']" position="before">-->
-    <!--                <field name="is_l10n_do_fiscal_invoice"-->
-    <!--                       invisible="1"/>-->
-    <!--                <field name="assigned_sequence"-->
-    <!--                       invisible="1"/>-->
-    <!--                <field name="fiscal_sequence_id"-->
-    <!--                       invisible="1"/>-->
-    <!--                <field name="fiscal_type_id"-->
-    <!--                       attrs="{-->
-    <!--                       'invisible':[('is_l10n_do_fiscal_invoice','=',False)],-->
-    <!--                       'required': [('is_l10n_do_fiscal_invoice','=',True),('move_type','=','in_invoice')],-->
-    <!--                       'readonly': [('state','!=','draft')]}"-->
-    <!--                       domain="[('move_type', '=', 'in_invoice')]"/>-->
-    <!--                <field name="expense_type" attrs="{-->
-    <!--                       'invisible':[('is_l10n_do_fiscal_invoice', '=', False)],-->
-    <!--                       'required': [('is_l10n_do_fiscal_invoice', '=', True)],-->
-    <!--                       'readonly': [('state', '!=', 'draft')]}"/>-->
-    <!--            </xpath>-->
-
-    <!--            <xpath expr="//field[@name='ref']" position="after">-->
-    <!--                <field name="ncf_expiration_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
-    <!--                <field name="origin_out"-->
-    <!--                       groups="base.group_user"-->
-    <!--                       attrs="{-->
-    <!--                            'invisible': ['|', '&amp;', ('move_type', '!=', 'in_refund'), ('is_debit_note', '=', False), '&amp;', ('move_type', '=', 'in_refund'), ('is_l10n_do_fiscal_invoice', '=', False)],-->
-    <!--                            'readonly': [('state', '!=', 'draft')],-->
-    <!--                            'required': ['|', '&amp;', ('move_type', '=', 'in_refund'), ('is_l10n_do_fiscal_invoice', '=', True), ('is_debit_note', '=', True)]}"/>-->
-    <!--                <field name="name"/>-->
-    <!--            </xpath>-->
-
-
-    <!--        </field>-->
-    <!--    </record>-->
 
     <!--    <record id="account.action_move_out_refund_type" model="ir.ui.menu">-->
     <!--        <field name="groups_id" eval="[(4, ref('l10n_do_accounting.credit_note_group'))]"/>-->
