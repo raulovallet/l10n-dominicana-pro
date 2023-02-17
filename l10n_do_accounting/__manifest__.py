@@ -13,7 +13,7 @@
     "depends": [
         "base",
         "account",
-        "l10n_do",
+        "l10n_do"
     ],
     # always loaded
     "data": [
@@ -29,14 +29,14 @@
         "wizard/account_fiscal_sequence_validate_wizard_views.xml",
         # "wizard/account_invoice_refund_views.xml",
 
-        "views/account_report.xml",
+        # "views/account_report.xml",
         "views/account_invoice_views.xml",
         "views/account_journal_views.xml",
         "views/res_partner_views.xml",
         "views/account_fiscal_sequence_views.xml",
         # "views/backend_js.xml",
-        # "views/report_templates.xml",
-        # "views/report_invoice.xml",
+        "views/report_templates.xml",
+        "views/report_invoice.xml",
     ],
     # only loaded in demonstration mode
     "demo": [
