@@ -46,7 +46,8 @@ class AccountFiscalSequence(models.Model):
         ).date(),
     )
     fiscal_type_id = fields.Many2one(
-        "account.fiscal.type",
+        string='Fiscal type',
+        comodel_name="account.fiscal.type",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},

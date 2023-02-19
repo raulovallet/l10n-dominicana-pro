@@ -8,7 +8,7 @@
     "license": "LGPL-3",
     "website": "https://github.com/odoo-dominicana",
     "category": "Localization",
-    "version": "16.0.0.0.0",
+    "version": "16.0.1.0.1",
     # any module necessary for this one to work correctly
     "depends": [
         "base",
@@ -29,7 +29,7 @@
         "wizard/account_fiscal_sequence_validate_wizard_views.xml",
         "wizard/account_invoice_refund_views.xml",
 
-        "views/account_report.xml",
+        # "views/account_report.xml",
         "views/account_invoice_views.xml",
         "views/account_journal_views.xml",
         "views/res_partner_views.xml",

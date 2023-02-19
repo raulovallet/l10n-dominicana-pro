@@ -31,13 +31,13 @@ class AccountInvoice(models.Model):
     _inherit = "account.move"
 
     fiscal_type_id = fields.Many2one(
+        string='Fiscal type',
         comodel_name="account.fiscal.type",
-        string="Fiscal Type",
         index=True,
     )
     available_fiscal_type_ids = fields.Many2many(
+        string="Available Fiscal Type",
         comodel_name="account.fiscal.type",
-        string="Fiscal Type",
         compute='_compute_available_fiscal_type'
     )
     fiscal_sequence_id = fields.Many2one(

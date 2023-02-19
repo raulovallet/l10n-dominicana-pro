@@ -17,12 +17,13 @@ class PosOrder(models.Model):
         string="NCF expiration date",
     )
     fiscal_type_id = fields.Many2one(
-        'account.fiscal.type',
+        string='Fiscal type',
+        comodel_name='account.fiscal.type',
         string="Fiscal Type",
     )
     fiscal_sequence_id = fields.Many2one(
-        'account.fiscal.sequence',
         string="Fiscal Sequence",
+        comodel_name='account.fiscal.sequence',
         copy=False,
     )
     is_used_in_order = fields.Boolean(
