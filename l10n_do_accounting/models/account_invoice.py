@@ -376,20 +376,18 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self)._onchange_partner_id()
 
-    @api.onchange("ref")
+    @api.onchange('ref', 'is_l10n_do_fiscal_invoice', 'fiscal_type_id', 'state')
     def _onchange_ncf(self):
-        if self.is_l10n_do_fiscal_invoice and self.move_type in ('in_invoice',) and \
-                self.ref:
-            if not self.fiscal_type_id.assigned_sequence:
+        if self.is_l10n_do_fiscal_invoice and \
+            self.fiscal_type_id and \
+            not self.fiscal_type_id.assigned_sequence and \
+            self.ref:
                 if self.fiscal_type_id.prefix != self.ref[:3]:
-                    raise UserError(
-                        _("The prefix of the fiscal sequence %s must be %s")
-                        % (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
-
-                if self.fiscal_type_id.padding != len(self.ref[3:]):
-                    raise UserError(
-                        _("The length of the fiscal sequence %s must be %s")
-                        % (self.fiscal_type_id.name, str(self.fiscal_type_id.padding),))
+                    raise UserError(_(
+                        "The prefix of the fiscal sequence %s must be %s"
+                    )% (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
+                
+                self.fiscal_type_id.check_format_fiscal_number(self.ref)
 
     def _post(self, soft=True):
         """ Before an invoice is changed to the 'open' state, validate that all
@@ -455,29 +453,13 @@ class AccountInvoice(models.Model):
                                 u"for make invoice"
                             )
                         )
+                
                 # Check origin_out is correct format
                 if inv.origin_out and inv.move_type in ('out_refund', 'in_refund'):
-                    
-                    if len(inv.origin_out) < 3:
-                        raise ValidationError(_('This origin fiscal number must have more than 3 characters'))
-                    
-                    fiscal_type = self.env['account.fiscal.type'].search([
-                        ('type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'),
-                        ('prefix', '=', inv.origin_out[0:3]),
-                    ])
-                    if not fiscal_type:
-                        raise ValidationError(
-                            _('This origin document type (%s) does not exist.' % inv.origin_out[0:3])
-                        )
-                    
-                    origin_out_padding = len(inv.origin_out) - len(fiscal_type.prefix)
-                    
-                    if origin_out_padding != fiscal_type.padding:
-                        raise ValidationError(
-                            _('The origin document type (%s) has (%s) digits. You are trying to input (%s) digits.') % 
-                            (fiscal_type.name, fiscal_type.padding, origin_out_padding)
-                        )
-
+                    self.env['account.fiscal.type'].check_format_fiscal_number(
+                        inv.origin_out,
+                        'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'  
+                    )
 
         res = super(AccountInvoice, self)._post(soft)
 

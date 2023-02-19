@@ -13,7 +13,24 @@
             
             <xpath expr="//field[@name='reason']" position="after">
                 <field name="is_vendor_refund" invisible="1"/>
-                <field name="refund_ref" attrs="{'invisible': [('is_vendor_refund', '=', False)], 'required': [('is_fiscal_refund', '=', True), ('is_vendor_refund', '=', True)]}"/>
+                <field name="refund_ref" attrs="{
+                    'invisible': [
+                        ('is_vendor_refund', '=', False)
+                    ], 
+                    'required': [
+                        ('is_fiscal_refund', '=', True), 
+                        ('is_vendor_refund', '=', True)
+                    ]
+                }"/>
+                <field name="ncf_expiration_date" attrs="{
+                    'invisible': [
+                        ('is_vendor_refund', '=', False)
+                    ], 
+                    'required': [
+                        ('is_fiscal_refund', '=', True), 
+                        ('is_vendor_refund', '=', True)
+                    ]
+                }"/>
             </xpath>
 
         </field>

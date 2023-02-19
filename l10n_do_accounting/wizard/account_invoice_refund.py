@@ -21,15 +21,12 @@ class AccountMoveReversal(models.TransientModel):
         context = dict(self._context or {})
         invoice_ids = self.env["account.move"].browse(context.get("active_ids"))
 
-        res["is_fiscal_refund"] = set(
-            invoice_ids.mapped("is_l10n_do_fiscal_invoice")
-        ) == {True}
+        res.update({
+            'is_fiscal_refund': set(invoice_ids.mapped("is_l10n_do_fiscal_invoice")) == {True},
+            'is_vendor_refund': set(invoice_ids.mapped("move_type")) == {'in_invoice'}
+        })
 
         return res
-
-    @api.model
-    def _get_default_is_vendor_refund(self):
-        return self._context.get("move_type", False) == "in_invoice"
 
     @api.model
     def _get_refund_method_selection(self):
@@ -51,12 +48,19 @@ class AccountMoveReversal(models.TransientModel):
         required=True,
         help='Choose how you want to credit this invoice. You cannot "modify" nor "cancel" if the invoice is already reconciled.'
     )
-    
-    is_vendor_refund = fields.Boolean(default=_get_default_is_vendor_refund,)
-    refund_ref = fields.Char()
-    is_fiscal_refund = fields.Boolean()
+    is_vendor_refund = fields.Boolean(
+        string='Vendor refund',
+    )
+    refund_ref = fields.Char(
+        string='NCF'
+    )
+    ncf_expiration_date = fields.Date(
+        string="Valid until",
+    )
+    is_fiscal_refund = fields.Boolean(
+        string='Fiscal refund'
+    )
 
-    
     def compute_refund(self, mode="refund"):
         xml_id = False
         created_inv = []
@@ -174,45 +178,18 @@ class AccountMoveReversal(models.TransientModel):
     #         result["domain"] = invoice_domain
     #         return result
     #     return True
-
     
-    def invoice_refund(self):
-        active_id = self._context.get("active_id", False)
-        if active_id:
-            invoice = self.env["account.move"].browse(active_id)
-            # TODO
-            if self.refund_ref and self.is_fiscal_refund:
-                ncf = self.refund_ref[0:3]
-                ncf_digits = len(self.refund_ref)
-                # TODO: Hacer las validaciones con el tipo de comprobante y no directo
-                #  en e codigo.
-                if (
-                    self._context.get("debit_note")
-                    and ncf not in ("B03", "E33")
-                ):
-                    raise UserError(
-                        _(
-                            "Debit Notes must be type B03 or E33, this NCF "
-                            "structure does not comply."
-                        )
-                    )
-                elif ncf not in ("B04", "E34"):
-                    raise UserError(
-                        _(
-                            ("Credit Notes must be type B04 or E34, this NCF (Type %s)"
-                             " structure does not comply.") % ncf
-                        )
-                    )
-                elif (ncf_digits != 11 and ncf == 'B04') \
-                        or (ncf_digits != 13 and ncf == 'E34'):
-                    raise UserError(
-                        _(
-                            ("The number of fiscal sequence in this voucher is "
-                             "incorrect, please double check the fiscal sequence")
-                        )
-                    )
+    def reverse_moves(self):
+        self.ensure_one()
 
-        return super(AccountMoveReversal, self).invoice_refund()
+        if self.refund_ref and self.is_fiscal_refund:
+            
+            self.env['account.fiscal.type'].check_format_fiscal_number(
+                self.refund_ref,
+                'in_refund'
+            )
+
+        return super(AccountMoveReversal, self).reverse_moves()
     
     def _prepare_default_reversal(self, move):
         
@@ -220,10 +197,11 @@ class AccountMoveReversal(models.TransientModel):
         
         if self.is_fiscal_refund:
             res.update({
-                'ref': False,
+                'ref': self.refund_ref,
                 'origin_out': move.ref,
                 'expense_type': move.expense_type,
-                'income_type': move.income_type
+                'income_type': move.income_type,
+                'ncf_expiration_date': self.ncf_expiration_date
             })
         
         return res
