@@ -43,42 +43,108 @@
             <xpath expr="//field[@name='partner_id']" position="after">
 
                 <field name="fiscal_type_id" domain="[('id', 'in', available_fiscal_type_ids)]" attrs="{
-                    'invisible':['|', '|', ('move_type', 'not in', ('in_invoice', 'out_invoice')), ('is_l10n_do_fiscal_invoice', '=', False), ('is_debit_note', '=', True)],
-                    'required': [('is_l10n_do_fiscal_invoice','=',True), ('move_type', '=', 'in_invoice'), ('is_debit_note', '=', False)],
-                    'readonly': [('state','!=','draft')]}"/>
-
-                <field name="income_type"
-                       attrs="{
-                       'invisible':['|', ('move_type', '!=', 'out_invoice'), ('is_l10n_do_fiscal_invoice', '=', False)],
-                       'required': [('is_l10n_do_fiscal_invoice','=',True), ('move_type','=','out_invoice')],
-                       'readonly': [('state','!=','draft')]}"/>
+                    'invisible':[
+                        '|', 
+                        '|', 
+                        ('move_type', 'not in', ('in_invoice', 'out_invoice')), 
+                        ('is_l10n_do_fiscal_invoice', '=', False), 
+                        ('is_debit_note', '=', True)
+                    ],
+                    'required': [
+                        ('is_l10n_do_fiscal_invoice','=',True), 
+                        ('move_type', '=', 'in_invoice'), 
+                        ('is_debit_note', '=', False)
+                    ],
+                    'readonly': [
+                        ('state','!=','draft')
+                    ]
+                }"/>
+                <field name="income_type" attrs="{
+                    'invisible':[
+                        '|', 
+                        ('move_type', 'not in', ['out_invoice', 'out_refund']), 
+                        ('is_l10n_do_fiscal_invoice', '=', False)
+                    ],
+                    'required': [
+                        ('is_l10n_do_fiscal_invoice','=',True), 
+                        ('move_type','in', ['out_invoice', 'out_refund'])
+                    ],
+                    'readonly': [
+                        ('state','!=','draft')
+                    ]
+                }"/>
                 <field name="expense_type" attrs="{
-                           'invisible':['|', ('move_type', '!=', 'in_invoice'),('is_l10n_do_fiscal_invoice', '=', False)],
-                           'required': [('is_l10n_do_fiscal_invoice', '=', True), ('move_type', '=', 'in_invoice')],
-                           'readonly': [('state', '!=', 'draft')]}"/>
-
-                <field name="ref" string="NCF" readonly="1" attrs="{'invisible': ['|', ('ref', '=', False), ('assigned_sequence', '=', False)]}"/>
-
+                    'invisible': [
+                        '|', 
+                        ('move_type', 'not in', ['in_invoice', 'in_refund']),
+                        ('is_l10n_do_fiscal_invoice', '=', False)
+                    ],
+                    'required': [
+                        ('is_l10n_do_fiscal_invoice', '=', True), 
+                        ('move_type', 'in', ['in_invoice', 'in_refund'])
+                    ],
+                    'readonly': [
+                        ('state', '!=', 'draft')
+                    ]
+                }"/>
+                <field name="ref" string="NCF" readonly="1" attrs="{
+                    'invisible': [
+                        '|', 
+                        ('ref', '=', False), 
+                        ('assigned_sequence', '=', False)
+                    ]
+                }"/>
                 <field name="ref" string="NCF" attrs="{
-                    'invisible': ['|', ('assigned_sequence', '=', True), ('fiscal_type_id', '=', False)],
-                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],
-                    'readonly': [('state', '!=', 'draft')]
+                    'invisible': [
+                        '|', 
+                        ('assigned_sequence', '=', True), 
+                        ('fiscal_type_id', '=', False)
+                    ],
+                    'required': [
+                        ('is_l10n_do_fiscal_invoice', '=', True), 
+                        ('assigned_sequence', '=', False)
+                    ],
+                    'readonly': [
+                        ('state', '!=', 'draft')
+                    ]
                 }"/>
-
-                <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/>
-
+                <field name="origin_out" attrs="{
+                    'invisible': [
+                        ('move_type', 'not in', ['out_refund', 'in_refund']), 
+                        ('is_debit_note', '=', False)
+                    ],
+                    'required': [
+                        '|', 
+                        '&amp;', 
+                        ('move_type', 'in', ['out_refund', 'in_refund']), 
+                        ('is_l10n_do_fiscal_invoice', '=', True), 
+                        ('is_debit_note', '=', True)
+                    ],
+                    'readonly': [
+                        ('state', '!=', 'draft')
+                    ]
+                }"/>
+                <field name="ncf_expiration_date" readonly="1" attrs="{
+                    'invisible': [
+                        '|', 
+                        ('ncf_expiration_date', '=', False), 
+                        ('assigned_sequence', '=', False)
+                    ]
+                }"/>
                 <field name="ncf_expiration_date" attrs="{
-                    'invisible': ['|', ('assigned_sequence', '=', True), ('fiscal_type_id', '=', False)],
-                    'required': [('is_l10n_do_fiscal_invoice', '=', True), ('assigned_sequence', '=', False)],
-                    'readonly': [('state', '!=', 'draft')]
+                    'invisible': [
+                        '|', 
+                        ('assigned_sequence', '=', True), 
+                        ('fiscal_type_id', '=', False)
+                    ],
+                    'required': [
+                        ('is_l10n_do_fiscal_invoice', '=', True), 
+                        ('assigned_sequence', '=', False)
+                    ],
+                    'readonly': [
+                        ('state', '!=', 'draft')
+                    ]
                 }"/>
-
-                <field name="origin_out"
-                       groups="base.group_user"
-                       attrs="{
-                       'invisible': ['|', ('move_type', 'no in',('out_refund', 'in_refund')), ('is_debit_note', '=', False)],
-                       'required': ['|', '&amp;', ('move_type', '=', 'out_refund'), ('is_l10n_do_fiscal_invoice', '=', True), ('is_debit_note', '=', True)]}"/>
-
             </xpath>
 
             <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='other_info']/group[1]/group[1]/field[@name='ref']" position="replace"/>

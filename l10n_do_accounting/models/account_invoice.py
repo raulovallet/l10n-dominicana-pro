@@ -455,6 +455,29 @@ class AccountInvoice(models.Model):
                                 u"for make invoice"
                             )
                         )
+                # Check origin_out is correct format
+                if inv.origin_out and inv.move_type in ('out_refund', 'in_refund'):
+                    
+                    if len(inv.origin_out) < 3:
+                        raise ValidationError(_('This origin fiscal number must have more than 3 characters'))
+                    
+                    fiscal_type = self.env['account.fiscal.type'].search([
+                        ('type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'),
+                        ('prefix', '=', inv.origin_out[0:3]),
+                    ])
+                    if not fiscal_type:
+                        raise ValidationError(
+                            _('This origin document type (%s) does not exist.' % inv.origin_out[0:3])
+                        )
+                    
+                    origin_out_padding = len(inv.origin_out) - len(fiscal_type.prefix)
+                    
+                    if origin_out_padding != fiscal_type.padding:
+                        raise ValidationError(
+                            _('The origin document type (%s) has (%s) digits. You are trying to input (%s) digits.') % 
+                            (fiscal_type.name, fiscal_type.padding, origin_out_padding)
+                        )
+
 
         res = super(AccountInvoice, self)._post(soft)
 
@@ -548,61 +571,6 @@ class AccountInvoice(models.Model):
             return report_id.report_action(self)
 
         return super(AccountInvoice, self).invoice_print()
-
-    @api.model
-    def _prepare_refund(
-        self, invoice, invoice_date=None, date=None, description=None, journal_id=None
-    ):
-        """ Inherit Odoo's _prepare_refund() method to allow the use of fiscal
-            types and other required fields for l10n_do.
-        """
-        context = dict(self._context or {})
-        refund_type = context.get("refund_type")
-        amount = context.get("amount")
-        account = context.get("account")
-        refund_ref = context.get("refund_ref")
-
-        res = super(AccountInvoice, self)._prepare_refund(
-            invoice,
-            invoice_date=invoice_date,
-            date=date,
-            description=description,
-            journal_id=journal_id,
-        )
-
-        if refund_type and refund_type != "full_refund":
-            res["tax_line_ids"] = False
-            res["invoice_line_ids"] = [
-                (
-                    0,
-                    0,
-                    {"name": description, "price_unit": amount, "account_id": account},
-                )
-            ]
-
-        if not self.is_l10n_do_fiscal_invoice:
-            return res
-
-        fiscal_type = {"out_invoice": "out_refund", "in_invoice": "in_refund"}
-
-        fiscal_type_id = self.env["account.fiscal.type"].search(
-            [("type", "=", fiscal_type[self.move_type])], limit=1
-        )
-
-        if not fiscal_type_id:
-            raise ValidationError(_("No Fiscal Type found for Credit Note"))
-
-        res.update(
-            {
-                "ref": refund_ref,
-                "origin_out": self.ref,
-                "income_type": self.income_type,
-                "expense_type": self.expense_type,
-                "fiscal_type_id": fiscal_type_id.id,
-            }
-        )
-
-        return res
     
     @api.returns("self")
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
