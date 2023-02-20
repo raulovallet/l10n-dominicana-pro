@@ -432,7 +432,7 @@ class AccountFiscalType(models.Model):
                 _('This document type (%s) does not exist.' % fiscal_number[0:3]) if not message else message
             )
 
-        origin_out_padding = len(fiscal_number) - len(fiscal_type.prefix)
+        origin_out_padding = len(fiscal_number) - len(fiscal_type.prefix) if fiscal_type.prefix else len(fiscal_number)
         
 
         if origin_out_padding != fiscal_type.padding:

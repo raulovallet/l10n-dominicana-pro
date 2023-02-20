@@ -23,6 +23,17 @@ class InvoiceServiceTypeDetail(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.move'
 
+    tax_line_ids = fields.One2many(
+        string='Tax lines',
+        comodel_name='account.move.line',
+        compute='_compute_tax_line_ids', 
+    )
+
+    @api.depends('tax_line_ids')
+    def _compute_tax_line_ids(self):
+        for invoice in self:
+            invoice.tax_line_ids = invoice.line_ids.filtered(lambda l: l.tax_line_id)
+
     def _get_invoice_payment_widget(self):
         j = json.loads(self.payments_widget)
         return j['content'] if j else []
@@ -45,13 +56,12 @@ class AccountInvoice(models.Model):
         """Restrict one ISR tax per invoice"""
         for inv in self:
             line = [
-                tax_line.tax_id.purchase_tax_type
+                tax_line.tax_line_id.purchase_tax_type
                 for tax_line in inv.tax_line_ids
-                if tax_line.tax_id.purchase_tax_type in ['isr', 'ritbis']
+                if tax_line.tax_line_id.purchase_tax_type in ['isr', 'ritbis']
             ]
             if len(line) != len(set(line)):
-                raise ValidationError(_('An invoice cannot have multiple'
-                                        'withholding taxes.'))
+                raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))
 
     def _convert_to_local_currency(self, amount):
         sign = -1 if self.move_type in ['in_refund', 'out_refund'] else 1
@@ -59,8 +69,7 @@ class AccountInvoice(models.Model):
             currency_id = self.currency_id.with_context(date=self.invoice_date)
             round_curr = currency_id.round
             amount = round_curr(
-                currency_id._convert(amount, self.company_id.currency_id,
-                                     self.company_id, self.invoice_date))
+                currency_id._convert(amount, self.company_id.currency_id, self.company_id, self.invoice_date))
 
         return amount * sign
 
@@ -68,7 +77,7 @@ class AccountInvoice(models.Model):
         return self.tax_line_ids
 
     
-    @api.depends('tax_line_ids', 'tax_line_ids.amount', 'state')
+    @api.depends('tax_line_ids', 'tax_line_ids.balance', 'state')
     def _compute_taxes_fields(self):
         """Compute invoice common taxes fields"""
         for inv in self:
@@ -80,36 +89,36 @@ class AccountInvoice(models.Model):
                 inv.selective_tax = inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
-                            lambda tax: tax.tax_id.tax_group_id.name == 'ISC')
-                        .mapped('amount')))
+                            lambda tax: tax.tax_line_id.tax_group_id.name == 'ISC')
+                        .mapped('balance')))
 
                 # Monto Otros Impuestos/Tasas
                 inv.other_taxes = inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
-                            lambda tax: tax.tax_id.tax_group_id.name ==
-                            "Otros Impuestos").mapped('amount')))
+                            lambda tax: tax.tax_line_id.tax_group_id.name ==
+                            "Otros Impuestos").mapped('balance')))
 
                 # Monto Propina Legal
                 inv.legal_tip = inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
-                            lambda tax: tax.tax_id.tax_group_id.name ==
-                            'Propina').mapped('amount')))
+                            lambda tax: tax.tax_line_id.tax_group_id.name ==
+                            'Propina').mapped('balance')))
 
                 # ITBIS sujeto a proporcionalidad
                 inv.proportionality_tax = inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.account_id.account_fiscal_type in
-                            ['A29', 'A30']).mapped('amount')))
+                            ['A29', 'A30']).mapped('balance')))
 
                 # ITBIS llevado al Costo
                 inv.cost_itbis = inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.account_id.account_fiscal_type ==
-                            'A51').mapped('amount')))
+                            'A51').mapped('balance')))
 
                 if inv.move_type == 'out_invoice' and any([
                     inv.third_withheld_itbis,
@@ -139,7 +148,7 @@ class AccountInvoice(models.Model):
                 for line in inv.invoice_line_ids:
 
                     # Monto calculado en bienes
-                    if line.product_id.move_type in ['product', 'consu']:
+                    if line.product_id.type in ['product', 'consu']:
                         good_amount += line.price_subtotal
 
                     # Si la linea no tiene un producto
@@ -174,9 +183,9 @@ class AccountInvoice(models.Model):
         for inv in self:
             if inv.move_type == 'in_invoice' and inv.state != 'draft':
                 isr = [
-                    tax_line.tax_id
+                    tax_line.tax_line_id
                     for tax_line in inv.tax_line_ids
-                    if tax_line.tax_id.purchase_tax_type == 'isr'
+                    if tax_line.tax_line_id.purchase_tax_type == 'isr'
                 ]
                 if isr:
                     inv.isr_withholding_type = isr.pop(0).isr_retention_type
@@ -234,7 +243,7 @@ class AccountInvoice(models.Model):
                 inv.payment_form = '04'
 
     
-    @api.depends('tax_line_ids', 'tax_line_ids.amount', 'state')
+    @api.depends('tax_line_ids', 'tax_line_ids.balance', 'state')
     def _compute_invoiced_itbis(self):
         """Compute invoice invoiced_itbis taking into account the currency"""
         for inv in self:
@@ -242,8 +251,8 @@ class AccountInvoice(models.Model):
             if inv.state != 'draft':
                 itbis_taxes = ['ITBIS', 'ITBIS 18%']
                 for tax in inv._get_tax_line_ids():
-                    if tax.tax_id.tax_group_id.name in itbis_taxes and tax.tax_id.purchase_tax_type != 'ritbis':
-                        amount += tax.amount
+                    if tax.tax_line_id.tax_group_id.name in itbis_taxes and tax.tax_line_id.purchase_tax_type != 'ritbis':
+                        amount += tax.balance
                 inv.invoiced_itbis = inv._convert_to_local_currency(amount)
 
 
@@ -299,7 +308,7 @@ class AccountInvoice(models.Model):
                             sum(
                                 tax_line_ids.filtered(
                                     lambda tax: tax.account_id.account_fiscal_type in witheld_itbis_types
-                                ).mapped('amount'))))
+                                ).mapped('balance'))))
 
                     # Retención de Renta por Terceros
                     inv.third_income_withholding = abs(
@@ -307,7 +316,7 @@ class AccountInvoice(models.Model):
                             sum(
                                 tax_line_ids.filtered(
                                     lambda tax: tax.account_id.account_fiscal_type in witheld_isr_types
-                                ).mapped('amount'))))
+                                ).mapped('balance'))))
 
                 elif inv.move_type == 'in_invoice':
 
@@ -316,16 +325,16 @@ class AccountInvoice(models.Model):
                         inv._convert_to_local_currency(
                             sum(
                                 tax_line_ids.filtered(
-                                    lambda tax: tax.tax_id.purchase_tax_type ==
-                                    'ritbis').mapped('amount'))))
+                                    lambda tax: tax.tax_line_id.purchase_tax_type ==
+                                    'ritbis').mapped('balance'))))
 
                     # Retención de Renta a Terceros
                     inv.income_withholding = abs(
                         inv._convert_to_local_currency(
                             sum(
                                 tax_line_ids.filtered(
-                                    lambda tax: tax.tax_id.purchase_tax_type ==
-                                    'isr').mapped('amount'))))
+                                    lambda tax: tax.tax_line_id.purchase_tax_type ==
+                                    'isr').mapped('balance'))))
 
                 # TODO: Esta parte esta comentada porque solo funciona para v10-v11 podria funcionar en un futuro
                 # for payment in inv._get_invoice_payment_widget():

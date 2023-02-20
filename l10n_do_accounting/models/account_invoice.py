@@ -376,19 +376,6 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self)._onchange_partner_id()
 
-    @api.onchange('ref', 'is_l10n_do_fiscal_invoice', 'fiscal_type_id', 'state')
-    def _onchange_ncf(self):
-        if self.is_l10n_do_fiscal_invoice and \
-            self.fiscal_type_id and \
-            not self.fiscal_type_id.assigned_sequence and \
-            self.ref:
-                if self.fiscal_type_id.prefix != self.ref[:3]:
-                    raise UserError(_(
-                        "The prefix of the fiscal sequence %s must be %s"
-                    )% (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
-                
-                self.fiscal_type_id.check_format_fiscal_number(self.ref)
-
     def _post(self, soft=True):
         """ Before an invoice is changed to the 'open' state, validate that all
             informations are valid regarding Norma 05-19 and if there are
@@ -405,7 +392,16 @@ class AccountInvoice(models.Model):
                 )
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
-
+                if self.fiscal_type_id and \
+                    not self.fiscal_type_id.assigned_sequence and \
+                    self.ref:
+                        if self.fiscal_type_id.prefix and self.fiscal_type_id.prefix != self.ref[:3]:
+                            raise UserError(_(
+                                "The prefix of the fiscal sequence %s must be %s"
+                            )% (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
+                        
+                        self.fiscal_type_id.check_format_fiscal_number(self.ref)
+                        
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again
                 # on invoice validate.
