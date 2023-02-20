@@ -35,7 +35,7 @@
                             <field name="fiscal_status" widget="state_selection" readonly="1"/>
                         </group>
                     </group>
-
+                    
                     <group attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund'])]}">
                         <group col="3" string="Taxes" groups="account.group_account_manager">
                             <field name="invoiced_itbis" string="Invoiced ITBIS"/>

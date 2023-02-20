@@ -60,7 +60,7 @@ class AccountMoveReversal(models.TransientModel):
     is_fiscal_refund = fields.Boolean(
         string='Fiscal refund'
     )
-
+    
     def compute_refund(self, mode="refund"):
         xml_id = False
         created_inv = []

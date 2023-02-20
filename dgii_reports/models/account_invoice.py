@@ -34,6 +34,7 @@ class AccountInvoice(models.Model):
         for invoice in self:
             invoice.tax_line_ids = invoice.line_ids.filtered(lambda l: l.tax_line_id)
 
+
     def _get_invoice_payment_widget(self):
         j = json.loads(self.payments_widget)
         return j['content'] if j else []
@@ -68,8 +69,7 @@ class AccountInvoice(models.Model):
         if self.currency_id != self.company_id.currency_id:
             currency_id = self.currency_id.with_context(date=self.invoice_date)
             round_curr = currency_id.round
-            amount = round_curr(
-                currency_id._convert(amount, self.company_id.currency_id, self.company_id, self.invoice_date))
+            amount = round_curr(currency_id._convert(amount, self.company_id.currency_id, self.company_id, self.invoice_date))
 
         return amount * sign
 
@@ -148,7 +148,7 @@ class AccountInvoice(models.Model):
                 for line in inv.invoice_line_ids:
 
                     # Monto calculado en bienes
-                    if line.product_id.type in ['product', 'consu']:
+                    if line.product_id.move_type in ['product', 'consu']:
                         good_amount += line.price_subtotal
 
                     # Si la linea no tiene un producto
