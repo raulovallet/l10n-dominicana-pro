@@ -1094,7 +1094,7 @@ class DgiiReport(models.Model):
             inv._convert_to_local_currency(
                 sum(
                     tax_line_ids.filtered(
-                        lambda tax: tax.tax_id.purchase_tax_type ==
+                        lambda tax: tax.tax_line_id.purchase_tax_type ==
                                     'ritbis').mapped('amount'))))
 
         # Monto Retención Renta por impuesto
@@ -1102,7 +1102,7 @@ class DgiiReport(models.Model):
             inv._convert_to_local_currency(
                 sum(
                     tax_line_ids.filtered(
-                        lambda tax: tax.tax_id.purchase_tax_type ==
+                        lambda tax: tax.tax_line_id.purchase_tax_type ==
                                     'isr').mapped('amount'))))
 
         # ITBIS Retenido por Terceros
