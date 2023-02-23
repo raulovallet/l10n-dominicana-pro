@@ -228,38 +228,39 @@ class AccountInvoice(models.Model):
                     inv.fiscal_sequence_status = "almost_no_sequence"
                 else:
                     inv.fiscal_sequence_status = "no_sequence"
-
-    @api.constrains("state", "tax_line_ids")
-    def validate_special_exempt(self):
-        """ Validates an invoice with Regímenes Especiales fiscal type
-            does not contain nor ITBIS or ISC.
-            See DGII Norma 05-19, Art 3 for further information.
-        """
-        for inv in self.filtered(lambda i: i.is_l10n_do_fiscal_invoice):
-            if (
-                inv.move_type == "out_invoice"
-                and inv.state in ("open", "cancel")
-                and ncf_dict.get(inv.fiscal_type_id.prefix) == "especial"
-            ):
-                # If any invoice tax in ITBIS or ISC
-                taxes = ("ITBIS", "ISC")
-                if any(
-                    [
-                        tax
-                        for tax in inv.tax_line_ids.mapped("tax_id").filtered(
-                            lambda tax: tax.tax_group_id.name in taxes
-                            and tax.amount != 0
-                        )
-                    ]
-                ):
-                    raise UserError(
-                        _(
-                            "You cannot validate and invoice of Fiscal Type "
-                            "Regímen Especial with ITBIS/ISC.\n\n"
-                            "See DGII General Norm 05-19, Art. 3 for further "
-                            "information"
-                        )
-                    )
+    
+    # TODO: Migrate this
+    # @api.constrains("state", "tax_line_ids")
+    # def validate_special_exempt(self):
+    #     """ Validates an invoice with Regímenes Especiales fiscal type
+    #         does not contain nor ITBIS or ISC.
+    #         See DGII Norma 05-19, Art 3 for further information.
+    #     """
+    #     for inv in self.filtered(lambda i: i.is_l10n_do_fiscal_invoice):
+    #         if (
+    #             inv.move_type == "out_invoice"
+    #             and inv.state in ("open", "cancel")
+    #             and ncf_dict.get(inv.fiscal_type_id.prefix) == "especial"
+    #         ):
+    #             # If any invoice tax in ITBIS or ISC
+    #             taxes = ("ITBIS", "ISC")
+    #             if any(
+    #                 [
+    #                     tax
+    #                     for tax in inv.tax_line_ids.mapped("tax_id").filtered(
+    #                         lambda tax: tax.tax_group_id.name in taxes
+    #                         and tax.amount != 0
+    #                     )
+    #                 ]
+    #             ):
+    #                 raise UserError(
+    #                     _(
+    #                         "You cannot validate and invoice of Fiscal Type "
+    #                         "Regímen Especial with ITBIS/ISC.\n\n"
+    #                         "See DGII General Norm 05-19, Art. 3 for further "
+    #                         "information"
+    #                     )
+    #                 )
 
     @api.constrains("state", "invoice_line_ids", "partner_id")
     def validate_products_export_ncf(self):
@@ -296,31 +297,31 @@ class AccountInvoice(models.Model):
                             "Consumo Fiscal Type"
                         )
                     )
+    # TODO: MIGRATE THIS
+    # @api.constrains("state", "tax_line_ids")
+    # def validate_informal_withholding(self):
+    #     """ Validates an invoice with Comprobante de Compras has 100% ITBIS
+    #         withholding.
+    #         See DGII Norma 05-19, Art 7 for further information.
+    #     """
+    #     for inv in self.filtered(
+    #         lambda i: i.move_type == "in_invoice" and i.state == "open"
+    #     ):
+    #         if (
+    #             ncf_dict.get(inv.fiscal_type_id.prefix) == "informal"
+    #             and inv.is_l10n_do_fiscal_invoice
+    #         ):
 
-    @api.constrains("state", "tax_line_ids")
-    def validate_informal_withholding(self):
-        """ Validates an invoice with Comprobante de Compras has 100% ITBIS
-            withholding.
-            See DGII Norma 05-19, Art 7 for further information.
-        """
-        for inv in self.filtered(
-            lambda i: i.move_type == "in_invoice" and i.state == "open"
-        ):
-            if (
-                ncf_dict.get(inv.fiscal_type_id.prefix) == "informal"
-                and inv.is_l10n_do_fiscal_invoice
-            ):
-
-                # If the sum of all taxes of category ITBIS is not 0
-                if sum(
-                    [
-                        tax.amount
-                        for tax in inv.tax_line_ids.mapped("tax_id").filtered(
-                            lambda t: t.tax_group_id.name == "ITBIS"
-                        )
-                    ]
-                ):
-                    raise UserError(_("You must withhold 100% of ITBIS"))
+    #             # If the sum of all taxes of category ITBIS is not 0
+    #             if sum(
+    #                 [
+    #                     tax.amount
+    #                     for tax in inv.tax_line_ids.mapped("tax_id").filtered(
+    #                         lambda t: t.tax_group_id.name == "ITBIS"
+    #                     )
+    #                 ]
+    #             ):
+    #                 raise UserError(_("You must withhold 100% of ITBIS"))
 
     @api.onchange("journal_id", "partner_id")
     def _onchange_journal_id(self):
@@ -383,7 +384,7 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
 
-            if inv.amount_untaxed == 0:
+            if inv.amount_untaxed == 0 and inv.move_type != 'entry':
                 raise UserError(
                     _(
                         u"You cannot validate an invoice whose "

@@ -6,3 +6,4 @@ access_dgii_exterior_report_line,access_dgii_reports_exterior_line,model_dgii_re
 access_dgii_reports,access_dgii_reports,model_dgii_reports,,1,1,1,0
 access_invoice_service_type_detail,access_invoice_service_type_detail,model_invoice_service_type_detail,,1,0,0,0
 access_dgii_reports_sale_summary,access_dgii_reports_sale_summary,model_dgii_reports_sale_summary,,1,1,1,1
+access_dgii_report_regenerate_wizard,access_dgii_report_regenerate_wizard,model_dgii_report_regenerate_wizard,,1,1,1,1

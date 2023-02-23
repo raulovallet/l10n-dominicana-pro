@@ -22,6 +22,14 @@
                         </h1>
                     </div>
                     <group>
+                        <group>
+                            <field name="name" placeholder="MM/YYYY" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="previous_balance" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
 
                         <field name="previous_report_pending" invisible="1"/>
                         <group attrs="{'invisible': [('previous_report_pending', '=', False)]}">
@@ -36,13 +44,6 @@
                     </group>
                     <notebook>
                         <page name="statements" string="Statements">
-                            <group>
-                                <group>
-                                    <field name="name" placeholder="MM/YYYY"
-                                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                    <field name="previous_balance" readonly="1"/>
-                                </group>
-                            </group>
 
                             <div class="row">
                                 <div class="col-md-3">

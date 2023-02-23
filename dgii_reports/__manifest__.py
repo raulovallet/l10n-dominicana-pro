@@ -11,8 +11,7 @@
         Este módulo extiende las funcionalidades del l10n_do_accounting,
         integrando los reportes de declaraciones fiscales""",
 
-    'author': "Indexa, SRL, "
-              "iterativo SRL",
+    'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
     'version': '16.0.1.0.1',
@@ -32,9 +31,16 @@
         'views/account_account_views.xml',
         'views/account_invoice_views.xml',
         'views/dgii_report_views.xml',
-        'views/dgii_report_templates.xml',
         'views/account_fiscal_type_views.xml',
         'views/account_tax_views.xml',
         'wizard/dgii_report_regenerate_wizard_views.xml',
     ],
+
+    'assets':{
+        'web.assets_backend': [
+            '/dgii_reports/static/src/scss/dgii_reports.scss',
+            '/dgii_reports/static/src/js/widget.js'
+        ]
+    }
+
 }
