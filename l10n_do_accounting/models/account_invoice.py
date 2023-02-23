@@ -146,6 +146,13 @@ class AccountInvoice(models.Model):
         "move_type",
         "is_debit_note",
     )
+
+    def _get_name_invoice_report(self):
+        self.ensure_one()
+        if self.is_l10n_do_fiscal_invoice and self.country_code == "DO":
+            return "l10n_do_accounting.report_invoice_document_inherited"
+        
+
     def _compute_fiscal_sequence(self):
         """ Compute the sequence and fiscal position to be used depending on
             the fiscal type that has been set on the invoice (or partner).
@@ -650,3 +657,46 @@ class AccountInvoice(models.Model):
             refund_invoice._compute_fiscal_sequence()
             new_invoices += refund_invoice
         return new_invoices
+
+    def _get_l10n_do_amounts(self, company_currency=False):
+        """
+        Method used to to prepare dominican fiscal invoices amounts data. Widely used
+        on reports and electronic invoicing.
+
+        Returned values:
+
+        itbis_amount: Total ITBIS
+        itbis_taxable_amount: Monto Gravado Total (con ITBIS)
+        itbis_exempt_amount: Monto Exento
+        """
+        self.ensure_one()
+        amount_field = company_currency and "balance" or "price_subtotal"
+        sign = -1 if (company_currency and self.is_inbound()) else 1
+
+        itbis_tax_group = self.env.ref("l10n_do.group_itbis", False)
+
+        taxed_move_lines = self.line_ids.filtered("tax_line_id")
+        itbis_taxed_move_lines = taxed_move_lines.filtered(
+            lambda l: itbis_tax_group in l.tax_line_id.mapped("tax_group_id")
+            and l.tax_line_id.amount > 0
+        )
+
+        itbis_taxed_product_lines = self.invoice_line_ids.filtered(
+            lambda l: itbis_tax_group in l.tax_ids.mapped("tax_group_id")
+        )
+
+        return {
+            "itbis_amount": sign * sum(itbis_taxed_move_lines.mapped(amount_field)),
+            "itbis_taxable_amount": sign
+            * sum(
+                line[amount_field]
+                for line in itbis_taxed_product_lines
+                if line.price_total != line.price_subtotal
+            ),
+            "itbis_exempt_amount": sign
+            * sum(
+                line[amount_field]
+                for line in itbis_taxed_product_lines
+                if any(True for tax in line.tax_ids if tax.amount == 0)
+            ),
+        }
