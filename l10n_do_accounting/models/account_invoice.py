@@ -31,13 +31,13 @@ class AccountInvoice(models.Model):
     _inherit = "account.move"
 
     fiscal_type_id = fields.Many2one(
+        string='Fiscal type',
         comodel_name="account.fiscal.type",
-        string="Fiscal Type",
         index=True,
     )
     available_fiscal_type_ids = fields.Many2many(
+        string="Available Fiscal Type",
         comodel_name="account.fiscal.type",
-        string="Fiscal Type",
         compute='_compute_available_fiscal_type'
     )
     fiscal_sequence_id = fields.Many2one(
@@ -383,21 +383,6 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self)._onchange_partner_id()
 
-    @api.onchange("ref")
-    def _onchange_ncf(self):
-        if self.is_l10n_do_fiscal_invoice and self.move_type in ('in_invoice',) and \
-                self.ref:
-            if not self.fiscal_type_id.assigned_sequence:
-                if self.fiscal_type_id.prefix != self.ref[:3]:
-                    raise UserError(
-                        _("The prefix of the fiscal sequence %s must be %s")
-                        % (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
-
-                if self.fiscal_type_id.padding != len(self.ref[3:]):
-                    raise UserError(
-                        _("The length of the fiscal sequence %s must be %s")
-                        % (self.fiscal_type_id.name, str(self.fiscal_type_id.padding),))
-
     def _post(self, soft=True):
         """ Before an invoice is changed to the 'open' state, validate that all
             informations are valid regarding Norma 05-19 and if there are
@@ -414,7 +399,16 @@ class AccountInvoice(models.Model):
                 )
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
-
+                if self.fiscal_type_id and \
+                    not self.fiscal_type_id.assigned_sequence and \
+                    self.ref:
+                        if self.fiscal_type_id.prefix and self.fiscal_type_id.prefix != self.ref[:3]:
+                            raise UserError(_(
+                                "The prefix of the fiscal sequence %s must be %s"
+                            )% (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
+                        
+                        self.fiscal_type_id.check_format_fiscal_number(self.ref)
+                        
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again
                 # on invoice validate.
@@ -462,6 +456,13 @@ class AccountInvoice(models.Model):
                                 u"for make invoice"
                             )
                         )
+                
+                # Check origin_out is correct format
+                if inv.origin_out and inv.move_type in ('out_refund', 'in_refund'):
+                    self.env['account.fiscal.type'].check_format_fiscal_number(
+                        inv.origin_out,
+                        'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'  
+                    )
 
         res = super(AccountInvoice, self)._post(soft)
 
@@ -555,61 +556,6 @@ class AccountInvoice(models.Model):
             return report_id.report_action(self)
 
         return super(AccountInvoice, self).invoice_print()
-
-    @api.model
-    def _prepare_refund(
-        self, invoice, invoice_date=None, date=None, description=None, journal_id=None
-    ):
-        """ Inherit Odoo's _prepare_refund() method to allow the use of fiscal
-            types and other required fields for l10n_do.
-        """
-        context = dict(self._context or {})
-        refund_type = context.get("refund_type")
-        amount = context.get("amount")
-        account = context.get("account")
-        refund_ref = context.get("refund_ref")
-
-        res = super(AccountInvoice, self)._prepare_refund(
-            invoice,
-            invoice_date=invoice_date,
-            date=date,
-            description=description,
-            journal_id=journal_id,
-        )
-
-        if refund_type and refund_type != "full_refund":
-            res["tax_line_ids"] = False
-            res["invoice_line_ids"] = [
-                (
-                    0,
-                    0,
-                    {"name": description, "price_unit": amount, "account_id": account},
-                )
-            ]
-
-        if not self.is_l10n_do_fiscal_invoice:
-            return res
-
-        fiscal_type = {"out_invoice": "out_refund", "in_invoice": "in_refund"}
-
-        fiscal_type_id = self.env["account.fiscal.type"].search(
-            [("type", "=", fiscal_type[self.move_type])], limit=1
-        )
-
-        if not fiscal_type_id:
-            raise ValidationError(_("No Fiscal Type found for Credit Note"))
-
-        res.update(
-            {
-                "ref": refund_ref,
-                "origin_out": self.ref,
-                "income_type": self.income_type,
-                "expense_type": self.expense_type,
-                "fiscal_type_id": fiscal_type_id.id,
-            }
-        )
-
-        return res
     
     @api.returns("self")
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None):

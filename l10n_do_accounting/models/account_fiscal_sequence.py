@@ -2,6 +2,7 @@
 # © 2019 Raul Ovalle <rovalle@guavana.com>
 
 import pytz
+import re
 from datetime import datetime
 
 from odoo import models, fields, api, _
@@ -45,7 +46,8 @@ class AccountFiscalSequence(models.Model):
         ).date(),
     )
     fiscal_type_id = fields.Many2one(
-        "account.fiscal.type",
+        string='Fiscal type',
+        comodel_name="account.fiscal.type",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
@@ -405,3 +407,43 @@ class AccountFiscalType(models.Model):
             fiscal_type.journal_type = (
                 "sale" if fiscal_type.type[:3] == "out" else "purchase"
             )
+
+    def check_format_fiscal_number(self, fiscal_number, type=''):
+
+        if not fiscal_number:
+            raise ValidationError(_('Fiscal number can not be blank'))
+        
+        if len(fiscal_number) < 3:
+            raise ValidationError(_('This origin fiscal number must have more than 3 characters'))
+        
+        fiscal_type = self
+        message = ''
+        if not self:
+            fiscal_type = self.search([
+                ('prefix', '=', fiscal_number[0:3]), 
+                ('type', '=', type)
+            ])
+
+        if not fiscal_type:
+            if type in ('in_refund', 'out_refund'):
+                message = _('The fiscal number type (%s) is not a credit note.') % fiscal_number[0:3]
+
+            raise ValidationError(
+                _('This document type (%s) does not exist.' % fiscal_number[0:3]) if not message else message
+            )
+
+        origin_out_padding = len(fiscal_number) - len(fiscal_type.prefix) if fiscal_type.prefix else len(fiscal_number)
+        
+
+        if origin_out_padding != fiscal_type.padding:
+            raise ValidationError(
+                _('The document type (%s) has (%s) digits. You are trying to input (%s) digits.') % 
+                (fiscal_type.name, fiscal_type.padding, origin_out_padding)
+            )
+        
+        if not re.match('^[0-9]+$', fiscal_number[3:]):
+            raise ValidationError(
+                _('After the document type, all characters must be digits from 0 to 9.')
+            )
+
+        
