@@ -26,17 +26,20 @@ class AccountInvoice(models.Model):
     tax_line_ids = fields.One2many(
         string='Tax lines',
         comodel_name='account.move.line',
+        inverse_name='move_id',
         compute='_compute_tax_line_ids', 
+        store=True
     )
 
-    @api.depends('tax_line_ids')
+    @api.depends('line_ids.tax_line_id')
     def _compute_tax_line_ids(self):
         for invoice in self:
             invoice.tax_line_ids = invoice.line_ids.filtered(lambda l: l.tax_line_id)
 
 
     def _get_invoice_payment_widget(self):
-        j = json.loads(self.payments_widget)
+        j = json.loads(self.invoice_payments_widget) if self.invoice_payments_widget else False
+                    
         return j['content'] if j else []
 
     def _compute_invoice_payment_date(self):
@@ -86,39 +89,39 @@ class AccountInvoice(models.Model):
 
             if inv.state != 'draft':
                 # Monto Impuesto Selectivo al Consumo
-                inv.selective_tax = inv._convert_to_local_currency(
+                inv.selective_tax = abs(inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.tax_line_id.tax_group_id.name == 'ISC')
-                        .mapped('balance')))
+                        .mapped('balance'))))
 
                 # Monto Otros Impuestos/Tasas
-                inv.other_taxes = inv._convert_to_local_currency(
+                inv.other_taxes = abs(inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.tax_line_id.tax_group_id.name ==
-                            "Otros Impuestos").mapped('balance')))
+                            "Otros Impuestos").mapped('balance'))))
 
                 # Monto Propina Legal
-                inv.legal_tip = inv._convert_to_local_currency(
+                inv.legal_tip = abs(inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.tax_line_id.tax_group_id.name ==
-                            'Propina').mapped('balance')))
+                            'Propina').mapped('balance'))))
 
                 # ITBIS sujeto a proporcionalidad
-                inv.proportionality_tax = inv._convert_to_local_currency(
+                inv.proportionality_tax = abs(inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.account_id.account_fiscal_type in
-                            ['A29', 'A30']).mapped('balance')))
+                            ['A29', 'A30']).mapped('balance'))))
 
                 # ITBIS llevado al Costo
-                inv.cost_itbis = inv._convert_to_local_currency(
+                inv.cost_itbis = abs(inv._convert_to_local_currency(
                     sum(
                         tax_line_ids.filtered(
                             lambda tax: tax.account_id.account_fiscal_type ==
-                            'A51').mapped('balance')))
+                            'A51').mapped('balance'))))
 
                 if inv.move_type == 'out_invoice' and any([
                     inv.third_withheld_itbis,
@@ -252,7 +255,7 @@ class AccountInvoice(models.Model):
                 itbis_taxes = ['ITBIS', 'ITBIS 18%']
                 for tax in inv._get_tax_line_ids():
                     if tax.tax_line_id.tax_group_id.name in itbis_taxes and tax.tax_line_id.purchase_tax_type != 'ritbis':
-                        amount += tax.balance
+                        amount += abs(tax.balance)
                 inv.invoiced_itbis = inv._convert_to_local_currency(amount)
 
 
