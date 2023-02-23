@@ -163,7 +163,7 @@
                 <attribute name="optional">show</attribute>
             </xpath>
 
-                <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/>
+                <!-- <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/> -->
 
     <!--    <record id="account.action_move_out_refund_type" model="ir.ui.menu">-->
     <!--        <field name="groups_id" eval="[(4, ref('l10n_do_accounting.credit_note_group'))]"/>-->
@@ -178,7 +178,8 @@
     <!--    <record id="account.action_vendor_bill_template" model="ir.actions.act_window">-->
     <!--        <field name="domain">[('move_type','=','in_invoice'), ('is_debit_note', '=', False)]</field>-->
     <!--    </record>-->
-
+            </field>
+        </record>
     <record id="action_invoice_out_debit_note" model="ir.actions.act_window">
         <field name="name">Debit Notes</field>
         <field name="res_model">account.move</field>
@@ -206,6 +207,7 @@
               parent="account.menu_finance_receivables"
               sequence="2"/>
 
+ 
     <record id="action_vendor_in_debit_note" model="ir.actions.act_window">
         <field name="name">Vendor Debit Notes</field>
         <field name="res_model">account.move</field>
