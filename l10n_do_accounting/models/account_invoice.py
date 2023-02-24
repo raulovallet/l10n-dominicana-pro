@@ -93,6 +93,7 @@ class AccountInvoice(models.Model):
         ],
         copy=False,
     )
+      
     origin_out = fields.Char(
         string="Affects",
         copy=False,
@@ -557,7 +558,24 @@ class AccountInvoice(models.Model):
             return report_id.report_action(self)
 
         return super(AccountInvoice, self).invoice_print()
-    
+
+    def action_invoice_cancel(self):
+
+        fiscal_invoice = self.filtered(
+            lambda inv: inv.journal_id.l10n_do_fiscal_journal)
+        if len(fiscal_invoice) > 1:
+            raise ValidationError(
+                _("You cannot cancel multiple fiscal invoices at a time."))
+
+        if fiscal_invoice:
+            action = self.env.ref(
+                'l10n_do_accounting.action_account_invoice_cancel'
+            ).read()[0]
+            action['context'] = {'default_invoice_id': fiscal_invoice.id}
+            return action
+
+        return super(AccountInvoice, self).action_invoice_cancel()
+
     @api.returns("self")
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
 
