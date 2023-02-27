@@ -162,9 +162,9 @@
                 <attribute name="string">NCF</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
-
-                <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/>
-
+        
+        </field>
+    </record>
     <!--    <record id="account.action_move_out_refund_type" model="ir.ui.menu">-->
     <!--        <field name="groups_id" eval="[(4, ref('l10n_do_accounting.credit_note_group'))]"/>-->
     <!--    </record>-->
