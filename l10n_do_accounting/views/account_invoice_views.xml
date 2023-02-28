@@ -208,9 +208,9 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='button_cancel']" position="replace">
-                    <button name="action_invoice_cancel" type="object" states="posted" string="Cancel" groups="account.group_account_invoice" data-hotkey="c"/>
-                </xpath>
+                <!-- <xpath expr="//button[@name='button_cancel']" position="replace">
+                    <button name="action_invoice_cancel" type="object" states="draft" string="Cancel" groups="account.group_account_invoice" data-hotkey="c"/>
+                </xpath> -->
 
                  <xpath expr="//h1" position="after">
                 <h4 attrs="{'invisible':['|',('state','!=','cancel'),('is_l10n_do_fiscal_invoice', '=', False)]}">

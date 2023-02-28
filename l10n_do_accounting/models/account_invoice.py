@@ -561,6 +561,7 @@ class AccountInvoice(models.Model):
 
     def action_invoice_cancel(self):
 
+        # if self.journal_id.l10n_do_fiscal_journal:
         fiscal_invoice = self.filtered(
             lambda inv: inv.journal_id.l10n_do_fiscal_journal)
         if len(fiscal_invoice) > 1:
@@ -573,8 +574,20 @@ class AccountInvoice(models.Model):
             ).read()[0]
             action['context'] = {'default_invoice_id': fiscal_invoice.id}
             return action
+                
 
-        return super(AccountInvoice, self).action_invoice_cancel()
+        # return super(AccountInvoice, self).action_invoice_cancel()
+
+    def button_cancel(self, force_cancel=False):
+        # import ipdb; ipdb.set_trace()  # noqa
+        if self.journal_id.l10n_do_fiscal_journal and force_cancel == False:
+
+            return self.action_invoice_cancel()
+        else:
+            return super(AccountInvoice, self).button_cancel()
+
+        
+        
 
     @api.returns("self")
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
