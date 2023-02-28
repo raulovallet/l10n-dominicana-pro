@@ -47,22 +47,23 @@
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <group name="606" col="2" class="bs-callout-info">
+                                    <group name="606" class="bs-callout-info">
                                         <button type="object" name="get_606_tree_view">
                                             <h2>606</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="purchase_records" readonly="1"/>
                                         <field name="purchase_invoiced_amount" readonly="1"/>
                                         <field name="service_total_amount" readonly="1"/>
                                         <field name="good_total_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_invoiced_itbis" readonly="1"/>
                                         <field name="purchase_withholded_itbis" readonly="1"/>
                                         <field name="cost_itbis" readonly="1"/>
                                         <field name="advance_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="income_withholding" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_selective_tax" readonly="1"/>
                                         <field name="purchase_other_taxes" readonly="1"/>
                                         <field name="purchase_legal_tip" readonly="1"/>
@@ -73,14 +74,15 @@
                                         <button type="object" name="get_607_tree_view">
                                             <h2>607</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="sale_records" readonly="1"/>
                                         <field name="sale_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_invoiced_itbis" readonly="1"/>
                                         <field name="sale_withholded_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_withholded_isr" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_selective_tax" readonly="1"/>
                                         <field name="sale_other_taxes" readonly="1"/>
                                         <field name="sale_legal_tip" readonly="1"/>
@@ -91,6 +93,7 @@
                                         <button type="object" name="get_608_tree_view">
                                             <h2>608</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="cancel_records" readonly="1"/>
                                     </group>
                                 </div>
@@ -99,9 +102,10 @@
                                         <button type="object" name="get_609_tree_view">
                                             <h2>609</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="exterior_records" readonly="1"/>
                                         <field name="exterior_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="presumed_income" readonly="1"/>
                                         <field name="exterior_withholded_isr" readonly="1"/>
                                     </group>

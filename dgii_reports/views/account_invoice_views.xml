@@ -19,45 +19,44 @@
             <xpath expr="//page[@name='other_info']" position="after">
                 <page name="dgii_fields" string="DGII" groups="account.group_account_user">
                     <group attrs="{'invisible': [('move_type', 'not in', ['out_invoice', 'out_refund'])]}">
-                        <group col="3" string="Withholding" groups="account.group_account_manager">
-                            <field name="payment_date" string="Withholding date"/>
-                            <field name="third_withheld_itbis" string="Withheld ITBIS by a third"/>
-                            <field name="third_income_withholding" string="Income Withholding by a third"/>
-
+                        <group string="Withholding" groups="account.group_account_manager">
+                            <field name="payment_date"/>
+                            <field name="third_withheld_itbis"/>
+                            <field name="third_income_withholding"/>
                         </group>
-                        <group col="3" string="Taxes" groups="account.group_account_manager">
-                            <field name="invoiced_itbis" string="Invoiced ITBIS"/>
-                            <field name="selective_tax" string="Selective Tax"/>
-                            <field name="other_taxes" string="Other taxes"/>
-                            <field name="legal_tip" string="Legal tip amount"/>
+                        <group string="Taxes" groups="account.group_account_manager">
+                            <field name="invoiced_itbis"/>
+                            <field name="selective_tax"/>
+                            <field name="other_taxes"/>
+                            <field name="legal_tip"/>
                         </group>
-                        <group col="3" string="607">
+                        <group string="607">
                             <field name="fiscal_status" widget="state_selection" readonly="1"/>
                         </group>
                     </group>
                     
                     <group attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund'])]}">
-                        <group col="3" string="Taxes" groups="account.group_account_manager">
-                            <field name="invoiced_itbis" string="Invoiced ITBIS"/>
-                            <field name="proportionality_tax" string="Proportionality Tax"/>
-                            <field name="cost_itbis" string="Cost Itbis"/>
-                            <field name="advance_itbis" string="Advanced ITBIS"/>
-                            <field name="selective_tax" string="Selective Tax"/>
-                            <field name="other_taxes" string="Other taxes"/>
-                            <field name="legal_tip" string="Legal tip amount"/>
+                        <group string="Taxes" groups="account.group_account_manager">
+                            <field name="invoiced_itbis"/>
+                            <field name="proportionality_tax"/>
+                            <field name="cost_itbis"/>
+                            <field name="advance_itbis"/>
+                            <field name="selective_tax"/>
+                            <field name="other_taxes"/>
+                            <field name="legal_tip"/>
                         </group>
-                        <group col="3" string="Invoicing" groups="account.group_account_manager">
-                            <field name="payment_date" string="Payment date"/>
-                            <field name="payment_form" string="Payment form"/>
-                            <field name="service_total_amount" string="Service Total Amount"/>
-                            <field name="good_total_amount" string="Good Total Amount"/>
+                        <group string="Invoicing" groups="account.group_account_manager">
+                            <field name="payment_date"/>
+                            <field name="payment_form"/>
+                            <field name="service_total_amount"/>
+                            <field name="good_total_amount"/>
                         </group>
-                        <group col="3" string="Withholding" groups="account.group_account_manager">
-                            <field name="withholded_itbis" string="Withheld ITBIS"/>
-                            <field name="isr_withholding_type" string="ISR Withholding Type"/>
-                            <field name="income_withholding" string="Income Withholding"/>
+                        <group string="Withholding" groups="account.group_account_manager">
+                            <field name="withholded_itbis"/>
+                            <field name="isr_withholding_type"/>
+                            <field name="income_withholding"/>
                         </group>
-                        <group col="3" string="606">
+                        <group string="606">
                             <field name="fiscal_status" widget="state_selection" readonly="1"/>
                         </group>
                     </group>
@@ -70,7 +69,7 @@
     <record id="invoice_tree_inherited" model="ir.ui.view">
         <field name="name">invoice.tree.inherited</field>
         <field name="model">account.move</field>
-        <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="after">
                 <field name="fiscal_status" widget="state_selection" readonly="1" groups="account.group_account_user"/>
