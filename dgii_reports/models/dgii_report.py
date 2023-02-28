@@ -363,16 +363,16 @@ class DgiiReport(models.Model):
     def get_date_tuple(date):
         return date.year, date.month
 
-    def _get_pending_invoices(self, types):
+    def _get_pending_invoices(self, types, states):
         period = dt.strptime(self.name, '%m/%Y')
         invoice_ids = self.env['account.move'].search([
             ('fiscal_status', '=', 'normal'),
-            ('state', '=', 'paid'),
-            ('payment_date', '<=', self.start_date),
+            ('payment_state', 'in', ('paid', 'in_payment')),
+            ('invoice_date', '<', self.start_date),
             ('company_id', '=', self.company_id.id),
             ('move_type', 'in', types),
-        ]).filtered(
-            lambda inv: self.get_date_tuple(inv.payment_date) == (period.year, period.month))
+            ('state', 'in', states)
+        ]).filtered(lambda inv: self.get_date_tuple(inv.payment_date) == (period.year, period.month))
 
         return invoice_ids
 
@@ -395,7 +395,7 @@ class DgiiReport(models.Model):
             lambda inv: inv.fiscal_type_id.purchase_type != 'others')
         
         # Append pending invoices (fiscal_status = Partial, state = Paid)
-        invoice_ids |= self._get_pending_invoices(types)
+        invoice_ids |= self._get_pending_invoices(types, states)
 
         return invoice_ids
 
@@ -577,7 +577,7 @@ class DgiiReport(models.Model):
     def include_payment(invoice_id, payment_id):
         """ Returns True if payment date is on or before current period """
 
-        p_date = payment_id.payment_date
+        p_date = payment_id.date
         i_date = invoice_id.invoice_date
 
         return True if (p_date.year <= i_date.year) and (
@@ -982,7 +982,7 @@ class DgiiReport(models.Model):
                         'invoice_partner_id': inv.partner_id.id,
                         'fiscal_invoice_number': inv.ref,
                         'invoice_date': inv.invoice_date,
-                        'anulation_type': inv.anulation_type,
+                        'anulation_type': '', # inv.anulation_type, TODO: Wait for Jorge
                         'invoice_id': inv.id
                     }
                     CancelLine.create(values)
@@ -1165,7 +1165,7 @@ class DgiiReport(models.Model):
                 ('dgii_report_id', '=', report.id)
             ]).mapped('invoice_id')
             for inv in invoice_ids:
-                if inv.state in ['paid', 'cancel'] and \
+                if (inv.payment_state in ['paid', 'in_payment'] or inv.state == 'cancel') and \
                         self._include_in_current_report(inv):
                     inv.fiscal_status = 'done'
                     continue
