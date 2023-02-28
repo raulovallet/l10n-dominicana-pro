@@ -576,10 +576,8 @@ class AccountInvoice(models.Model):
             return action
                 
 
-        # return super(AccountInvoice, self).action_invoice_cancel()
-
     def button_cancel(self, force_cancel=False):
-        # import ipdb; ipdb.set_trace()  # noqa
+     
         if self.journal_id.l10n_do_fiscal_journal and force_cancel == False:
 
             return self.action_invoice_cancel()
