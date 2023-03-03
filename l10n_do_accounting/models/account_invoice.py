@@ -93,6 +93,7 @@ class AccountInvoice(models.Model):
         ],
         copy=False,
     )
+      
     origin_out = fields.Char(
         string="Affects",
         copy=False,
@@ -146,6 +147,13 @@ class AccountInvoice(models.Model):
         "move_type",
         "is_debit_note",
     )
+
+    def _get_name_invoice_report(self):
+        self.ensure_one()
+        if self.is_l10n_do_fiscal_invoice and self.country_code == "DO":
+            return "l10n_do_accounting.report_invoice_document_inherited"
+        
+
     def _compute_fiscal_sequence(self):
         """ Compute the sequence and fiscal position to be used depending on
             the fiscal type that has been set on the invoice (or partner).
@@ -550,7 +558,35 @@ class AccountInvoice(models.Model):
             return report_id.report_action(self)
 
         return super(AccountInvoice, self).invoice_print()
-    
+
+    def action_invoice_cancel(self):
+
+        # if self.journal_id.l10n_do_fiscal_journal:
+        fiscal_invoice = self.filtered(
+            lambda inv: inv.journal_id.l10n_do_fiscal_journal)
+        if len(fiscal_invoice) > 1:
+            raise ValidationError(
+                _("You cannot cancel multiple fiscal invoices at a time."))
+
+        if fiscal_invoice:
+            action = self.env.ref(
+                'l10n_do_accounting.action_account_invoice_cancel'
+            ).read()[0]
+            action['context'] = {'default_invoice_id': fiscal_invoice.id}
+            return action
+                
+
+    def button_cancel(self, force_cancel=False):
+     
+        if self.journal_id.l10n_do_fiscal_journal and force_cancel == False:
+
+            return self.action_invoice_cancel()
+        else:
+            return super(AccountInvoice, self).button_cancel()
+
+        
+        
+
     @api.returns("self")
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
 
@@ -597,3 +633,46 @@ class AccountInvoice(models.Model):
             refund_invoice._compute_fiscal_sequence()
             new_invoices += refund_invoice
         return new_invoices
+
+    def _get_l10n_do_amounts(self, company_currency=False):
+        """
+        Method used to to prepare dominican fiscal invoices amounts data. Widely used
+        on reports and electronic invoicing.
+
+        Returned values:
+
+        itbis_amount: Total ITBIS
+        itbis_taxable_amount: Monto Gravado Total (con ITBIS)
+        itbis_exempt_amount: Monto Exento
+        """
+        self.ensure_one()
+        amount_field = company_currency and "balance" or "price_subtotal"
+        sign = -1 if (company_currency and self.is_inbound()) else 1
+
+        itbis_tax_group = self.env.ref("l10n_do.group_itbis", False)
+
+        taxed_move_lines = self.line_ids.filtered("tax_line_id")
+        itbis_taxed_move_lines = taxed_move_lines.filtered(
+            lambda l: itbis_tax_group in l.tax_line_id.mapped("tax_group_id")
+            and l.tax_line_id.amount > 0
+        )
+
+        itbis_taxed_product_lines = self.invoice_line_ids.filtered(
+            lambda l: itbis_tax_group in l.tax_ids.mapped("tax_group_id")
+        )
+
+        return {
+            "itbis_amount": sign * sum(itbis_taxed_move_lines.mapped(amount_field)),
+            "itbis_taxable_amount": sign
+            * sum(
+                line[amount_field]
+                for line in itbis_taxed_product_lines
+                if line.price_total != line.price_subtotal
+            ),
+            "itbis_exempt_amount": sign
+            * sum(
+                line[amount_field]
+                for line in itbis_taxed_product_lines
+                if any(True for tax in line.tax_ids if tax.amount == 0)
+            ),
+        }

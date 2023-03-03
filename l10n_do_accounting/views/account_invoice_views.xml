@@ -162,9 +162,10 @@
                 <attribute name="string">NCF</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
-        
-        </field>
+       </field>
     </record>
+                <!-- <field name="ncf_expiration_date" readonly="1" attrs="{'invisible': ['|', ('ncf_expiration_date', '=', False), ('assigned_sequence', '=', False)]}"/> -->
+
     <!--    <record id="account.action_move_out_refund_type" model="ir.ui.menu">-->
     <!--        <field name="groups_id" eval="[(4, ref('l10n_do_accounting.credit_note_group'))]"/>-->
     <!--    </record>-->
@@ -178,7 +179,7 @@
     <!--    <record id="account.action_vendor_bill_template" model="ir.actions.act_window">-->
     <!--        <field name="domain">[('move_type','=','in_invoice'), ('is_debit_note', '=', False)]</field>-->
     <!--    </record>-->
-
+     
     <record id="action_invoice_out_debit_note" model="ir.actions.act_window">
         <field name="name">Debit Notes</field>
         <field name="res_model">account.move</field>
@@ -201,11 +202,33 @@
         </field>
     </record>
 
+
+    <record id="l10n_do_accounting_invoice_form_cancel_inherit" model="ir.ui.view">
+            <field name="name">invoice.form.cancel.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//button[@name='button_cancel']" position="replace">
+                    <button name="action_invoice_cancel" type="object" states="draft" string="Cancel" groups="account.group_account_invoice" data-hotkey="c"/>
+                </xpath> -->
+
+                 <xpath expr="//h1" position="after">
+                <h4 attrs="{'invisible':['|',('state','!=','cancel'),('is_l10n_do_fiscal_invoice', '=', False)]}">
+                    Cancellation Reason:
+                    <br/>
+                    <field name="annulation_type" readonly="1"/>
+                </h4>
+            </xpath>
+
+            </field>
+    </record>
+
     <menuitem action="action_invoice_out_debit_note"
               id="menu_action_invoice_out_debit_note"
               parent="account.menu_finance_receivables"
               sequence="2"/>
 
+ 
     <record id="action_vendor_in_debit_note" model="ir.actions.act_window">
         <field name="name">Vendor Debit Notes</field>
         <field name="res_model">account.move</field>

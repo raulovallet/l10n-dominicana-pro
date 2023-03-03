@@ -10,7 +10,7 @@ class AccountInvoiceCancel(models.TransientModel):
     it will give warning message.
     """
 
-    _name = "account.move.cancel"
+    _name = "account.invoice.cancel"
     _description = "Cancel the Selected Invoice"
 
     annulation_type = fields.Selection(
@@ -28,15 +28,14 @@ class AccountInvoiceCancel(models.TransientModel):
         required=True,
         default=lambda self: self._context.get('annulation_type', '04'))
 
-    
     def invoice_cancel(self):
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []
         for record in self.env['account.move'].browse(active_ids):
-            if record.state in ('cancel', 'paid', 'in_payment'):
+            if record.state == 'cancel' or record.payment_state in ('paid', 'in_payment'): 
                 raise UserError(
                     _("Selected invoice(s) cannot be cancelled as they are "
                       "already in 'Cancelled' or 'Paid' state."))
-            record.anulation_type = self.annulation_type
-            record.action_cancel()
+            record.annulation_type = self.annulation_type
+            record.button_cancel(force_cancel=True)
         return {'type': 'ir.actions.act_window_close'}
