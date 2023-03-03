@@ -60,30 +60,62 @@ class DgiiReport(models.Model):
                 report.previous_report_pending = False
 
     name = fields.Char(string='Period', required=True, size=7)
-    state = fields.Selection([('draft', 'New'), ('error', 'With error'),
-                              ('generated', 'Generated'), ('sent', 'Sent')],
-                             default='draft',
-                             track_visibility='onchange',
-                             copy=False)
+    state = fields.Selection(
+        string="state",
+        selection=[
+            ('draft', 'New'), 
+            ('error', 'With error'),
+            ('generated', 'Generated'), 
+            ('sent', 'Sent')
+        ],
+        default='draft',
+        copy=False
+    )
     previous_balance = fields.Float('Previous balance', copy=False)
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
         required=True,
         default=lambda self: self.env.user.company_id.currency_id)
-    company_id = fields.Many2one('res.company',
-                                 'Company',
-                                 default=lambda self: self.env.user.company_id,
-                                 required=True)
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self.env.user.company_id,
+        required=True
+    )
     previous_report_pending = fields.Boolean(
-        compute='_compute_previous_report_pending')
+        compute='_compute_previous_report_pending'
+    )
+    start_date = fields.Date(
+        compute='_compute_dates', 
+        string='Start Date'
+    )
+    end_date = fields.Date(
+        compute='_compute_dates', 
+        string='End Date'
+    )
+    
+    @api.depends('name')
+    def _compute_dates(self):
+        for report in self:
+            start_date = False
+            end_date = False
+            
+            if report.name:
+                month, year = report.name.split('/')
+                last_day = calendar.monthrange(int(year), int(month))[1]
+                start_date = '{}-{}-01'.format(year, month)
+                end_date = '{}-{}-{}'.format(year, month, last_day)
+
+            report.start_date = start_date
+            report.end_date = end_date
 
     _sql_constraints = [
-        ('name_unique', 'UNIQUE(name, company_id)',
-         _("You cannot have more than one report by period."))
+        ('name_unique', 'UNIQUE(name, company_id)', 
+        _("You cannot have more than one report by period."))
     ]
 
-    
+
     def _compute_606_fields(self):
         for rec in self:
             data = {
@@ -120,11 +152,9 @@ class DgiiReport(models.Model):
             rec.purchase_records = abs(data['purchase_records'])
             rec.service_total_amount = abs(data['service_total_amount'])
             rec.good_total_amount = abs(data['good_total_amount'])
-            rec.purchase_invoiced_amount = abs(
-                data['purchase_invoiced_amount'])
+            rec.purchase_invoiced_amount = abs(data['purchase_invoiced_amount'])
             rec.purchase_invoiced_itbis = abs(data['purchase_invoiced_itbis'])
-            rec.purchase_withholded_itbis = abs(
-                data['purchase_withholded_itbis'])
+            rec.purchase_withholded_itbis = abs(data['purchase_withholded_itbis'])
             rec.cost_itbis = abs(data['cost_itbis'])
             rec.advance_itbis = abs(data['advance_itbis'])
             rec.income_withholding = abs(data['income_withholding'])
@@ -241,10 +271,12 @@ class DgiiReport(models.Model):
     exterior_binary = fields.Binary(string='609 file')
 
     # IT-1
-    ncf_sale_summary_ids = fields.One2many('dgii.reports.sale.summary',
-                                           'dgii_report_id',
-                                           string='Operations by NCF type',
-                                           copy=False)
+    ncf_sale_summary_ids = fields.One2many(
+        comodel_name='dgii.reports.sale.summary',
+        inverse_name='dgii_report_id',
+        string='Operations by NCF type',
+        copy=False
+    )
     cash = fields.Monetary('Cash', copy=False)
     bank = fields.Monetary('Check / Transfer / Deposit', copy=False)
     card = fields.Monetary('Credit Card / Debit Card', copy=False)
@@ -253,9 +285,10 @@ class DgiiReport(models.Model):
     swap = fields.Monetary('Swap', copy=False)
     others = fields.Monetary('Other Sale Forms', copy=False)
     sale_type_total = fields.Monetary('Sale Type Total', copy=False)
-
-    opr_income = fields.Monetary('Operations Income (No-Financial)',
-                                 copy=False)
+    opr_income = fields.Monetary(
+        string='Operations Income (No-Financial)',
+        copy=False,
+    )
     fin_income = fields.Monetary('Financial Income', copy=False)
     ext_income = fields.Monetary('Extraordinary Income', copy=False)
     lea_income = fields.Monetary('Lease Income', copy=False)
@@ -312,11 +345,13 @@ class DgiiReport(models.Model):
             else:
                 raise ValidationError(error)
 
-    @api.model
-    def create(self, vals):
-        self._validate_date_format(vals.get('name'))
+    @api.model_create_multi
+    def create(self, vals_list):
+        
+        for vals in vals_list:
+            self._validate_date_format(vals.get('name'))
 
-        return super(DgiiReport, self).create(vals)
+        return super(DgiiReport, self).create(vals_list)
 
     
     def write(self, vals):
@@ -328,22 +363,16 @@ class DgiiReport(models.Model):
     def get_date_tuple(date):
         return date.year, date.month
 
-    def _get_pending_invoices(self, types):
-
+    def _get_pending_invoices(self, types, states):
         period = dt.strptime(self.name, '%m/%Y')
-
-        month, year = self.name.split('/')
-        start_date = '{}-{}-{}'.format(
-            year, month,
-            calendar.monthrange(int(year), int(month))[1])
         invoice_ids = self.env['account.move'].search([
             ('fiscal_status', '=', 'normal'),
-            ('state', '=', 'paid'),
-            ('payment_date', '<=', start_date),
+            ('payment_state', 'in', ('paid', 'in_payment')),
+            ('invoice_date', '<', self.start_date),
             ('company_id', '=', self.company_id.id),
-            ('type', 'in', types),
-        ]).filtered(lambda inv: self.get_date_tuple(inv.payment_date) ==
-                    (period.year, period.month))
+            ('move_type', 'in', types),
+            ('state', 'in', states)
+        ]).filtered(lambda inv: self.get_date_tuple(inv.payment_date) == (period.year, period.month))
 
         return invoice_ids
 
@@ -354,27 +383,23 @@ class DgiiReport(models.Model):
         :param type: a list of invoice type
         :return: filtered invoices
         """
-        month, year = self.name.split('/')
-        last_day = calendar.monthrange(int(year), int(month))[1]
-        start_date = '{}-{}-01'.format(year, month)
-        end_date = '{}-{}-{}'.format(year, month, last_day)
 
-        invoice_ids = self.env['account.move'].search(
-            [('invoice_date', '>=', start_date),
-             ('invoice_date', '<=', end_date),
-             ('company_id', '=', self.company_id.id),
-             ('is_l10n_do_fiscal_invoice', '=', True),
-             ('state', 'in', states),
-             ('type', 'in', types)],
-            order='invoice_date asc').filtered(
+        invoice_ids = self.env['account.move'].search([
+            ('invoice_date', '>=', self.start_date),
+            ('invoice_date', '<=', self.end_date),
+            ('company_id', '=', self.company_id.id),
+            ('is_l10n_do_fiscal_invoice', '=', True),
+            ('state', 'in', states),
+            ('move_type', 'in', types)
+        ], order='invoice_date asc').filtered(
             lambda inv: inv.fiscal_type_id.purchase_type != 'others')
-
-        # Append pending invoces (fiscal_status = Partial, state = Paid)
-        invoice_ids |= self._get_pending_invoices(types)
+        
+        # Append pending invoices (fiscal_status = Partial, state = Paid)
+        invoice_ids |= self._get_pending_invoices(types, states)
 
         return invoice_ids
 
-    def formated_rnc_cedula(self, vat):
+    def formatted_rnc_cedula(self, vat):
         if vat:
             if len(vat) in [9, 11]:
                 id_type = 1 if len(vat) == 9 else 2
@@ -385,46 +410,41 @@ class DgiiReport(models.Model):
         else:
             return False
 
-    def _get_formated_date(self, date):
+    def _get_formatted_date(self, date):
 
         return dt.strptime(date, '%Y-%m-%d').strftime('%Y%m%d') \
             if isinstance(date, str) else date.strftime('%Y%m%d') \
             if date else ""
 
-    def _get_formated_amount(self, amount):
+    def _get_formatted_amount(self, amount):
 
         return str('{:.2f}'.format(abs(amount))).ljust(12)
 
     def process_606_report_data(self, values):
 
         RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "").strip()
-        ID_TYPE = str(values['identification_type']
-                      if values['identification_type'] else "").strip()
+        ID_TYPE = str(values['identification_type'] if values['identification_type'] else "").strip()
         EXP_TYPE = str(
             values['expense_type'] if values['expense_type'] else "").strip()
         NCF = str(values['fiscal_invoice_number']).strip()
-        NCM = str(values['modified_invoice_number']
-                  if values['modified_invoice_number'] else "").strip()
-        INV_DATE = str(self._get_formated_date(
-            values['invoice_date'])).strip()
-        PAY_DATE = str(self._get_formated_date(
-            values['payment_date'])).strip()
-        SERV_AMOUNT = self._get_formated_amount(values['service_total_amount']).strip()
-        GOOD_AMOUNT = self._get_formated_amount(values['good_total_amount']).strip()
-        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount']).strip()
-        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis']).strip()
-        WH_ITBIS = self._get_formated_amount(values['withholded_itbis']).strip()
-        PROP_ITBIS = self._get_formated_amount(values['proportionality_tax']).strip()
-        COST_ITBIS = self._get_formated_amount(values['cost_itbis']).strip()
-        ADV_ITBIS = self._get_formated_amount(values['advance_itbis']).strip()
+        NCM = str(values['modified_invoice_number'] if values['modified_invoice_number'] else "").strip()
+        INV_DATE = str(self._get_formatted_date( values['invoice_date'])).strip()
+        PAY_DATE = str(self._get_formatted_date(values['payment_date'])).strip()
+        SERV_AMOUNT = self._get_formatted_amount(values['service_total_amount']).strip()
+        GOOD_AMOUNT = self._get_formatted_amount(values['good_total_amount']).strip()
+        INV_AMOUNT = self._get_formatted_amount(values['invoiced_amount']).strip()
+        INV_ITBIS = self._get_formatted_amount(values['invoiced_itbis']).strip()
+        WH_ITBIS = self._get_formatted_amount(values['withholded_itbis']).strip()
+        PROP_ITBIS = self._get_formatted_amount(values['proportionality_tax']).strip()
+        COST_ITBIS = self._get_formatted_amount(values['cost_itbis']).strip()
+        ADV_ITBIS = self._get_formatted_amount(values['advance_itbis']).strip()
         PP_ITBIS = ''
-        WH_TYPE = str(values['isr_withholding_type']
-                      if values['isr_withholding_type'] else "").strip()
-        INC_WH = self._get_formated_amount(values['income_withholding']).strip()
+        WH_TYPE = str(values['isr_withholding_type'] if values['isr_withholding_type'] else "").strip()
+        INC_WH = self._get_formatted_amount(values['income_withholding']).strip()
         PP_ISR = ''
-        ISC = self._get_formated_amount(values['selective_tax']).strip()
-        OTHR = self._get_formated_amount(values['other_taxes']).strip()
-        LEG_TIP = self._get_formated_amount(values['legal_tip']).strip()
+        ISC = self._get_formatted_amount(values['selective_tax']).strip()
+        OTHR = self._get_formatted_amount(values['other_taxes']).strip()
+        LEG_TIP = self._get_formatted_amount(values['legal_tip']).strip()
         PAY_FORM = str(
             values['payment_type'] if values['payment_type'] else "").strip()
 
@@ -438,8 +458,7 @@ class DgiiReport(models.Model):
     def _generate_606_txt(self, records, qty):
 
         company_vat = self.company_id.vat
-        period = dt.strptime(self.name.replace('/', ''),
-                             '%m%Y').strftime('%Y%m')
+        period = dt.strptime(self.name.replace('/', ''), '%m%Y').strftime('%Y%m')
 
         header = "606|{}|{}|{}".format(
             str(company_vat), period, qty) + '\n'
@@ -469,8 +488,7 @@ class DgiiReport(models.Model):
 
         payment_date = invoice.payment_date
         period = dt.strptime(self.name, '%m/%Y')
-        same_minor_period = (payment_date.month,
-                             payment_date.year) <= (period.month, period.year)
+        same_minor_period = (payment_date.month, payment_date.year) <= (period.month, period.year)
 
         return True if (payment_date and same_minor_period) else False
 
@@ -480,8 +498,10 @@ class DgiiReport(models.Model):
             PurchaseLine = self.env['dgii.reports.purchase.line']
             PurchaseLine.search([('dgii_report_id', '=', rec.id)]).unlink()
 
-            invoice_ids = self._get_invoices(['open', 'in_payment', 'paid'],
-                                             ['in_invoice', 'in_refund'])
+            invoice_ids = self._get_invoices(
+                ['posted'], 
+                ['in_invoice', 'in_refund']
+            )
 
             line = 0
             report_data = ''
@@ -489,10 +509,10 @@ class DgiiReport(models.Model):
                 inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
                     inv.fiscal_status
                 line += 1
-                rnc_ced = self.formated_rnc_cedula(
+                rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.purchase_type != 'exterior' else \
-                    self.formated_rnc_cedula(
+                    self.formatted_rnc_cedula(
                     inv.company_id.vat)
                 show_payment_date = self._include_in_current_report(inv)
                 values = {
@@ -510,7 +530,7 @@ class DgiiReport(models.Model):
                     show_payment_date else False,
                     'service_total_amount': inv.service_total_amount,
                     'good_total_amount': inv.good_total_amount,
-                    'invoiced_amount': inv.amount_untaxed_signed,
+                    'invoiced_amount': abs(inv.amount_untaxed_signed),
                     'invoiced_itbis': inv.invoiced_itbis,
                     'proportionality_tax': inv.proportionality_tax,
                     'cost_itbis': inv.cost_itbis,
@@ -518,7 +538,7 @@ class DgiiReport(models.Model):
                     'purchase_perceived_itbis': 0,  # Falta computar en la fact
                     'purchase_perceived_isr': 0,  # Falta computarlo en la fact
                     'isr_withholding_type': inv.isr_withholding_type,
-                    'withholded_itbis': inv.withholded_itbis if
+                    'withholded_itbis': inv.withholding_itbis if
                     show_payment_date else 0,
                     'income_withholding': inv.income_withholding if
                     show_payment_date else 0,
@@ -557,7 +577,7 @@ class DgiiReport(models.Model):
     def include_payment(invoice_id, payment_id):
         """ Returns True if payment date is on or before current period """
 
-        p_date = payment_id.payment_date
+        p_date = payment_id.date
         i_date = invoice_id.invoice_date
 
         return True if (p_date.year <= i_date.year) and (
@@ -589,14 +609,14 @@ class DgiiReport(models.Model):
                     payments_dict['swap'] += self._convert_to_user_currency(
                         invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
             payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.residual, invoice_id.invoice_date)
+                invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
         else:
             for payment in invoice_id._get_invoice_payment_widget():
                 payments_dict['swap'] += self._convert_to_user_currency(
                     invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
 
             payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.residual, invoice_id.invoice_date)
+                invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
 
         return payments_dict
 
@@ -679,13 +699,13 @@ class DgiiReport(models.Model):
         if invoice.fiscal_type_id and invoice.move_type != 'out_refund':
             op_dict[invoice.fiscal_type_id.sale_type]['qty'] += 1
             op_dict[invoice.fiscal_type_id.sale_type][
-                'amount'] += invoice.amount_untaxed_signed
+                'amount'] += abs(invoice.amount_untaxed_signed)
         if invoice.move_type == 'out_refund' and not invoice.is_debit_note:
             op_dict['nc']['qty'] += 1
-            op_dict['nc']['amount'] += invoice.amount_untaxed_signed
+            op_dict['nc']['amount'] += abs(invoice.amount_untaxed_signed)
         if invoice.is_debit_note:
             op_dict['nd']['qty'] += 1
-            op_dict['nd']['amount'] += invoice.amount_untaxed_signed
+            op_dict['nd']['amount'] += abs(invoice.amount_untaxed_signed)
 
         return op_dict
 
@@ -708,7 +728,7 @@ class DgiiReport(models.Model):
     def _process_income_dict(self, args, invoice):
         income_dict = args
         if invoice.income_type:
-            income_dict[invoice.income_type] += invoice.amount_untaxed_signed
+            income_dict[invoice.income_type] += abs(invoice.amount_untaxed_signed)
         return income_dict
 
     
@@ -727,32 +747,28 @@ class DgiiReport(models.Model):
     def process_607_report_data(self, values):
 
         RNC = str(values['rnc_cedula'] if values['rnc_cedula'] else "").strip()
-        ID_TYPE = str(values['identification_type']
-                      if values['identification_type'] else "").strip()
+        ID_TYPE = str(values['identification_type'] if values['identification_type'] else "").strip()
         NCF = str(values['fiscal_invoice_number']).strip()
-        NCM = str(values['modified_invoice_number']
-                  if values['modified_invoice_number'] else "").strip()
+        NCM = str(values['modified_invoice_number'] if values['modified_invoice_number'] else "").strip()
         INCOME_TYPE = str(values['income_type']).strip()
-        INV_DATE = str(self._get_formated_date(
-            values['invoice_date'])).strip()
-        WH_DATE = str(self._get_formated_date(
-            values['withholding_date'])).strip()
-        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount']).strip()
-        INV_ITBIS = self._get_formated_amount(values['invoiced_itbis']).strip()
-        WH_ITBIS = self._get_formated_amount(values['third_withheld_itbis']).strip()
+        INV_DATE = str(self._get_formatted_date(values['invoice_date'])).strip()
+        WH_DATE = str(self._get_formatted_date(values['withholding_date'])).strip()
+        INV_AMOUNT = self._get_formatted_amount(values['invoiced_amount']).strip()
+        INV_ITBIS = self._get_formatted_amount(values['invoiced_itbis']).strip()
+        WH_ITBIS = self._get_formatted_amount(values['third_withheld_itbis']).strip()
         PRC_ITBIS = ''
-        WH_ISR = self._get_formated_amount(values['third_income_withholding']).strip()
+        WH_ISR = self._get_formatted_amount(values['third_income_withholding']).strip()
         PCR_ISR = ''
-        ISC = self._get_formated_amount(values['selective_tax']).strip()
-        OTH_TAX = self._get_formated_amount(values['other_taxes']).strip()
-        LEG_TIP = self._get_formated_amount(values['legal_tip']).strip()
-        CASH = self._get_formated_amount(values['cash']).strip()
-        BANK = self._get_formated_amount(values['bank']).strip()
-        CARD = self._get_formated_amount(values['card']).strip()
-        CRED = self._get_formated_amount(values['credit']).strip()
-        SWAP = self._get_formated_amount(values['swap']).strip()
-        BOND = self._get_formated_amount(values['bond']).strip()
-        OTHR = self._get_formated_amount(values['others']).strip()
+        ISC = self._get_formatted_amount(values['selective_tax']).strip()
+        OTH_TAX = self._get_formatted_amount(values['other_taxes']).strip()
+        LEG_TIP = self._get_formatted_amount(values['legal_tip']).strip()
+        CASH = self._get_formatted_amount(values['cash']).strip()
+        BANK = self._get_formatted_amount(values['bank']).strip()
+        CARD = self._get_formatted_amount(values['card']).strip()
+        CRED = self._get_formatted_amount(values['credit']).strip()
+        SWAP = self._get_formatted_amount(values['swap']).strip()
+        BOND = self._get_formatted_amount(values['bond']).strip()
+        OTHR = self._get_formatted_amount(values['others']).strip()
 
         return "|".join([
             RNC, ID_TYPE, NCF, NCM, INCOME_TYPE, INV_DATE, WH_DATE, INV_AMOUNT,
@@ -805,8 +821,10 @@ class DgiiReport(models.Model):
             SaleLine = self.env['dgii.reports.sale.line']
             SaleLine.search([('dgii_report_id', '=', rec.id)]).unlink()
 
-            invoice_ids = self._get_invoices(['open', 'in_payment', 'paid'],
-                                             ['out_invoice', 'out_refund'])
+            invoice_ids = self._get_invoices(
+                ['posted'], 
+                ['out_invoice', 'out_refund']
+            )
 
             line = 0
             excluded_line = line
@@ -821,10 +839,10 @@ class DgiiReport(models.Model):
                 income_dict = self._process_income_dict(income_dict, inv)
                 inv.fiscal_status = \
                     'blocked' if not inv.fiscal_status else inv.fiscal_status
-                rnc_ced = self.formated_rnc_cedula(
+                rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.sale_type != 'unico' \
-                    else self.formated_rnc_cedula(inv.company_id.vat)
+                    else self.formatted_rnc_cedula(inv.company_id.vat)
                 show_payment_date = self._include_in_current_report(inv)
                 payments = self._get_sale_payments_forms(inv)
                 values = {
@@ -842,12 +860,12 @@ class DgiiReport(models.Model):
                     'withholding_date': inv.payment_date if (
                         inv.move_type != 'out_refund' and
                         show_payment_date) else False,
-                    'invoiced_amount': inv.amount_untaxed_signed,
+                    'invoiced_amount': abs(inv.amount_untaxed_signed),
                     'invoiced_itbis': inv.invoiced_itbis,
-                    'third_withheld_itbis': inv.third_withheld_itbis
+                    'third_withheld_itbis': inv.withholding_itbis
                         if show_payment_date else 0,
                     'perceived_itbis': 0,  # Pendiente
-                    'third_income_withholding': inv.third_income_withholding
+                    'third_income_withholding': inv.income_withholding
                         if show_payment_date else 0,
                     'perceived_isr': 0,  # Pendiente
                     'selective_tax': inv.selective_tax,
@@ -893,7 +911,7 @@ class DgiiReport(models.Model):
                 values.update({'line': line})
                 SaleLine.create(values)
                 if str(values.get('fiscal_invoice_number'))[-10:-8] == \
-                        '02' and inv.amount_untaxed_signed < 250000:
+                        '02' and abs(inv.amount_untaxed_signed) < 250000:
                     excluded_line += 1
                     # Excluye las facturas de Consumo
                     # con monto menor a 250000 solo del txt
@@ -916,7 +934,7 @@ class DgiiReport(models.Model):
     def process_608_report_data(self, values):
 
         NCF = str(values['fiscal_invoice_number']).ljust(11)
-        INV_DATE = str(self._get_formated_date(
+        INV_DATE = str(self._get_formatted_date(
             values['invoice_date'])).ljust(8)
         ANU_TYPE = str(values['anulation_type']).ljust(2)
 
@@ -925,8 +943,7 @@ class DgiiReport(models.Model):
     def _generate_608_txt(self, records, qty):
 
         company_vat = self.company_id.vat
-        period = dt.strptime(self.name.replace('/', ''),
-                             '%m%Y').strftime('%Y%m')
+        period = dt.strptime(self.name.replace('/', ''), '%m%Y').strftime('%Y%m')
 
         header = "608|{}|{}|{}".format(
             str(company_vat).ljust(11), period, qty) + '\n'
@@ -947,9 +964,10 @@ class DgiiReport(models.Model):
             CancelLine = self.env['dgii.reports.cancel.line']
             CancelLine.search([('dgii_report_id', '=', rec.id)]).unlink()
 
-            invoice_ids = self._get_invoices(['cancel'], [
-                'out_invoice', 'in_invoice', 'out_refund'
-            ]).filtered(
+            invoice_ids = self._get_invoices(
+                ['cancel'], 
+                ['out_invoice', 'in_invoice', 'out_refund'],
+            ).filtered(
                 lambda inv: (inv.fiscal_type_id.purchase_type != 'normal'))
             line = 0
             report_data = ''
@@ -964,7 +982,7 @@ class DgiiReport(models.Model):
                         'invoice_partner_id': inv.partner_id.id,
                         'fiscal_invoice_number': inv.ref,
                         'invoice_date': inv.invoice_date,
-                        'anulation_type': inv.anulation_type,
+                        'anulation_type': '', # inv.anulation_type, TODO: Wait for Jorge
                         'invoice_id': inv.id
                     }
                     CancelLine.create(values)
@@ -987,12 +1005,12 @@ class DgiiReport(models.Model):
             values['related_part'] if values['related_part'] else "0").ljust(1)
         DOC_NUM = str(
             values['doc_number'] if values['doc_number'] else "").ljust(30)
-        DOC_DATE = str(self._get_formated_date(values['doc_date'])).ljust(8)
-        INV_AMOUNT = self._get_formated_amount(values['invoiced_amount'])
-        ISR_DATE = str(self._get_formated_date(
+        DOC_DATE = str(self._get_formatted_date(values['doc_date'])).ljust(8)
+        INV_AMOUNT = self._get_formatted_amount(values['invoiced_amount'])
+        ISR_DATE = str(self._get_formatted_date(
             values['isr_withholding_date'])).ljust(8)
-        PRM_INCM = self._get_formated_amount(values['presumed_income'])
-        WH_ISR = self._get_formated_amount(values['withholded_isr'])
+        PRM_INCM = self._get_formatted_amount(values['presumed_income'])
+        WH_ISR = self._get_formatted_amount(values['withholded_isr'])
 
         return "|".join([
             LEGAL_NAME, ID_TYPE, TAX_ID, CNT_CODE, PST, STD, REL_PART, DOC_NUM,
@@ -1024,9 +1042,10 @@ class DgiiReport(models.Model):
             ExteriorLine = self.env['dgii.reports.exterior.line']
             ExteriorLine.search([('dgii_report_id', '=', rec.id)]).unlink()
 
-            invoice_ids = self._get_invoices(['open', 'in_payment', 'paid'], [
-                'in_invoice', 'in_refund'
-            ]).filtered(lambda inv: (inv.partner_id.country_id.code != 'DO')
+            invoice_ids = self._get_invoices(
+                ['posted'], 
+                ['in_invoice', 'in_refund']
+            ).filtered(lambda inv: (inv.partner_id.country_id.code != 'DO')
                         and (inv.fiscal_type_id.purchase_type == 'exterior'))
             line = 0
             report_data = ''
@@ -1046,9 +1065,9 @@ class DgiiReport(models.Model):
                     'purchased_service_type': int(inv.service_type),
                     'service_type_detail': inv.service_type_detail.code,
                     'related_part': int(inv.partner_id.related),
-                    'doc_number': inv.number,
+                    'doc_number': inv.name,
                     'doc_date': inv.invoice_date,
-                    'invoiced_amount': inv.amount_untaxed_signed,
+                    'invoiced_amount': inv.amount_untaxed,
                     'isr_withholding_date': inv.payment_date if
                     inv.payment_date else False,
                     'presumed_income': 0,  # Pendiente
@@ -1084,47 +1103,13 @@ class DgiiReport(models.Model):
             self._generate_report()
 
     def _has_withholding(self, inv):
+
         """Validate if given invoice has an Withholding tax"""
-        tax_line_ids = inv._get_tax_line_ids()
-        witheld_itbis_types = ['A34', 'A36']
-        witheld_isr_types = ['ISR', 'A38']
 
-        # Monto ITBIS Retenido por impuesto
-        withholded_itbis = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.purchase_tax_type ==
-                                    'ritbis').mapped('amount'))))
-
-        # Monto Retención Renta por impuesto
-        income_withholding = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.purchase_tax_type ==
-                                    'isr').mapped('amount'))))
-
-        # ITBIS Retenido por Terceros
-        third_withheld_itbis = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.account_id.account_fiscal_type in witheld_itbis_types
-                    ).mapped('amount'))))
-
-        # Retención de Renta por Terceros
-        third_income_withholding = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.account_id.account_fiscal_type in witheld_isr_types
-                    ).mapped('amount'))))
-
-        return True if any([income_withholding,
-                            withholded_itbis,
-                            third_withheld_itbis,
-                            third_income_withholding]) else False
+        return True if any([
+            inv.withholding_itbis, 
+            inv.income_withholding
+        ]) else False
 
     
     def _invoice_status_sent(self):
@@ -1146,7 +1131,7 @@ class DgiiReport(models.Model):
                 ('dgii_report_id', '=', report.id)
             ]).mapped('invoice_id')
             for inv in invoice_ids:
-                if inv.state in ['paid', 'cancel'] and \
+                if (inv.payment_state in ['paid', 'in_payment'] or inv.state == 'cancel') and \
                         self._include_in_current_report(inv):
                     inv.fiscal_status = 'done'
                     continue
@@ -1243,6 +1228,16 @@ class DgiiReportPurchaseLine(models.Model):
     invoice_id = fields.Many2one('account.move')
     credit_note = fields.Boolean()
 
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
+
 
 class DgiiReportSaleLine(models.Model):
     _name = 'dgii.reports.sale.line'
@@ -1281,6 +1276,16 @@ class DgiiReportSaleLine(models.Model):
     invoice_id = fields.Many2one('account.move')
     credit_note = fields.Boolean()
 
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
+
 
 class DgiiCancelReportLine(models.Model):
     _name = 'dgii.reports.cancel.line'
@@ -1295,6 +1300,16 @@ class DgiiCancelReportLine(models.Model):
 
     invoice_partner_id = fields.Many2one('res.partner')
     invoice_id = fields.Many2one('account.move')
+
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
 
 
 class DgiiExteriorReportLine(models.Model):
@@ -1318,3 +1333,13 @@ class DgiiExteriorReportLine(models.Model):
     presumed_income = fields.Float()
     withholded_isr = fields.Float()
     invoice_id = fields.Many2one('account.move')
+
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action

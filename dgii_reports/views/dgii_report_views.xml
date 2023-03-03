@@ -22,6 +22,14 @@
                         </h1>
                     </div>
                     <group>
+                        <group>
+                            <field name="name" placeholder="MM/YYYY" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="previous_balance" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
 
                         <field name="previous_report_pending" invisible="1"/>
                         <group attrs="{'invisible': [('previous_report_pending', '=', False)]}">
@@ -36,32 +44,26 @@
                     </group>
                     <notebook>
                         <page name="statements" string="Statements">
-                            <group>
-                                <group>
-                                    <field name="name" placeholder="MM/YYYY"
-                                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                    <field name="previous_balance" readonly="1"/>
-                                </group>
-                            </group>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <group name="606" col="2" class="bs-callout-info">
+                                    <group name="606" class="bs-callout-info">
                                         <button type="object" name="get_606_tree_view">
                                             <h2>606</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="purchase_records" readonly="1"/>
                                         <field name="purchase_invoiced_amount" readonly="1"/>
                                         <field name="service_total_amount" readonly="1"/>
                                         <field name="good_total_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_invoiced_itbis" readonly="1"/>
                                         <field name="purchase_withholded_itbis" readonly="1"/>
                                         <field name="cost_itbis" readonly="1"/>
                                         <field name="advance_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="income_withholding" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_selective_tax" readonly="1"/>
                                         <field name="purchase_other_taxes" readonly="1"/>
                                         <field name="purchase_legal_tip" readonly="1"/>
@@ -72,14 +74,15 @@
                                         <button type="object" name="get_607_tree_view">
                                             <h2>607</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="sale_records" readonly="1"/>
                                         <field name="sale_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_invoiced_itbis" readonly="1"/>
                                         <field name="sale_withholded_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_withholded_isr" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_selective_tax" readonly="1"/>
                                         <field name="sale_other_taxes" readonly="1"/>
                                         <field name="sale_legal_tip" readonly="1"/>
@@ -90,6 +93,7 @@
                                         <button type="object" name="get_608_tree_view">
                                             <h2>608</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="cancel_records" readonly="1"/>
                                     </group>
                                 </div>
@@ -98,9 +102,10 @@
                                         <button type="object" name="get_609_tree_view">
                                             <h2>609</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="exterior_records" readonly="1"/>
                                         <field name="exterior_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="presumed_income" readonly="1"/>
                                         <field name="exterior_withholded_isr" readonly="1"/>
                                     </group>
@@ -245,6 +250,7 @@
         <field name="model">dgii.reports.purchase.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -282,6 +288,7 @@
         <field name="arch" type="xml">
             <tree create="false" edit="false"
                   decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -318,6 +325,7 @@
         <field name="model">dgii.reports.cancel.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="invoice_partner_id"/>
@@ -334,6 +342,7 @@
         <field name="model">dgii.reports.exterior.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="legal_name"/>
@@ -456,6 +465,14 @@
                 <filter string="Withholded ISR" name="withholding" domain="[('withholded_isr', '!=', 0)]"/>
             </search>
         </field>
+    </record>
+
+    <record id="action_invoice_form_popup" model="ir.actions.act_window">
+        <field name="name">Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account.view_move_form"/>
+        <field name="target">new</field>
     </record>
 
 </odoo>
