@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="0">
+    <!-- Sales -->
+    <record id="l10n_do.1_tax_18_sale" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_sale_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_of_10" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_tip_sale" model="account.tax">
+        <field name="l10n_do_tax_type">tip</field>
+    </record>
+    <record id="l10n_do.1_ret_5_income_gov" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">07</field>
+    </record>
+
+    <!-- Pruchase -->
+    <record id="l10n_do.1_tax_tip_purch" model="account.tax">
+        <field name="l10n_do_tax_type">tip</field>
+    </record>
+    <record id="l10n_do.1_tax_18_purch" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_purch_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_16_purch" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_16_purch_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_9_purch" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_9_purch_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_8_purch" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_8_purch_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_purch_serv" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_purch_serv_incl" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_10_total_mount" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_ret_10_income_person" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">02</field>
+    </record>
+    <record id="l10n_do.1_ret_100_tax_person" model="account.tax">
+        <field name="l10n_do_tax_type">ritbis</field>
+    </record>
+    <record id="l10n_do.1_ret_100_tax_security" model="account.tax">
+        <field name="l10n_do_tax_type">ritbis</field>
+    </record>
+    <record id="l10n_do.1_tax_18_serv_cost" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_ret_10_income_rent" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">01</field>
+    </record>
+    <record id="l10n_do.1_ret_10_income_dividend" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">03</field>
+    </record>
+    <record id="l10n_do.1_ret_2_income_person" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">03</field>
+    </record>
+    <record id="l10n_do.1_ret_2_income_transfer" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">03</field>
+    </record>
+    <record id="l10n_do.1_tax_18_importation" model="account.tax">
+        <field name="l10n_do_tax_type">itbis</field>
+    </record>
+    <record id="l10n_do.1_tax_10_telco" model="account.tax">
+        <field name="l10n_do_tax_type">isc</field>
+    </record>
+    <record id="l10n_do.1_tax_2_telco" model="account.tax">
+        <field name="l10n_do_tax_type">other</field>
+    </record>
+    <record id="l10n_do.1_tax_0015_bank" model="account.tax">
+        <field name="l10n_do_tax_type">other</field>
+    </record>
+    <record id="l10n_do.1_ret_100_tax_nonprofit" model="account.tax">
+        <field name="l10n_do_tax_type">ritbis</field>
+    </record>
+    <record id="l10n_do.1_ret_30_tax_moral" model="account.tax">
+        <field name="l10n_do_tax_type">ritbis</field>
+    </record>
+    <record id="l10n_do.1_ret_75_tax_nonformal" model="account.tax">
+        <field name="l10n_do_tax_type">ritbis</field>
+    </record>
+    <record id="l10n_do.1_ret_27_income_remittance" model="account.tax">
+        <field name="l10n_do_tax_type">isr</field>
+        <field name="isr_retention_type">03</field>
+    </record>
+</odoo>

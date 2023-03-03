@@ -14,10 +14,11 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.0.2',
+    'version': '16.0.1.0.4',
 
     # any module necessary for this one to work correctly
     'depends': [
+        'l10n_do',
         'l10n_do_accounting'
     ],
 
@@ -25,6 +26,7 @@
     'data': [
         'data/invoice_service_type_detail_data.xml',
         'data/account_fiscal_type_data.xml',
+        'data/account_tax_data.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
         'views/res_partner_views.xml',

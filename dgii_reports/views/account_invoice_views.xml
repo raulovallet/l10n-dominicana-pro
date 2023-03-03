@@ -21,8 +21,8 @@
                     <group attrs="{'invisible': [('move_type', 'not in', ['out_invoice', 'out_refund'])]}">
                         <group string="Withholding" groups="account.group_account_manager">
                             <field name="payment_date"/>
-                            <field name="third_withheld_itbis"/>
-                            <field name="third_income_withholding"/>
+                            <field name="withholding_itbis"/>
+                            <field name="income_withholding"/>
                         </group>
                         <group string="Taxes" groups="account.group_account_manager">
                             <field name="invoiced_itbis"/>
@@ -52,7 +52,7 @@
                             <field name="good_total_amount"/>
                         </group>
                         <group string="Withholding" groups="account.group_account_manager">
-                            <field name="withholded_itbis"/>
+                            <field name="withholding_itbis"/>
                             <field name="isr_withholding_type"/>
                             <field name="income_withholding"/>
                         </group>

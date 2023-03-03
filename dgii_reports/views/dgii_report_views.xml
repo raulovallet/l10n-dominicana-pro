@@ -250,6 +250,7 @@
         <field name="model">dgii.reports.purchase.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -287,6 +288,7 @@
         <field name="arch" type="xml">
             <tree create="false" edit="false"
                   decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -323,6 +325,7 @@
         <field name="model">dgii.reports.cancel.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="invoice_partner_id"/>
@@ -339,6 +342,7 @@
         <field name="model">dgii.reports.exterior.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="legal_name"/>
@@ -461,6 +465,14 @@
                 <filter string="Withholded ISR" name="withholding" domain="[('withholded_isr', '!=', 0)]"/>
             </search>
         </field>
+    </record>
+
+    <record id="action_invoice_form_popup" model="ir.actions.act_window">
+        <field name="name">Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account.view_move_form"/>
+        <field name="target">new</field>
     </record>
 
 </odoo>

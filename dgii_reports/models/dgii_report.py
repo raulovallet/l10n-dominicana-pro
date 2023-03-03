@@ -538,7 +538,7 @@ class DgiiReport(models.Model):
                     'purchase_perceived_itbis': 0,  # Falta computar en la fact
                     'purchase_perceived_isr': 0,  # Falta computarlo en la fact
                     'isr_withholding_type': inv.isr_withholding_type,
-                    'withholded_itbis': inv.withholded_itbis if
+                    'withholded_itbis': inv.withholding_itbis if
                     show_payment_date else 0,
                     'income_withholding': inv.income_withholding if
                     show_payment_date else 0,
@@ -862,10 +862,10 @@ class DgiiReport(models.Model):
                         show_payment_date) else False,
                     'invoiced_amount': abs(inv.amount_untaxed_signed),
                     'invoiced_itbis': inv.invoiced_itbis,
-                    'third_withheld_itbis': inv.third_withheld_itbis
+                    'third_withheld_itbis': inv.withholding_itbis
                         if show_payment_date else 0,
                     'perceived_itbis': 0,  # Pendiente
-                    'third_income_withholding': inv.third_income_withholding
+                    'third_income_withholding': inv.income_withholding
                         if show_payment_date else 0,
                     'perceived_isr': 0,  # Pendiente
                     'selective_tax': inv.selective_tax,
@@ -1103,47 +1103,13 @@ class DgiiReport(models.Model):
             self._generate_report()
 
     def _has_withholding(self, inv):
+
         """Validate if given invoice has an Withholding tax"""
-        tax_line_ids = inv._get_tax_line_ids()
-        witheld_itbis_types = ['A34', 'A36']
-        witheld_isr_types = ['ISR', 'A38']
 
-        # Monto ITBIS Retenido por impuesto
-        withholded_itbis = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.purchase_tax_type ==
-                                    'ritbis').mapped('balance'))))
-
-        # Monto Retención Renta por impuesto
-        income_withholding = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.purchase_tax_type ==
-                                    'isr').mapped('balance'))))
-
-        # ITBIS Retenido por Terceros
-        third_withheld_itbis = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.account_id.account_fiscal_type in witheld_itbis_types
-                    ).mapped('balance'))))
-
-        # Retención de Renta por Terceros
-        third_income_withholding = abs(
-            inv._convert_to_local_currency(
-                sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.account_id.account_fiscal_type in witheld_isr_types
-                    ).mapped('balance'))))
-
-        return True if any([income_withholding,
-                            withholded_itbis,
-                            third_withheld_itbis,
-                            third_income_withholding]) else False
+        return True if any([
+            inv.withholding_itbis, 
+            inv.income_withholding
+        ]) else False
 
     
     def _invoice_status_sent(self):
@@ -1262,6 +1228,16 @@ class DgiiReportPurchaseLine(models.Model):
     invoice_id = fields.Many2one('account.move')
     credit_note = fields.Boolean()
 
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
+
 
 class DgiiReportSaleLine(models.Model):
     _name = 'dgii.reports.sale.line'
@@ -1300,6 +1276,16 @@ class DgiiReportSaleLine(models.Model):
     invoice_id = fields.Many2one('account.move')
     credit_note = fields.Boolean()
 
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
+
 
 class DgiiCancelReportLine(models.Model):
     _name = 'dgii.reports.cancel.line'
@@ -1314,6 +1300,16 @@ class DgiiCancelReportLine(models.Model):
 
     invoice_partner_id = fields.Many2one('res.partner')
     invoice_id = fields.Many2one('account.move')
+
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
 
 
 class DgiiExteriorReportLine(models.Model):
@@ -1337,3 +1333,13 @@ class DgiiExteriorReportLine(models.Model):
     presumed_income = fields.Float()
     withholded_isr = fields.Float()
     invoice_id = fields.Many2one('account.move')
+
+    def action_view_invoice(self):
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+        if 'views' in action:
+            action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+        else:
+            action['views'] = form_view
+        action['res_id'] = self.invoice_id.id
+        return action
