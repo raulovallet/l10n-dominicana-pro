@@ -121,7 +121,7 @@ class AccountInvoice(models.Model):
         compute="_compute_fiscal_sequence_status",
     )
     is_debit_note = fields.Boolean(
-        string="is_debit_note"
+        string="Is debit note"
     )
 
     @api.depends("is_l10n_do_fiscal_invoice", "move_type", "journal_id", "partner_id")
