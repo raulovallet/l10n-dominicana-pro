@@ -18,6 +18,7 @@
 
     # any module necessary for this one to work correctly
     'depends': [
+        'account',
         'l10n_do',
         'l10n_do_accounting'
     ],

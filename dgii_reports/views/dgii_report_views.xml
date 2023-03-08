@@ -231,18 +231,9 @@
         </field>
     </record>
 
-    <menuitem id="marcos_account_dgii_menu" name="DGII"
-              parent="account.menu_finance"
-              sequence="5"
-              groups="account.group_account_user"/>
-
-    <menuitem id="dgii_report_parent_menu" name="Data Sending"
-              parent="marcos_account_dgii_menu"
-              sequence="5"/>
-
-    <menuitem action="dgii_report_action" id="dgii_report_menu"
-              parent="dgii_report_parent_menu"
-              sequence="14"/>
+    <menuitem id="account_reports_do_menu" name="Dominican reports" parent="account.menu_finance_reports" sequence="5" groups="account.group_account_readonly"/>
+    
+    <menuitem id="dgii_report_menu" name="DGII" action="dgii_report_action"  parent="account_reports_do_menu" sequence="14" />
 
     <!--606-->
     <record id="dgii_report_purchase_line_tree" model="ir.ui.view">

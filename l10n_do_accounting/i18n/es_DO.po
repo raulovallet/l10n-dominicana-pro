@@ -4,13 +4,13 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0+e\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 04:48+0000\n"
-"PO-Revision-Date: 2023-02-24 00:58-0400\n"
+"POT-Creation-Date: 2023-03-06 15:21+0000\n"
+"PO-Revision-Date: 2023-03-06 10:32-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: es_DO\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -208,12 +208,12 @@ msgstr ""
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form
 msgid "<span class=\"o_form_label\" attrs=\"{'invisible': ['|',('state','=','draft'), ('is_debit_note','=',False)]}\">Debit Note</span>"
-msgstr ""
+msgstr "<span class=\"o_form_label\" attrs=\"{'invisible': ['|',('state','=','draft'), ('is_debit_note','=',False)]}\">Nota de débito</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 msgid "<span class=\"o_stat_text\">Sequence</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text\">Secuencia</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.report_invoice_document_inherited
@@ -438,7 +438,6 @@ msgstr "Puede ser cola"
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_validate_wizard_form
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_invoice_cancel_view
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form_cancel_inherit
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -645,7 +644,7 @@ msgstr "Borrador"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 msgid "Eg : 8001695033"
-msgstr ""
+msgstr "Ej. 8001695033"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -835,12 +834,6 @@ msgstr "Tipo de ingresos"
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__sequence_id
 msgid "Internal Sequence"
 msgstr "Secuencia Interna"
-
-#. module: l10n_do_accounting
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_res_partner__is_fiscal_info_required
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_res_users__is_fiscal_info_required
-msgid "Is Fiscal Info Required"
-msgstr "¿Se requiere información fiscal?"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_bank_statement_line__is_l10n_do_fiscal_invoice
@@ -1465,5 +1458,5 @@ msgstr "si el monto de la factura es mayor a RD$250,000.00 el cliente deberá ha
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_bank_statement_line__is_debit_note
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move__is_debit_note
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_payment__is_debit_note
-msgid "is_debit_note"
+msgid "Is debit note"
 msgstr "Es nota de debito"
