@@ -50,12 +50,12 @@ class AccountInvoice(models.Model):
     income_type = fields.Selection(
         string="Income Type",
         selection=[
-            ("01", "01 - Ingresos por Operaciones (No Financieros)"),
-            ("02", "02 - Ingresos Financieros"),
-            ("03", "03 - Ingresos Extraordinarios"),
-            ("04", "04 - Ingresos por Arrendamientos"),
-            ("05", "05 - Ingresos por Venta de Activo Depreciable"),
-            ("06", "06 - Otros Ingresos"),
+            ("01", "01 - Operating Revenues (Non-Financial)"),
+            ("02", "02 - Financial Revenues"),
+            ("03", "03 - Extraordinary Revenues"),
+            ("04", "04 - Rental Revenues"),
+            ("05", "05 - Revenues from Sale of Depreciable Assets"),
+            ("06", "06 - Other Revenues"),
         ],
         copy=False,
         default=lambda self: self._context.get("income_type", "01"),
@@ -63,37 +63,36 @@ class AccountInvoice(models.Model):
     expense_type = fields.Selection(
         copy=False,
         selection=[
-            ("01", "01 - Gastos de Personal"),
-            ("02", "02 - Gastos por Trabajo, Suministros y Servicios"),
-            ("03", "03 - Arrendamientos"),
-            ("04", "04 - Gastos de Activos Fijos"),
-            ("05", u"05 - Gastos de Representación"),
-            ("06", "06 - Otras Deducciones Admitidas"),
-            ("07", "07 - Gastos Financieros"),
-            ("08", "08 - Gastos Extraordinarios"),
-            ("09", "09 - Compras y Gastos que forman parte del Costo de Venta"),
-            ("10", "10 - Adquisiciones de Activos"),
-            ("11", "11 - Gastos de Seguros"),
+            ("01", "01 - Personnel Expenses"),
+            ("02", "02 - Expenses for Labor, Supplies, and Services"),
+            ("03", "03 - Leases"),
+            ("04", "04 - Fixed Asset Expenses"),
+            ("05", "05 - Representation Expenses"),
+            ("06", "06 - Other Allowable Deductions"),
+            ("07", "07 - Financial Expenses"),
+            ("08", "08 - Extraordinary Expenses"),
+            ("09", "09 - Purchases and Expenses that form part of the Cost of Sales"),
+            ("10", "10 - Acquisitions of Assets"),
+            ("11", "11 - Insurance Expenses"),
         ],
         string="Cost & Expense Type",
     )
     annulation_type = fields.Selection(
         string="Annulment Type",
         selection=[
-            ("01", "01 - Deterioro de Factura Pre-impresa"),
-            ("02", u"02 - Errores de Impresión (Factura Pre-impresa)"),
-            ("03", u"03 - Impresión Defectuosa"),
-            ("04", u"04 - Corrección de la Información"),
-            ("05", "05 - Cambio de Productos"),
-            ("06", u"06 - Devolución de Productos"),
-            ("07", u"07 - Omisión de Productos"),
-            ("08", "08 - Errores en Secuencia de NCF"),
-            ("09", "09 - Por Cese de Operaciones"),
-            ("10", u"10 - Pérdida o Hurto de Talonarios"),
+            ("01", "01 - Deterioration of Pre-printed Invoice"),
+            ("02", "02 - Printing Errors (Pre-printed Invoice)"),
+            ("03", "03 - Defective Printing"),
+            ("04", "04 - Correction of Information"),
+            ("05", "05 - Change of Products"),
+            ("06", "06 - Product Returns"),
+            ("07", "07 - Omission of Products"),
+            ("08", "08 - Errors in Sequence of NCF"),
+            ("09", "09 - Due to Cessation of Operations"),
+            ("10", "10 - Loss or Theft of Invoice Books"),
         ],
         copy=False,
     )
-      
     origin_out = fields.Char(
         string="Affects",
         copy=False,
@@ -102,6 +101,7 @@ class AccountInvoice(models.Model):
         string="Valid until",
         store=True,
         copy=False,
+        required=False
     )
     is_l10n_do_fiscal_invoice = fields.Boolean(
         string="Is Fiscal Invoice",
@@ -160,16 +160,13 @@ class AccountInvoice(models.Model):
         """
         for inv in self.filtered(lambda i: i.state == "draft"):
             if inv.is_debit_note:
+                
                 debit_map = {"in_invoice": "in_debit", "out_invoice": "out_debit"}
                 fiscal_type = self.env["account.fiscal.type"].search(
                     [("type", "=", debit_map[inv.move_type])], limit=1
                 )
                 inv.fiscal_type_id = fiscal_type.id
-            elif inv.move_type in ("out_refund", "in_refund"):
-                fiscal_type = self.env["account.fiscal.type"].search(
-                    [("type", "=", inv.move_type)], limit=1
-                )
-                inv.fiscal_type_id = fiscal_type.id
+
             else:
                 fiscal_type = inv.fiscal_type_id
 
@@ -362,14 +359,18 @@ class AccountInvoice(models.Model):
             invoice, making it a a fiscal invoice for l10n_do.
         """
         if self.is_l10n_do_fiscal_invoice:
-            if self.partner_id and self.move_type == "out_invoice":
-                if not self.fiscal_type_id:
-                    self.fiscal_type_id = self.partner_id.sale_fiscal_type_id
+            
+            fiscal_type_object = self.env["account.fiscal.type"]
+            if self.partner_id and self.move_type == "out_invoice" and not self.fiscal_type_id:
+                
+                self.fiscal_type_id = self.partner_id.sale_fiscal_type_id
+
             elif self.partner_id and self.move_type == "in_invoice":
+                
                 self.expense_type = self.partner_id.expense_type
 
                 if self.partner_id.id == self.company_id.partner_id.id:
-                    fiscal_type = self.env["account.fiscal.type"].search(
+                    fiscal_type = fiscal_type_object.search(
                         [("type", "=", self.move_type), ("prefix", "=", "B13")], limit=1
                     )
                     if not fiscal_type:
@@ -382,6 +383,13 @@ class AccountInvoice(models.Model):
                     self.fiscal_type_id = fiscal_type
                     return super(AccountInvoice, self)._onchange_partner_id()
                 self.fiscal_type_id = self.partner_id.purchase_fiscal_type_id
+
+            elif self.partner_id and not self.fiscal_type_id and self.move_type in ['in_refund', 'out_refund']:
+
+                fiscal_refund = fiscal_type_object.search([
+                    ('type', '=', self.move_type)
+                ])
+                self.fiscal_type_id = fiscal_refund[0] if fiscal_refund else False
 
         return super(AccountInvoice, self)._onchange_partner_id()
 
@@ -401,15 +409,16 @@ class AccountInvoice(models.Model):
                 )
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
-                if self.fiscal_type_id and \
-                    not self.fiscal_type_id.assigned_sequence and \
-                    self.ref:
-                        if self.fiscal_type_id.prefix and self.fiscal_type_id.prefix != self.ref[:3]:
+
+                if inv.fiscal_type_id and \
+                    not inv.fiscal_type_id.assigned_sequence and \
+                    inv.ref:
+                        if inv.fiscal_type_id.prefix and inv.fiscal_type_id.prefix != inv.ref[:3]:
                             raise UserError(_(
                                 "The prefix of the fiscal sequence %s must be %s"
-                            )% (self.fiscal_type_id.name, self.fiscal_type_id.prefix,))
+                            )% (inv.fiscal_type_id.name, inv.fiscal_type_id.prefix,))
                         
-                        self.fiscal_type_id.check_format_fiscal_number(self.ref)
+                        inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
                         
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again

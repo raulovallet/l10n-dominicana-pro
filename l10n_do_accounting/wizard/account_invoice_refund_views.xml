@@ -25,17 +25,14 @@
                 <field name="ncf_expiration_date" attrs="{
                     'invisible': [
                         ('is_vendor_refund', '=', False)
-                    ], 
-                    'required': [
-                        ('is_fiscal_refund', '=', True), 
-                        ('is_vendor_refund', '=', True)
-                    ]
+                    ],
                 }"/>
             </xpath>
 
         </field>
     </record>
 
+    <!-- TODO: DEBIT NOTE -->
     <!-- <record id="view_account_invoice_debit" model="ir.ui.view">
         <field name="name">account.move.reversal.form</field>
         <field name="model">account.move.reversal</field>

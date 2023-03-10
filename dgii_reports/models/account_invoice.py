@@ -386,11 +386,10 @@ class AccountInvoice(models.Model):
             ('blocked', 'Not Sent')
         ],
         copy=False,
-        help="* The \'Grey\' status means ...\n"
-        "* The \'Green\' status means ...\n"
-        "* The \'Red\' status means ...\n"
-        "* The blank status means that the invoice have"
-        "not been included in a report."
+        help="* The \'Grey\' status means the invoice was sent to the DGII.\n"
+        "* The \'Red\' status means the invoice is in a DGII report but has not yet been sent to the DGII.\n"
+        "* The \'Blank\' status means Has not yet been reported or was partially reported.",
+        default='normal'
     )
 
     @api.model

@@ -271,30 +271,42 @@ class DgiiReport(models.Model):
     exterior_binary = fields.Binary(string='609 file')
 
     # IT-1
-    ncf_sale_summary_ids = fields.One2many(
-        comodel_name='dgii.reports.sale.summary',
+    it1_section_1_line_ids = fields.One2many(
+        string='IT1 section 1 lines',
+        comodel_name='dgii.reports.it1.line',
         inverse_name='dgii_report_id',
-        string='Operations by NCF type',
-        copy=False
+        domain='[("section", "=", "1")]'
     )
-    cash = fields.Monetary('Cash', copy=False)
-    bank = fields.Monetary('Check / Transfer / Deposit', copy=False)
-    card = fields.Monetary('Credit Card / Debit Card', copy=False)
-    credit = fields.Monetary('Credit', copy=False)
-    bond = fields.Monetary('Gift certificates or vouchers', copy=False)
-    swap = fields.Monetary('Swap', copy=False)
-    others = fields.Monetary('Other Sale Forms', copy=False)
-    sale_type_total = fields.Monetary('Sale Type Total', copy=False)
-    opr_income = fields.Monetary(
-        string='Operations Income (No-Financial)',
-        copy=False,
+    it1_section_2_line_ids = fields.One2many(
+        string='IT1 section 2 lines',
+        comodel_name='dgii.reports.it1.line',
+        inverse_name='dgii_report_id',
+        domain='[("section", "=", "2")]'
     )
-    fin_income = fields.Monetary('Financial Income', copy=False)
-    ext_income = fields.Monetary('Extraordinary Income', copy=False)
-    lea_income = fields.Monetary('Lease Income', copy=False)
-    ast_income = fields.Monetary('Depreciable Assets Income', copy=False)
-    otr_income = fields.Monetary('Others Income', copy=False)
-    income_type_total = fields.Monetary('Income Total', copy=False)
+    it1_section_3_line_ids = fields.One2many(
+        string='IT1 section 3 lines',
+        comodel_name='dgii.reports.it1.line',
+        inverse_name='dgii_report_id',
+        domain='[("section", "=", "3")]'
+    )
+    it1_section_4_line_ids = fields.One2many(
+        string='IT1 section 4 lines',
+        comodel_name='dgii.reports.it1.line',
+        inverse_name='dgii_report_id',
+        domain='[("section", "=", "4")]'
+    )
+    it1_section_5_line_ids = fields.One2many(
+        string='IT1 section 5 lines',
+        comodel_name='dgii.reports.it1.line',
+        inverse_name='dgii_report_id',
+        domain='[("section", "=", "5")]'
+    )
+    it1_section_6_line_ids = fields.One2many(
+        string='IT1  section 6 lines',
+        comodel_name='dgii.reports.it1.line',
+        inverse_name='dgii_report_id',
+        domain='[("section", "=", "6")]'
+    )
 
     # General Summary of Consumer Invoices
     csmr_ncf_qty = fields.Integer('Issued Consumer NCF Qty', copy=False)
@@ -1079,7 +1091,753 @@ class DgiiReport(models.Model):
                 report_data += self.process_609_report_data(values) + '\n'
 
             self._generate_609_txt(report_data, line)
+    
+    def _get_section_attachment_a_report(self, key):
+        if key in list(range(1, 12)):
+            return '1'
+        elif key in list(range(12, 34)):
+            return '2'
+        elif key in list(range(34, 43)):
+            return '3'
+        elif key in list(range(43, 45)):
+            return '4'
+        elif key in list(range(45, 57)):
+            return '5'
+        else:
+            return False
 
+    def _get_attachment_a_dictionary(self):
+        report_lines = {}
+        names = {
+            1: _('VALID PROOFS FOR TAX CREDIT (01 and 31)'),
+            2: _('CONSUMPTION PROOFS (02 and 32)'),
+            3: _('PROOFS DEBIT NOTE (03 and 33)'),
+            4: _('PROOFS OF CREDIT NOTE (04 and 34)'),
+            5: _('SINGLE INCOME REGISTRY PROOFS (12)'),
+            6: _('SPECIAL REGIME REGISTRATION PROOFS (14 and 44)'),
+            7: _('GOVERNMENT PROOFS (15 and 45)'),
+            8: _('PROOFS FOR EXPORTS (16 and 46)'),
+            9: _('OTHER OPERATIONS (POSITIVE)'),
+            10: _('OTHER OPERATIONS (NEGATIVE)'),
+            11: _('TOTAL OPERATIONS (Sum boxes 1+2+3-4+5+6+7+8+9-10)'),
+            12: _('CASH'),
+            13: _('CHECK / TRANSFER'),
+            14: _('DEBIT / CREDIT CARD'),
+            15: _('ON CREDIT'),
+            16: _('BONUSES OR GIFT CERTIFICATE'),
+            17: _('SWAPS'),
+            18: _('OTHER FORMS OF SALE'),
+            19: _('TOTAL OPERATIONS BY TYPE OF SALE (Sum boxes 12+13+14+15+16+17+18)'),
+            20: _('INCOME FROM OPERATIONS (NON-FINANCIAL)'),
+            21: _('FINANCIAL INCOME'),
+            22: _('EXTRAORDINARY INCOME'),
+            23: _('INCOME FROM LEASE'),
+            24: _('INCOME FROM THE SALES OF DEPRECIABLE ASSETS'),
+            25: _('OTHER INCOME'),
+            26: _('TOTAL BY TYPE OF INCOME (Sum boxes 20+21+22+23+24+25)'),
+            27: _('COMPUTABLE PAYMENTS FOR WITHHOLDINGS (Norm No. 08-04)'),
+            28: _('COMPUTABLE PAYMENTS FOR SALES OF AIR TRANSPORTATION TICKETS (Norm No. 02-05) (BSP-IATA)'),
+            29: _('COMPUTABLE PAYMENTS FOR OTHER WITHHOLDINGS (Norm No. 02-05)'),
+            30: _('COMPUTABLE PAYMENTS FOR SALES OF ACCOMMODATION AND OCCUPANCY PACKAGES'),
+            31: _('CREDIT FOR WITHHOLDING BY STATE ENTITIES'),
+            32: _('COMPUTABLE PAYMENTS FOR ITBIS PERCEIVED'),
+            33: _('TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS/PERCEPTION (Sum boxes 27+28+29+30+31+32)'),
+            34: _('TECHNICAL MANAGEMENT (Art. 4 Norma 07-07)'),
+            35: _('ADMINISTRATION AGREEMENT (Art. 4 Paragraph I, Norm 07-07)'),
+            36: _('CONSULTING / FEES'),
+            37: _('TOTAL CONSTRUCTION OPERATIONS (Total Invoiced: Sum boxes 34+35, Amount: Sum boxes 34+35+36)'),
+            38: _('OPERATIONS NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES '
+                  '(Subtract Box 37 Total Invoiced - Amount Subject to ITBIS)'),
+            39: _('SALES OF GOODS BY COMMISSION'),
+            40: _('SALES OF SERVICES ON BEHALF OF THIRD PARTIES'),
+            41: _('TOTAL COMMISSION OPERATIONS (Sum boxes 39+40)'),
+            42: _('OPERATIONS NOT SUBJECT TO ITBIS FOR COMMISSIONS '
+                  '(Subtract Box 41 Total Invoiced - Amount Subject to ITBIS)'),
+            43: _('TOTAL CREDIT NOTES ISSUED WITH MORE THAN THIRTY'),
+            44: _('TOTAL INVOICES IN TAX RECEIPTS FOR SPECIAL REGIMES'),
+            45: _('IN OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES'),
+            46: _('TO BE INCLUDED IN ASSETS (CATEGORY I)'),
+            47: _('OTHER NON-DEDUCTIBLE ITBIS PAID'),
+            48: _('TOTAL NON-DEDUCTIBLE ITBIS (45+46+47)'),
+            49: _('IN THE PRODUCTION AND/OR SALE OF EXPORTED GOODS'),
+            50: _('IN THE PRODUCTION AND/OR SALE OF TAXED ASSETS'),
+            51: _('IN THE PROVISION OF TAXED SERVICES'),
+            52: _('TOTAL ITBIS DEDUCTIBLE NOT SUBJECT TO PROPORTIONALITY (49+50+51)'),
+            53: _('ITBIS SUBJECT TO PROPORTIONALITY'),
+            54: _('COEFFICIENT OF PROPORTIONALITY ((((Boxes 2 + 5 + 10 of IT1) / Box 1 of IT1)) * 100) If applicable.'),
+            55: _('ITBIS ADMITTED BY APPLICATION OF PROPORTIONALITY (box 53 * 54)'),
+            56: _('TOTAL ITBIS DEDUCTIBLE (52+55)')
+        }
+
+        for key, value in names.items():
+            report_lines.update({
+                key: {
+                    'name': value,
+                    'sequence': key,
+                    'dgii_report_id': self.id,
+                    'section': self._get_section_attachment_a_report(key),
+                    'coefficient': 0,
+                    'quantity': 0,
+                    'local_purchase': 0,
+                    'services': 0,
+                    'imports': 0,
+                    'amount': 0,
+                }
+            })
+
+        # Titles
+        report_lines.update({
+            'AII': {
+                'name': _('II. OPERATIONS REPORTED IN THE 607, SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE OF NCF'),
+                'display_type': 'line_section',
+                'sequence': 0,
+                'dgii_report_id': self.id,
+                'section': '1'
+            },
+            'AIII': {
+                'name': _('III. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE OF '
+                          'SALE (TOTAL AMOUNT INCLUDING TAXES)'),
+                'display_type': 'line_section',
+                'sequence': 12,
+                'dgii_report_id': self.id,
+                'section': '2'
+            },
+            'AIV': {
+                'name': _('IV. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE OF '
+                          'INCOME'),
+                'display_type': 'line_section',
+                'sequence': 20,
+                'dgii_report_id': self.id,
+                'section': '2'
+            },
+            'AV': {
+                'name': _('V. COMPUTABLE PAYMENTS FOR WITHHOLDINGS/PERCEPTIONS'),
+                'display_type': 'line_section',
+                'sequence': 27,
+                'dgii_report_id': self.id,
+                'section': '2'
+            },
+            'AVI': {
+                'name': _('VI. CONSTRUCTION OPERATIONS'),
+                'display_type': 'line_section',
+                'sequence': 34,
+                'dgii_report_id': self.id,
+                'section': '3'
+            },
+            'AVII': {
+                'name': _('VII. COMMISSION OPERATIONS'),
+                'display_type': 'line_section',
+                'sequence': 39,
+                'dgii_report_id': self.id,
+                'section': '3'
+            },
+            'AVIII': {
+                'name': _('VIII. INFORMATIVE DATA'),
+                'display_type': 'line_section',
+                'sequence': 43,
+                'dgii_report_id': self.id,
+                'section': '4'
+            },
+            'AIX': {
+                'name': _('IX. ITBIS PAID'),
+                'display_type': 'line_section',
+                'sequence': 45,
+                'dgii_report_id': self.id,
+                'section': '5'
+            },
+            'AIXa': {
+                'name': _('A) NON-DEDUCTIBLE (Carried to Cost/Expense)'),
+                'display_type': 'line_section',
+                'sequence': 45,
+                'dgii_report_id': self.id,
+                'section': '5'
+            },
+            'AIXb': {
+                'name': _('B) DEDUCTIBLE'),
+                'display_type': 'line_section',
+                'sequence': 49,
+                'dgii_report_id': self.id,
+                'section': '5'
+            },
+            'AIXc': {
+                'name': _('C) ITBIS SUBJECT TO PROPORTIONALITY (Art. 349 of the Tax Code)'),
+                'display_type': 'line_section',
+                'sequence': 53,
+                'dgii_report_id': self.id,
+                'section': '5'
+            }
+        })
+
+        return report_lines
+
+    def _get_it1_dictionary(self):
+        report_lines = {}
+        names = {
+            1: _('TOTAL OPERATIONS FOR THE PERIOD (From box 11 of Annex A)'),
+            2: _('INCOME FROM EXPORTS OF GOODS (Article 342 CT)'),
+            3: _('INCOME FROM EXPORTS OF SERVICES (Article 344 CT and Article 14, Paragraph j), Regulation 293-11)'),
+            4: _('INCOME FROM LOCAL SALES OF EXEMPT GOODS OR SERVICES (Article 343 and Article 344 CT)'),
+            5: _('INCOME FROM THE SALES OF EXEMPT GOODS OR SERVICES BY DESTINATION'),
+            6: _('NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES (From box 38 of Annex A)'),
+            7: _('NOT SUBJECT TO ITBIS FOR COMMISSIONS (From box 42 of Annex A)'),
+            8: _('INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)'),
+            9: _('TOTAL INCOME FROM NON-TAXED OPERATIONS (Sum of boxes 2+3+4+5+6+7+8)'),
+            10: _('TOTAL INCOME FROM TAXED OPERATIONS (Subtract boxes 9 from 1)'),
+            11: _('OPERATIONS TAXED AT 18%'),
+            12: _('OPERATIONS TAXED AT 16%'),
+            13: _('OPERATIONS TAXED AT 9% (Law No. 690-16)'),
+            14: _('OPERATIONS TAXED AT 8% (Law No. 690-16)'),
+            15: _('OPERATIONS TAXED BY SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)'),
+            16: _('ITBIS COLLECTED (18% of box 11)'),
+            17: _('ITBIS COLLECTED (16% of box 12)'),
+            18: _('ITBIS COLLECTED (9% of box 13) (Law No. 690-16)'),
+            19: _('ITBIS COLLECTED (8% of box 14) (Law No. 690-16)'),
+            20: _('ITBIS CHARGED FOR SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)'),
+            21: _('TOTAL ITBIS COLLECTED (Sum of boxes 16+17+18+19+20)'),
+            22: _('ITBIS PAID ON LOCAL PURCHASES'),
+            23: _('ITBIS PAID FOR DEDUCTIBLE SERVICES'),
+            24: _('ITBIS PAID ON IMPORTS'),
+            25: _('TOTAL DEDUCTIBLE ITBIS (Sum of boxes 22+23+24)'),
+            26: _('TAX TO PAY (Subtract box 25 from box 21)'),
+            27: _('BALANCE IN FAVOR (If box 26 is negative)'),
+            28: _('AUTHORIZED COMPENSABLE BALANCES (Other Taxes) AND/OR REFUNDS'),
+            29: _('BALANCE IN PREVIOUS FAVOR'),
+            30: _('TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS (From box 33 of Annex A)'),
+            31: _('OTHER COMPUTABLE PAYMENTS ON ACCOUNT'),
+            32: _('AUTHORIZED COMPENSATIONS AND/OR REFUNDS'),
+            33: _('DIFFERENCE TO PAY (If the value of boxes 26-28-29-30-31-32 is Positive)'),
+            34: _('NEW BALANCE IN FAVOR '
+                  '(If the value of boxes (26-28-29-30-31-32 is Negative) or (27+28+29+30+31+32))'),
+            35: _('SURCHARGES'),
+            36: _('COMPENSATION INTEREST'),
+            37: _('SANCTIONS'),
+            38: _('TOTAL TO PAY'),
+            39: _('SERVICES SUBJECT TO WITHHOLDING INDIVIDUALS'),
+            40: _('SERVICES SUBJECT TO WITHHOLDING NON-PROFIT ENTITIES (Rule No. 01-11)'),
+            41: _('TOTAL SERVICES SUBJECT TO WITHHOLDING TO INDIVIDUALS AND NON-PROFIT ENTITIES'),
+            42: _('SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 07-09)'),
+            43: _('SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 02-05 and 07-07)'),
+            44: _('GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations Taxed at 18%)'),
+            45: _('GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations Taxed at 16%)'),
+            46: _('TOTAL GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Sum of boxes 44+45)'),
+            47: _('ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE '
+                  '(Operations Taxed at 18%) (Rule No. 08-10 and 05-19)'),
+            48: _('ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE '
+                  '(Operations Taxed at 16%) (Rule No. 08-10 and 05-19)'),
+            49: _('TOTAL ASSETS SUBJECT TO RETENTION PROOF OF PURCHASE'),
+            50: _('ITBIS FOR SERVICES SUBJECT TO WITHHOLDING INDIVIDUALS AND NON-PROFIT ENTITIES'),
+            51: _('ITBIS FOR SERVICES SUBJECT TO COMPANY WITHHOLDING (18% of box 42)'),
+            52: _('ITBIS FOR SERVICES SUBJECT TO COMPANY WITHHOLDING (18% of box 43 for 0.30)'),
+            53: _('ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (18% of box 44)'),
+            54: _('ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (16% of box 45)'),
+            55: _('TOTAL ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (Sum of boxes 53+54)'),
+            56: _('ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (18% of box 47) '
+                  '(Rule No. 08-10 and 05-19)'),
+            57: _('ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (16% of box 48) '
+                  '(Rule No. 08-10 and 05-19)'),
+            58: _('TOTAL FOR ASSETS SUBJECT TO WITHHOLDING PROOF OF PURCHASE (Sum of boxes 56+57)'),
+            59: _('TOTAL ITBIS RECEIVED FOR SALE'),
+            60: _('TAX TO PAY (Sum of boxes 50+51+52+55+58+59)'),
+            61: _('COMPUTABLE PAYMENTS ON ACCOUNT'),
+            62: _('DIFFERENCE TO PAY (If the value of boxes 60-61 is Positive)'),
+            63: _('NEW BALANCE IN FAVOR (If the value of boxes 60-61 is Negative)'),
+            64: _('SURCHARGES'),
+            65: _('COMPENSATION INTEREST'),
+            66: _('SANCTIONS'),
+            67: _('TOTAL TO PAY (Sum of boxes 62+64+65+66)'),
+            68: _('GRAND TOTAL (Sum of boxes 38+67)')
+        }
+
+        for key, value in names.items():
+            report_lines.update({
+                key: {
+                    'name': value,
+                    'sequence': key,
+                    'dgii_report_id': self.id,
+                    'section': '6',
+                    'coefficient': 0,
+                    'quantity': 0,
+                    'local_purchase': 0,
+                    'services': 0,
+                    'imports': 0,
+                    'amount': 0,
+                }
+            })
+
+        # Titles
+        report_lines.update({
+            'IT1II': {
+                'name': _('II. INCOME FROM OPERATIONS'),
+                'display_type': 'line_section',
+                'sequence': 0,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1IIA': {
+                'name': _('II.A NOT TAXED'),
+                'display_type': 'line_section',
+                'sequence': 2,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1IIB': {
+                'name': _('II.B TAXED'),
+                'display_type': 'line_section',
+                'sequence': 10,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1III': {
+                'name': _('III. SETTLEMENT'),
+                'display_type': 'line_section',
+                'sequence': 16,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1IV': {
+                'name': _('IV. PENALTIES'),
+                'display_type': 'line_section',
+                'sequence': 35,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1V': {
+                'name': _('V. AMOUNT TO PAY'),
+                'display_type': 'line_section',
+                'sequence': 38,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1VA': {
+                'name': _('A. RETAINED / ITBIS PERCEIVED'),
+                'display_type': 'line_section',
+                'sequence': 39,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1B': {
+                'name': _('B. PENALTIES'),
+                'display_type': 'line_section',
+                'sequence': 64,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+            'IT1C': {
+                'name': _('C. AMOUNT TO PAY'),
+                'display_type': 'line_section',
+                'sequence': 67,
+                'dgii_report_id': self.id,
+                'section': '6'
+            },
+        })
+
+        return report_lines
+    
+    def _get_move_lines_it1(self, box):
+        domain = [
+            ('move_id.state', '=', 'posted'),
+            ('date', '>=', self.start_date),
+            ('date', '<=', self.end_date),
+            ('balance', '>', 0)
+        ]
+        domain += [('account_id.box_attachment_a', '=', box)] if 'A' in box else [('account_id.box_it1', '=', box)]
+
+        return self.env['account.move.line'].search(domain)
+
+    # IT1
+    def _compute_attachment_a_and_it1_data(self):
+
+        self.env['dgii.reports.it1.line'].search([('dgii_report_id', 'in', self.ids)]).unlink()
+
+        for rec in self:
+
+            attachment_a_lines = rec._get_attachment_a_dictionary()
+            it1_lines = rec._get_it1_dictionary()
+            sale_invoices = self.env['dgii.reports.sale.line'].search([('dgii_report_id', '=', rec.id)])
+            purchase_invoices = self.env['dgii.reports.purchase.line'].search([('dgii_report_id', '=', rec.id)])
+            box_ncf_type = {
+                'fiscal': 1,
+                'consumer': 2,
+                'debit_note': 3,
+                'credit_note': 4,
+                'unique': 5,
+                'special': 6,
+                'governmental': 7,
+                'export': 8,
+            }
+            box_income_type = {
+                '01': 20,
+                '02': 21,
+                '03': 22,
+                '04': 23,
+                '05': 24,
+                '06': 25
+            }
+            month = rec.start_date.month - 1
+            year = rec.start_date.year
+
+            month = month % 12
+            if month == 0:
+                month = 12
+                year -= 1
+
+            datetime_month_before = rec.start_date.replace(month=month, year=year)
+            previous_report = self.search([
+                    ('company_id', '=', rec.company_id.id),
+                    ('state', 'in', ('sent', 'generated')),
+                    ('name', '=', '{}/{}'.format(datetime_month_before.month, datetime_month_before.year))
+                ],
+                limit=1
+            )
+
+            for sale_invoice in sale_invoices:
+
+                # AII
+                if sale_invoice.invoice_id.l10n_latam_document_type_id and \
+                        sale_invoice.invoice_id.move_type != 'out_refund':
+                    ncf_type = sale_invoice.invoice_id.l10n_latam_document_type_id.l10n_do_ncf_type
+                    attachment_a_lines[box_ncf_type[ncf_type]]['quantity'] += 1
+                    attachment_a_lines[box_ncf_type[ncf_type]]['amount'] += \
+                        sale_invoice.invoice_id.amount_untaxed_signed
+
+                elif sale_invoice.invoice_id.move_type == 'out_refund' and \
+                        sale_invoice.invoice_id.debit_note_count == 0:
+                    attachment_a_lines[box_ncf_type['credit_note']]['quantity'] += 1
+                    attachment_a_lines[box_ncf_type['credit_note']]['amount'] += \
+                        sale_invoice.invoice_id.amount_untaxed_signed
+
+                elif sale_invoice.invoice_id.debit_note_count > 0:
+                    attachment_a_lines[box_ncf_type['debit_note']]['quantity'] += 1
+                    attachment_a_lines[box_ncf_type['debit_note']]['amount'] += \
+                        sale_invoice.invoice_id.amount_untaxed_signed
+
+                # AIII
+                attachment_a_lines[12]['amount'] += sale_invoice.cash \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.cash * -1
+                attachment_a_lines[13]['amount'] += sale_invoice.bank \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bank * -1
+                attachment_a_lines[14]['amount'] += sale_invoice.card \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.card * -1
+                attachment_a_lines[15]['amount'] += sale_invoice.credit \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.credit * -1
+                attachment_a_lines[16]['amount'] += sale_invoice.bond \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bond * -1
+                attachment_a_lines[17]['amount'] += sale_invoice.swap \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.swap * -1
+                attachment_a_lines[18]['amount'] += sale_invoice.others \
+                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.others * -1
+
+                # AIV
+                attachment_a_lines[box_income_type[sale_invoice.invoice_id.l10n_do_income_type]]['amount'] += \
+                    sale_invoice.invoiced_amount
+
+                # AVIII
+                if sale_invoice.invoice_id.move_type == 'out_refund':
+
+                    date_30_days_before = sale_invoice.invoice_id.date + timedelta(days=-30)
+
+                    origin = self.env['account.move'].search([
+                        ('l10n_do_fiscal_number', '=', sale_invoice.invoice_id.l10n_do_origin_ncf),
+                        ('date', '<', date_30_days_before)
+                    ], limit=1)
+
+                    attachment_a_lines[43]['amount'] += abs(sale_invoice.invoiced_amount) if origin else 0
+
+                #IT1-II.B
+
+                for invoice_line in sale_invoice.invoice_id._get_tax_line_ids().filtered(
+                        lambda tl: 'ITBIS' in tl.tax_line_id.tax_group_id.name):
+
+                    tax_base_amount = invoice_line.tax_base_amount \
+                        if sale_invoice.invoice_id.move_type != 'out_refund' else invoice_line.tax_base_amount * -1
+
+                    if invoice_line.tax_line_id.amount == 18.0:
+                        it1_lines[11]['amount'] += tax_base_amount
+                    elif invoice_line.tax_line_id.amount == 16.0:
+                        it1_lines[12]['amount'] += tax_base_amount
+                    elif invoice_line.tax_line_id.amount == 9.0:
+                        it1_lines[13]['amount'] += tax_base_amount
+                    elif invoice_line.tax_line_id.amount == 8.0:
+                        it1_lines[14]['amount'] += tax_base_amount
+
+            for purchase_invoice in purchase_invoices:
+
+                # AVIII
+                if purchase_invoice.invoice_id.l10n_latam_document_type_id.l10n_do_ncf_type in ('special', 'e-special'):
+                    attachment_a_lines[44]['amount'] += purchase_invoice.invoice_id.amount_untaxed
+
+                # IXc
+                for invoice_line in purchase_invoice.invoice_id.invoice_line_ids:
+                    line_itbis_taxes = invoice_line.tax_ids.filtered(
+                        lambda t: t.purchase_tax_type == 'itbis'
+                    )
+                    itbis_taxes_data = line_itbis_taxes.compute_all(
+                        price_unit=invoice_line.price_unit,
+                        quantity=invoice_line.quantity,
+                    )
+                    if not invoice_line.product_id or invoice_line.product_id.type == 'service':
+                        attachment_a_lines[53]['services'] += sum([t["amount"] for t in itbis_taxes_data["taxes"]])
+                    else:
+                        attachment_a_lines[53]['local_purchase'] += sum([t["amount"] for t in itbis_taxes_data["taxes"]])
+
+
+            # AII
+            attachment_a_line_9 = rec._get_move_lines_it1('A9')
+            attachment_a_line_10 = rec._get_move_lines_it1('A10')
+            attachment_a_lines[9]['amount'] = abs(sum(attachment_a_line_9.mapped('balance')))
+            attachment_a_lines[9]['quantity'] = len(attachment_a_line_9)
+            attachment_a_lines[10]['amount'] = abs(sum(attachment_a_line_10.mapped('balance')))
+            attachment_a_lines[10]['quantity'] = len(attachment_a_line_10)
+
+            attachment_a_lines[11]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(1, 11)])
+            attachment_a_lines[11]['quantity'] = sum([attachment_a_lines[box]['quantity'] for box in range(1, 11)])
+
+            # AIII
+            attachment_a_lines[19]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(12, 19)])
+
+            # AIV
+            attachment_a_lines[26]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(20, 26)])
+
+            # AV
+            attachment_a_lines[27]['amount'] = abs(sum(rec._get_move_lines_it1('A27').mapped('balance')))
+            attachment_a_lines[28]['amount'] = abs(sum(rec._get_move_lines_it1('A28').mapped('balance')))
+            attachment_a_lines[29]['amount'] = abs(sum(rec._get_move_lines_it1('A29').mapped('balance')))
+            attachment_a_lines[30]['amount'] = abs(sum(rec._get_move_lines_it1('A30').mapped('balance')))
+            attachment_a_lines[31]['amount'] = abs(sum(rec._get_move_lines_it1('A31').mapped('balance')))
+            attachment_a_lines[32]['amount'] = abs(sum(rec._get_move_lines_it1('A32').mapped('balance')))
+            attachment_a_lines[33]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(27, 33)])
+
+            # AVI
+            attachment_a_lines[34]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A34').mapped('balance')))
+            attachment_a_lines[34]['amount'] = attachment_a_lines[34]['local_purchase'] * 0.10
+            attachment_a_lines[35]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A35').mapped('balance')))
+            # TODO: missing boxes: attachment_a_lines[35]['amount'], attachment_a_lines[39]['amount'] and
+            #  attachment_a_lines[40]['amount']
+            # attachment_a_lines[35]['amount'] =
+            attachment_a_lines[36]['amount'] = abs(sum(rec._get_move_lines_it1('A36').mapped('balance')))
+            attachment_a_lines[37]['local_purchase'] = attachment_a_lines[34]['local_purchase'] + \
+                                                       attachment_a_lines[35]['local_purchase']
+            attachment_a_lines[37]['amount'] = attachment_a_lines[34]['amount'] + \
+                                               attachment_a_lines[35]['amount'] + \
+                                               attachment_a_lines[36]['amount']
+            attachment_a_lines[38]['amount'] = attachment_a_lines[37]['local_purchase'] - \
+                                               attachment_a_lines[37]['amount']
+            # AVII
+            attachment_a_lines[39]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A39').mapped('balance')))
+            # attachment_a_lines[39]['amount'] =
+            attachment_a_lines[40]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A40').mapped('balance')))
+            # attachment_a_lines[40]['amount'] =
+            attachment_a_lines[41]['local_purchase'] = attachment_a_lines[39]['local_purchase'] + \
+                                                       attachment_a_lines[40]['local_purchase']
+            attachment_a_lines[41]['amount'] = attachment_a_lines[39]['amount'] + attachment_a_lines[40]['amount']
+            attachment_a_lines[42]['amount'] = attachment_a_lines[41]['local_purchase'] - \
+                                               attachment_a_lines[41]['amount']
+
+            # AIXa
+            attachment_a_lines[45]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A45c').mapped('balance')))
+            attachment_a_lines[46]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A46c').mapped('balance')))
+            attachment_a_lines[47]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A47c').mapped('balance')))
+            attachment_a_lines[48]['local_purchase'] = sum([
+                attachment_a_lines[box]['local_purchase'] for box in range(45, 48)])
+
+            attachment_a_lines[45]['services'] = abs(sum(rec._get_move_lines_it1('A45s').mapped('balance')))
+            attachment_a_lines[46]['services'] = abs(sum(rec._get_move_lines_it1('A46s').mapped('balance')))
+            attachment_a_lines[47]['services'] = abs(sum(rec._get_move_lines_it1('A47s').mapped('balance')))
+            attachment_a_lines[48]['services'] = sum([
+                attachment_a_lines[box]['services'] for box in range(45, 48)])
+
+            attachment_a_lines[45]['imports'] = abs(sum(rec._get_move_lines_it1('A45i').mapped('balance')))
+            attachment_a_lines[46]['imports'] = abs(sum(rec._get_move_lines_it1('A46i').mapped('balance')))
+            attachment_a_lines[47]['imports'] = abs(sum(rec._get_move_lines_it1('A47i').mapped('balance')))
+            attachment_a_lines[48]['imports'] = sum([
+                attachment_a_lines[box]['imports'] for box in range(45, 48)])
+
+            attachment_a_lines[45]['amount'] = attachment_a_lines[45]['local_purchase'] + \
+                                               attachment_a_lines[45]['services'] + \
+                                               attachment_a_lines[45]['imports']
+
+            attachment_a_lines[46]['amount'] = attachment_a_lines[46]['local_purchase'] + \
+                                               attachment_a_lines[46]['services'] + \
+                                               attachment_a_lines[46]['imports']
+
+            attachment_a_lines[47]['amount'] = attachment_a_lines[47]['local_purchase'] + \
+                                               attachment_a_lines[47]['services'] + \
+                                               attachment_a_lines[47]['imports']
+
+            attachment_a_lines[48]['amount'] = attachment_a_lines[48]['local_purchase'] + \
+                                               attachment_a_lines[48]['services'] + \
+                                               attachment_a_lines[48]['imports']
+
+            # AIXb
+            attachment_a_lines[49]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A49c').mapped('balance')))
+            attachment_a_lines[50]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A50c').mapped('balance')))
+            attachment_a_lines[51]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A51c').mapped('balance')))
+            attachment_a_lines[52]['local_purchase'] = sum([
+                attachment_a_lines[box]['local_purchase'] for box in range(49, 53)])
+
+            attachment_a_lines[49]['services'] = abs(sum(rec._get_move_lines_it1('A49s').mapped('balance')))
+            attachment_a_lines[50]['services'] = abs(sum(rec._get_move_lines_it1('A50s').mapped('balance')))
+            attachment_a_lines[51]['services'] = abs(sum(rec._get_move_lines_it1('A51s').mapped('balance')))
+            attachment_a_lines[52]['services'] = sum([
+                attachment_a_lines[box]['services'] for box in range(49, 53)])
+
+            attachment_a_lines[49]['imports'] = abs(sum(rec._get_move_lines_it1('A49i').mapped('balance')))
+            attachment_a_lines[50]['imports'] = abs(sum(rec._get_move_lines_it1('A50i').mapped('balance')))
+            attachment_a_lines[51]['imports'] = abs(sum(rec._get_move_lines_it1('A51i').mapped('balance')))
+            attachment_a_lines[52]['imports'] = sum([
+                attachment_a_lines[box]['imports'] for box in range(49, 53)])
+
+            attachment_a_lines[49]['amount'] = attachment_a_lines[49]['local_purchase'] + \
+                                               attachment_a_lines[49]['services'] + \
+                                               attachment_a_lines[49]['imports']
+
+            attachment_a_lines[50]['amount'] = attachment_a_lines[50]['local_purchase'] + \
+                                               attachment_a_lines[50]['services'] + \
+                                               attachment_a_lines[50]['imports']
+
+            attachment_a_lines[51]['amount'] = attachment_a_lines[51]['local_purchase'] + \
+                                               attachment_a_lines[51]['services'] + \
+                                               attachment_a_lines[51]['imports']
+
+            attachment_a_lines[52]['amount'] = attachment_a_lines[52]['local_purchase'] + \
+                                               attachment_a_lines[52]['services'] + \
+                                               attachment_a_lines[52]['imports']
+            # AIXc
+            attachment_a_lines[53]['imports'] = abs(sum(rec._get_move_lines_it1('A53').mapped('balance')))
+            attachment_a_lines[53]['amount'] = attachment_a_lines[53]['local_purchase'] + \
+                                               attachment_a_lines[53]['services'] + \
+                                               attachment_a_lines[53]['imports']
+
+            # IT1II
+            it1_lines[1]['amount'] = attachment_a_lines[11]['amount']
+
+            # IT1IIA
+            it1_lines[2]['amount'] = abs(sum(rec._get_move_lines_it1('I2').mapped('balance')))
+            it1_lines[3]['amount'] = abs(sum(rec._get_move_lines_it1('I3').mapped('balance')))
+            it1_lines[4]['amount'] = abs(sum(rec._get_move_lines_it1('I4').mapped('balance')))
+            it1_lines[5]['amount'] = abs(sum(rec._get_move_lines_it1('I5').mapped('balance')))
+            it1_lines[6]['amount'] = attachment_a_lines[38]['amount']
+            it1_lines[7]['amount'] = attachment_a_lines[42]['amount']
+            it1_lines[8]['amount'] = abs(sum(rec._get_move_lines_it1('I8').mapped('balance')))
+            it1_lines[9]['amount'] = sum([it1_lines[box]['amount'] for box in range(2, 9)])
+
+            # IT1IIB
+            it1_lines[10]['amount'] = it1_lines[1]['amount'] - it1_lines[9]['amount']
+            it1_lines[15]['amount'] = abs(sum(rec._get_move_lines_it1('I15').mapped('balance')))
+
+            attachment_a_lines[54]['coefficient'] = (it1_lines[2]['amount'] +
+                                                     it1_lines[5]['amount'] +
+                                                     it1_lines[10]['amount']) / (it1_lines[1]['amount']) \
+                if it1_lines[1]['amount'] != 0 else 0
+
+            attachment_a_lines[55]['local_purchase'] = attachment_a_lines[53]['local_purchase'] * \
+                                                       attachment_a_lines[54]['coefficient']
+            attachment_a_lines[55]['services'] = attachment_a_lines[53]['services'] * \
+                                                 attachment_a_lines[54]['coefficient']
+            attachment_a_lines[55]['imports'] = attachment_a_lines[53]['imports'] * \
+                                                attachment_a_lines[54]['coefficient']
+            attachment_a_lines[55]['amount'] = attachment_a_lines[53]['amount'] * attachment_a_lines[54]['coefficient']
+
+            attachment_a_lines[56]['local_purchase'] = attachment_a_lines[52]['local_purchase'] + \
+                                                       attachment_a_lines[55]['local_purchase']
+            attachment_a_lines[56]['services'] = attachment_a_lines[52]['services'] + attachment_a_lines[55]['services']
+            attachment_a_lines[56]['imports'] = attachment_a_lines[52]['imports'] + attachment_a_lines[55]['imports']
+            attachment_a_lines[56]['amount'] = attachment_a_lines[52]['amount'] + attachment_a_lines[55]['amount']
+
+            # IT1III
+            it1_lines[16]['amount'] = it1_lines[11]['amount'] * 0.18
+            it1_lines[17]['amount'] = it1_lines[12]['amount'] * 0.16
+            it1_lines[18]['amount'] = it1_lines[13]['amount'] * 0.09
+            it1_lines[19]['amount'] = it1_lines[14]['amount'] * 0.08
+            it1_lines[20]['amount'] = it1_lines[15]['amount'] * 0.18
+            it1_lines[21]['amount'] = sum([it1_lines[box]['amount'] for box in range(16, 21)])
+            it1_lines[22]['amount'] = attachment_a_lines[56]['local_purchase']
+            it1_lines[23]['amount'] = attachment_a_lines[56]['services']
+            it1_lines[24]['amount'] = attachment_a_lines[56]['imports']
+            it1_lines[25]['amount'] = sum([it1_lines[box]['amount'] for box in range(22, 25)])
+            it1_lines[26]['amount'] = it1_lines[21]['amount'] - it1_lines[25]['amount'] \
+                if it1_lines[25]['amount'] < it1_lines[21]['amount'] else 0
+            it1_lines[27]['amount'] = abs(it1_lines[21]['amount'] - it1_lines[25]['amount']) \
+                if it1_lines[25]['amount'] > it1_lines[21]['amount'] else 0
+            it1_lines[28]['amount'] = abs(sum(rec._get_move_lines_it1('I28').mapped('balance')))
+
+            previous_it1_line_34_obj = self.env['dgii.reports.it1.line'].search([
+                ('dgii_report_id', '=', previous_report.id if previous_report else 0),
+                ('sequence', '=', 34),
+                ('section', '=', '6'),
+            ])
+
+            it1_lines[29]['amount'] = previous_it1_line_34_obj.amount if previous_it1_line_34_obj else 0
+            it1_lines[30]['amount'] = attachment_a_lines[33]['amount']
+            it1_lines[31]['amount'] = abs(sum(rec._get_move_lines_it1('I31').mapped('balance')))
+            it1_lines[32]['amount'] = abs(sum(rec._get_move_lines_it1('I32').mapped('balance')))
+
+            it1_line_33_34 = it1_lines[26]['amount'] - \
+                          it1_lines[28]['amount'] - \
+                          it1_lines[29]['amount'] - \
+                          it1_lines[30]['amount'] - \
+                          it1_lines[31]['amount'] - \
+                          it1_lines[32]['amount']
+
+            it1_lines[33]['amount'] = it1_line_33_34 if it1_line_33_34 > 0 else 0
+            it1_lines[34]['amount'] = it1_line_33_34 \
+                if it1_line_33_34 < 0 else sum([it1_lines[box]['amount'] for box in range(27, 33)])
+
+            # IT1IV
+            it1_lines[35]['amount'] = abs(sum(rec._get_move_lines_it1('I35').mapped('balance')))
+            it1_lines[36]['amount'] = abs(sum(rec._get_move_lines_it1('I36').mapped('balance')))
+            it1_lines[37]['amount'] = abs(sum(rec._get_move_lines_it1('I37').mapped('balance')))
+
+            # IT1V
+            it1_lines[38]['amount'] = it1_lines[33]['amount'] + \
+                                      it1_lines[35]['amount'] + \
+                                      it1_lines[36]['amount'] + \
+                                      it1_lines[37]['amount']
+
+            # IT1A
+            it1_lines[39]['amount'] = abs(sum(rec._get_move_lines_it1('I39').mapped('balance')))
+            it1_lines[40]['amount'] = abs(sum(rec._get_move_lines_it1('I40').mapped('balance')))
+            it1_lines[41]['amount'] = it1_lines[39]['amount'] + it1_lines[40]['amount']
+            it1_lines[42]['amount'] = abs(sum(rec._get_move_lines_it1('I42').mapped('balance')))
+            it1_lines[43]['amount'] = abs(sum(rec._get_move_lines_it1('I43').mapped('balance')))
+            it1_lines[44]['amount'] = abs(sum(rec._get_move_lines_it1('I44').mapped('balance')))
+            it1_lines[45]['amount'] = abs(sum(rec._get_move_lines_it1('I45').mapped('balance')))
+            it1_lines[46]['amount'] = it1_lines[44]['amount'] + it1_lines[45]['amount']
+            it1_lines[47]['amount'] = abs(sum(rec._get_move_lines_it1('I47').mapped('balance')))
+            it1_lines[48]['amount'] = abs(sum(rec._get_move_lines_it1('I48').mapped('balance')))
+            it1_lines[49]['amount'] = it1_lines[47]['amount'] + it1_lines[48]['amount']
+            it1_lines[50]['amount'] = it1_lines[41]['amount'] * 0.18
+            it1_lines[51]['amount'] = it1_lines[42]['amount'] * 0.18
+            it1_lines[52]['amount'] = it1_lines[43]['amount'] * 0.18
+            it1_lines[53]['amount'] = it1_lines[44]['amount'] * 0.18
+            it1_lines[54]['amount'] = it1_lines[45]['amount'] * 0.16
+            it1_lines[55]['amount'] = it1_lines[53]['amount'] + it1_lines[54]['amount']
+            it1_lines[56]['amount'] = it1_lines[47]['amount'] * 0.18
+            it1_lines[57]['amount'] = it1_lines[48]['amount'] * 0.16
+            it1_lines[58]['amount'] = it1_lines[56]['amount'] + it1_lines[57]['amount']
+            it1_lines[59]['amount'] = abs(sum(rec._get_move_lines_it1('I59').mapped('balance')))
+            it1_lines[60]['amount'] = it1_lines[50]['amount'] + \
+                                      it1_lines[51]['amount'] + \
+                                      it1_lines[52]['amount'] + \
+                                      it1_lines[55]['amount'] + \
+                                      it1_lines[58]['amount'] + \
+                                      it1_lines[59]['amount']
+            it1_lines[61]['amount'] = abs(sum(rec._get_move_lines_it1('I61').mapped('balance')))
+            it1_lines[62]['amount'] = abs(it1_lines[60]['amount'] - it1_lines[61]['amount']) \
+                if it1_lines[60]['amount'] > it1_lines[61]['amount'] else 0
+            it1_lines[63]['amount'] = abs(it1_lines[60]['amount'] - it1_lines[61]['amount']) \
+                if it1_lines[60]['amount'] < it1_lines[61]['amount'] else 0
+            it1_lines[64]['amount'] = abs(sum(rec._get_move_lines_it1('I64').mapped('balance')))
+            it1_lines[65]['amount'] = abs(sum(rec._get_move_lines_it1('I65').mapped('balance')))
+            it1_lines[66]['amount'] = abs(sum(rec._get_move_lines_it1('I66').mapped('balance')))
+            it1_lines[67]['amount'] = it1_lines[62]['amount'] + \
+                                      it1_lines[64]['amount'] + \
+                                      it1_lines[65]['amount'] + \
+                                      it1_lines[66]['amount']
+            it1_lines[68]['amount'] = it1_lines[38]['amount'] + it1_lines[67]['amount']
+
+            self.env['dgii.reports.it1.line'].create(attachment_a_lines.values())
+            self.env['dgii.reports.it1.line'].create(it1_lines.values())
     
     def _generate_report(self):
         # Drop 607 NCF Operations for recompute
@@ -1090,6 +1848,7 @@ class DgiiReport(models.Model):
         self._compute_607_data()
         self._compute_608_data()
         self._compute_609_data()
+        self._compute_attachment_a_and_it1_data()
         self.state = 'generated'
 
     
@@ -1343,3 +2102,66 @@ class DgiiExteriorReportLine(models.Model):
             action['views'] = form_view
         action['res_id'] = self.invoice_id.id
         return action
+
+class DgiiReportsIt1(models.Model):
+    _name = 'dgii.reports.it1.line'
+    _description = "Attached a and IT-1 Report"
+    _order = 'sequence,display_type,id'
+
+    name = fields.Char(
+        string='Name',
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+    )
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports',
+        ondelete='cascade',
+    )
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        related='dgii_report_id.currency_id'
+    )
+    section = fields.Selection(
+        string='section',
+        selection=[
+            # Attachment a
+            ('1', 'Section 1'),
+            ('2', 'Section 2)'),
+            ('AVI', 'Section 3'),
+            ('AVIII', 'Section 4'),
+            ('AIX', 'Section 5'),
+
+            # IT-1
+            ('IT1', 'Section 6'),
+        ],
+        required=False,
+    )
+    coefficient = fields.Float(
+        string='%',
+    )
+    quantity = fields.Integer(
+        string='QUANTITY'
+    )
+    local_purchase = fields.Monetary(
+        string="LOCAL PURCHASE",
+    )
+    services = fields.Monetary(
+        string="SERVICES",
+    )
+    imports = fields.Monetary(
+        string="IMPORTS",
+    )
+    amount = fields.Monetary(
+        string="AMOUNT",
+    )
+    display_type = fields.Selection(
+        string="Display type",
+        selection=[
+            ('line_section', "Section"),
+            ('line_note', "Note"),
+        ],
+        default=False,
+        help="Technical field for UX purpose.",
+    )
