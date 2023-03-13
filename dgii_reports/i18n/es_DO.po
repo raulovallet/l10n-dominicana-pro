@@ -4,30 +4,38 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-28 18:13+0000\n"
-"PO-Revision-Date: 2019-03-28 14:20-0400\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2023-03-10 22:53+0000\n"
+"PO-Revision-Date: 2023-03-13 12:40-0400\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Language: es_DO\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. module: dgii_reports
-#: model:ir.model.fields,help:dgii_reports.field_account_invoice__fiscal_status
+#: model:ir.model.fields,help:dgii_reports.field_account_bank_statement_line__fiscal_status
+#: model:ir.model.fields,help:dgii_reports.field_account_move__fiscal_status
+#: model:ir.model.fields,help:dgii_reports.field_account_payment__fiscal_status
 msgid ""
-"* The 'Grey' status means ...\n"
-"* The 'Green' status means ...\n"
-"* The 'Red' status means ...\n"
-"* The blank status means that the invoice have not been included in a report."
+"* The 'Green' status means the invoice was sent to the DGII.\n"
+"* The 'Red' status means the invoice is in a DGII report but has not yet been sent "
+"to the DGII.\n"
+"* The 'Grey' status means Has not yet been reported or was partially reported."
 msgstr ""
+"* El estado ‘Verde’ significa que la factura fue enviada a la DGII.\n"
+"* El estado 'Rojo' significa que la factura está en un informe de la DGII pero aún "
+"no ha sido enviada a la DGII.\n"
+"* El estado ‘Gris’ significa que aún no se ha informado o se ha informado "
+"parcialmente."
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
 msgid "606"
 msgstr ""
 
@@ -41,11 +49,6 @@ msgstr "Archivo 606"
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
 msgid "607"
 msgstr ""
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "607 Reported Operations by NCF Type"
-msgstr "Operaciones Reportadas en el 607 por Tipo de NCF"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__sale_binary
@@ -73,124 +76,245 @@ msgid "609 file"
 msgstr "Archivo 609"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A08 - Otras Operaciones (Positivas)"
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "<span class=\"fa fa-lightbulb-o fa-lg\" title=\"Info\" aria-label=\"Info\"/>"
 msgstr ""
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A09 - Otras Operaciones (Negativas)"
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
+msgid "<span class=\"fa fa-warning fa-lg\" title=\"Warning\" aria-label=\"Warning\"/>"
 msgstr ""
+"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-"
+"label=\"Advertencia\"/>"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A19 - Ingresos por Operaciones (No Financieros)"
-msgstr ""
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "A) NON-DEDUCTIBLE (Carried to Cost/Expense)"
+msgstr "A) NO DEDUCIBLE (Llevado al Costo/Gasto)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A20 - Ingresos Financieros"
-msgstr ""
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "A. RETAINED / ITBIS PERCEIVED"
+msgstr "A. ITBIS RETENIDO / ITBIS PERCIBIDO"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A21 - Ingresos Extraordinarios"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a10
+msgid "A10 - OTHER OPERATIONS (NEGATIVE)"
+msgstr "A10 - OTRAS OPERACIONES (NEGATIVAS)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A22 - Ingresos por Arrendamientos"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a27
+msgid "A27 - COMPUTABLE PAYMENTS FOR WITHHOLDINGS (Rule No. 08-04)"
+msgstr "A27 - PAGOS COMPUTABLES POR RETENCIONES (Norma No. 08-04)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A23 - Ingresos por Ventas de Activos Depreciables"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a28
+msgid ""
+"A28 - COMPUTABLE PAYMENTS FOR SALES OF AIR TRANSPORTATION TICKETS (Rule No. 02-05) "
+"(BSP-IATA)"
 msgstr ""
+"A28 - PAGOS COMPUTABLES POR VENTAS DE PASAJES DE TRANSPORTE AÉREO (Norma No. 02-05) "
+"(BSP-IATA)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A24 - Otros Ingresos"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a29
+msgid "A29 - COMPUTABLE PAYMENTS FOR OTHER WITHHOLDINGS (Rule No. 02-05)"
+msgstr "A29 - PAGOS COMPUTABLES POR OTRAS RETENCIONES (Norma No. 02-05)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A26 - ITBIS Pagado en Importaciones"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a30
+msgid "A30 - COMPUTABLE PAYMENTS FOR SALES OF ACCOMMODATION AND OCCUPANCY PACKAGES"
+msgstr "A30 - PAGOS COMPUTABLES POR VENTAS DE PAQUETES DE ALOJAMIENTO Y OCUPACIÓN"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A27 - ITBIS Pagado en Importaciones para la Producción de Bienes Exentos"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a31
+msgid "A31 - CREDIT FOR WITHHOLDING BY STATE ENTITIES"
+msgstr "A31 - CRÉDITO POR RETENCIÓN REALIZADA POR ENTIDADES DEL ESTADO"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A29 - ITBIS en Bienes o Servicios sujetos a Proporcionalidad"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a32
+msgid "A32 - COMPUTABLE PAYMENTS FOR ITBIS PERCEIVED"
+msgstr "A32 - PAGOS COMPUTABLES POR ITBIS PERCIBIDO"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A30 - ITBIS en Importaciones sujetos a Proporcionalidad"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a34
+msgid "A34 - TECHNICAL DIRECTION (Art. 4 Norm 07-07)"
+msgstr "A34 - DIRECCIÓN TÉCNICA (Art. 4 Norma 07-07)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A34 - Pagos Computables por Retenciones (N08-04)"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a35
+msgid "A35 - ADMINISTRATION CONTRACT (Art. 4 Paragraph I, Norm 07-07)"
+msgstr "A35 - CONTRATO DE ADMINISTRACIÓN (Art. 4 Párrafo I, Norma 07-07)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A35 - Pagos Computables por Boletos Aéreos (N02-05) (BSP-IATA)"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a36
+msgid "A36 - CONSULTING / FEES"
+msgstr "A35 - ASESORIAS / HONORARIOS"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A36 - Pagos Computables por otras Retenciones (N02-05)"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a39
+msgid "A39 - SALES OF GOODS ON COMMISSION"
+msgstr "A39 - VENTAS DE BIENES POR COMISIÓN"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A37 - Pagos Computables por Paquetes de Alojamiento y Ocupación"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a40
+msgid "A40 - SALES OF SERVICES IN THE NAME OF THIRD PARTIES"
+msgstr "A40 - VENTAS DE SERVICIOS EN NOMBRE DE TERCEROS"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A38 - Crédito por retención realizada por Entidades del Estado"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a45c
+msgid "A45c - OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES (local purchase)"
 msgstr ""
+"A45c - EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS (COMPRAS LOCALES)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A41 - Dirección Técnica (N07-07)"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a45i
+msgid "A45i - OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES (Imports)"
 msgstr ""
+"A45i - EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS (IMPORTACIONES)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A42 - Contrato de Administración (N07-07)"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a45s
+msgid "A45s - OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES (Services)"
 msgstr ""
+"A45s - EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS (SERVICIOS)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A43 - Asesorías / Honorarios"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a46c
+msgid "A46c - TO INCLUDE IN ASSETS (CATEGORY I) (local purchase)"
+msgstr "A46c - A INCLUIR EN ACTIVOS (CATEGORÍA I) (COMPRAS LOCALES)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A46 - Ventas de Bienes en Concesión"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a46i
+msgid "A46i - TO INCLUDE IN ASSETS (CATEGORY I) (Imports)"
+msgstr "A46i - A INCLUIR EN ACTIVOS (CATEGORÍA I) (IMPORTACIONES)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A47 - Ventas de Servicios en Nombre de Terceros"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a46s
+msgid "A46s - TO INCLUDE IN ASSETS (CATEGORY I) (Services)"
+msgstr "A46s - A INCLUIR EN ACTIVOS (CATEGORÍA I) (SERVICIOS)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A50 - Total Notas de Crédito emitidas con más de 30 días"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a47c
+msgid "A47c - OTHER NON-DEDUCTIBLE VAT PAID (local purchase)"
+msgstr "A47c -OTROS ITBIS PAGADOS NO DEDUCIBLES (COMPRAS LOCALES)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "A51 - ITBIS llevado al Costo"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a47i
+msgid "A47i - OTHER NON-DEDUCTIBLE VAT PAID (Imports)"
+msgstr "A47i -OTROS ITBIS PAGADOS NO DEDUCIBLES (IMPORTACIONES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a47s
+msgid "A47s - OTHER NON-DEDUCTIBLE VAT PAID (Services)"
+msgstr "A47s -OTROS ITBIS PAGADOS NO DEDUCIBLES (SERVICIOS)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a49c
+msgid "A49c - IN THE PRODUCTION AND/OR SALE OF EXPORTED GOODS (local purchase)"
+msgstr "A49c - EN LA PRODUCCIÓN Y/O VENTA DE BIENES EXPORTADOS (COMPRAS LOCALES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a49i
+msgid "A49i - IN THE PRODUCTION AND/OR SALE OF EXPORTED GOODS (Imports)"
+msgstr "A49i - EN LA PRODUCCIÓN Y/O VENTA DE BIENES EXPORTADOS (IMPORTACIONES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a49s
+msgid "A49s - IN THE PRODUCTION AND/OR SALE OF EXPORTED GOODS (Services)"
+msgstr "A49s - EN LA PRODUCCIÓN Y/O VENTA DE BIENES EXPORTADOS (SERVICIOS)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a50c
+msgid "A50c - IN THE PRODUCTION AND/OR SALE OF TAXABLE GOODS (local purchase)"
+msgstr "A50c - EN LA PRODUCCIÓN Y/O VENTA DE BIENES GRAVADOS (COMPRAS LOCALES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a50i
+msgid "A50i - IN THE PRODUCTION AND/OR SALE OF TAXABLE GOODS (Imports)"
+msgstr "A50i - EN LA PRODUCCIÓN Y/O VENTA DE BIENES GRAVADOS (IMPORTACIONES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a50s
+msgid "A50s - IN THE PRODUCTION AND/OR SALE OF TAXABLE GOODS (Services)"
+msgstr "A50s - EN LA PRODUCCIÓN Y/O VENTA DE BIENES GRAVADOS (SERVICIOS)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a51c
+msgid "A51c - IN THE PROVISION OF TAXABLE SERVICE (local purchase)"
+msgstr "A51c - EN LA PRESTACIÓN DE SERVICIOS GRAVADOS (COMPRAS LOCALES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a51i
+msgid "A51i - IN THE PROVISION OF TAXABLE SERVICE (Imports)"
+msgstr "A51i - EN LA PRESTACIÓN DE SERVICIOS GRAVADOS (IMPORTACIONES)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a51s
+msgid "A51s - IN THE PROVISION OF TAXABLE SERVICE (Services)"
+msgstr "A51s - EN LA PRESTACIÓN DE SERVICIOS GRAVADOS (SERVICIOS)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a53
+msgid "A53 - ITBIS SUBJECT TO PROPORTIONALITY (Imports)"
+msgstr "A53 - ITBIS SUJETO A PROPORCIONALIDAD (Importaciones)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a9
+msgid "A9 - OTHER OPERATIONS (POSITIVE)"
+msgstr "A9 - OTRAS OPERACIONES (POSITIVAS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ADMINISTRATION AGREEMENT (Art. 4 Paragraph I, Norm 07-07)"
+msgstr "CONTRATO DE ADMINISTRACIÓN (Art. 4 Párrafo I, Norma 07-07)"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__amount
+msgid "AMOUNT"
+msgstr "MONTO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) (Rule "
+"No. 08-10 and 05-19)"
 msgstr ""
+"BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al 16%) "
+"(Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) (Rule "
+"No. 08-10 and 05-19)"
+msgstr ""
+"BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al 18%) "
+"(Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "AUTHORIZED COMPENSABLE BALANCES (Other Taxes) AND/OR REFUNDS"
+msgstr "SALDOS COMPENSABLES AUTORIZADOS (Otros Impuestos) Y/O REEMBOLSOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "AUTHORIZED COMPENSATIONS AND/OR REFUNDS"
+msgstr "COMPENSACIONES Y/O REEMBOLSOS AUTORIZADOS"
 
 #. module: dgii_reports
 #: model:ir.model,name:dgii_reports.model_account_account
@@ -198,38 +322,29 @@ msgid "Account"
 msgstr "Cuenta"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_account__account_fiscal_type
-msgid "Account Fiscal Type"
-msgstr "Tipo de Cuenta Fiscal"
-
-#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_needaction
 msgid "Action Needed"
 msgstr "Acción Necesaria"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__advance_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__advance_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__advance_itbis
 msgid "Advance Itbis"
 msgstr "ITBIS por Adelantar"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__advance_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__advance_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__advance_itbis
 msgid "Advanced ITBIS"
 msgstr "ITBIS por Adelantar"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__amount
-msgid "Amount"
-msgstr "Importe"
-
-#. module: dgii_reports
-#: code:addons/dgii_reports/models/account_invoice.py:46
-#: code:addons/dominicana-premium/dgii_reports/models/account_invoice.py:46
+#. odoo-python
+#: code:addons/dgii_reports/models/account_invoice.py:0
 #, python-format
 msgid "An invoice cannot have multiple withholding taxes."
-msgstr "Una factura no puede tener múltiples retenciones"
+msgstr "Una factura no puede tener múltiples retenciones."
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__anulation_type
@@ -242,14 +357,59 @@ msgid "Anulation type"
 msgstr "Tipo de anulación"
 
 #. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Arrendamientos"
-msgstr ""
+#: model:ir.model,name:dgii_reports.model_dgii_reports_it1_line
+msgid "Attached a and IT-1 Report"
+msgstr "Reporte Anexo A y IT-1"
+
+#. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "Attachment A (IT-1)"
+msgstr "Anexo A (IT-1)"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_account__box_attachment_a
+msgid "Attachment A (IT1)"
+msgstr "Anexo A (IT-1)"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_attachment_count
 msgid "Attachment Count"
 msgstr "Conteo de archivos adjuntos"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "B) DEDUCTIBLE"
+msgstr "B) DEDUCIBLE"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "B. PENALTIES"
+msgstr "B. PENALIDADES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "BALANCE IN FAVOR (If box 26 is negative)"
+msgstr "SALDO A FAVOR (Si el valor de las casillas 21-25 es Negativo)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "BALANCE IN PREVIOUS FAVOR"
+msgstr "SALDO A FAVOR ANTERIOR"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "BONUSES OR GIFT CERTIFICATE"
+msgstr "BONOS O CERTIFICADO DE REGALO"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__bank
@@ -260,6 +420,124 @@ msgstr "Banco"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__bond
 msgid "Bond"
 msgstr "Bonos o Certificados de Regalo"
+
+#. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "Box"
+msgstr "Casilla"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "C) ITBIS SUBJECT TO PROPORTIONALITY (Art. 349 of the Tax Code)"
+msgstr "C) ITBIS SUJETO A PROPORCIONALIDAD (Art. 349 de Código Tributario)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "C. AMOUNT TO PAY"
+msgstr "C. MONTO A PAGAR"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "CASH"
+msgstr "EFECTIVO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "CHECK / TRANSFER"
+msgstr "CHEQUE / TRANSFERENCIA"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"COEFFICIENT OF PROPORTIONALITY ((((Boxes 2 + 5 + 10 of IT1) / Box 1 of IT1)) * 100) "
+"If applicable."
+msgstr ""
+"COEFICIENTE DE PROPORCIONALIDAD ((((Casillas 2 + 5 + 10 del IT1)  / Casilla 1 del "
+"IT1)) * 100) Si aplica."
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPENSATION INTEREST"
+msgstr "INTERÉS INDEMNIZATORIO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPUTABLE PAYMENTS FOR ITBIS PERCEIVED"
+msgstr "PAGOS COMPUTABLES POR ITBIS PERCIBIDO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPUTABLE PAYMENTS FOR OTHER WITHHOLDINGS (Norm No. 02-05)"
+msgstr "PAGOS COMPUTABLES POR OTRAS RETENCIONES (Norma No. 02-05)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPUTABLE PAYMENTS FOR SALES OF ACCOMMODATION AND OCCUPANCY PACKAGES"
+msgstr "PAGOS COMPUTABLES POR VENTAS DE PAQUETES DE ALOJAMIENTO Y OCUPACIÓN"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"COMPUTABLE PAYMENTS FOR SALES OF AIR TRANSPORTATION TICKETS (Norm No. 02-05) (BSP-"
+"IATA)"
+msgstr ""
+"PAGOS COMPUTABLES POR VENTAS DE PASAJES DE TRANSPORTE AÉREO (Norma No. 02-05) (BSP-"
+"IATA)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPUTABLE PAYMENTS FOR WITHHOLDINGS (Norm No. 08-04)"
+msgstr "PAGOS COMPUTABLES POR RETENCIONES (Norma No. 08-04)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "COMPUTABLE PAYMENTS ON ACCOUNT"
+msgstr "PAGOS COMPUTABLES A CUENTA"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "CONSULTING / FEES"
+msgstr "ASESORIAS / HONORARIOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "CONSUMPTION PROOFS (02 and 32)"
+msgstr "COMPROBANTES CONSUMO (02 y 32)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "CREDIT FOR WITHHOLDING BY STATE ENTITIES"
+msgstr "CRÉDITO POR RETENCIÓN REALIZADA POR ENTIDADES DEL ESTADO"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
@@ -282,17 +560,13 @@ msgid "Card"
 msgstr "Tarjeta"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__cash
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_cash
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__cash
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__01
 msgid "Cash"
 msgstr "Efectivo"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__bank
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_bank
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__02
 msgid "Check / Transfer / Deposit"
 msgstr "Cheque / Transferencia / Depósito"
 
@@ -302,9 +576,9 @@ msgid "Code"
 msgstr "Código"
 
 #. module: dgii_reports
-#: code:addons/dgii_reports/models/account_invoice.py:20
-#: code:addons/dominicana-premium/dgii_reports/models/account_invoice.py:20
-#: sql_constraint:invoice.service.type.detail:0
+#. odoo-python
+#: code:addons/dgii_reports/models/account_invoice.py:0
+#: model:ir.model.constraint,message:dgii_reports.constraint_invoice_service_type_detail_code_unique
 #, python-format
 msgid "Code must be unique"
 msgstr "El código debe ser único"
@@ -315,9 +589,39 @@ msgid "Company"
 msgstr "Compañía"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "Consumer Invoices Summary"
-msgstr "Resumen Facturas Consumo"
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_cash
+msgid "Consumer Cash"
+msgstr "Efectivo"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_bank
+msgid "Consumer Check / Transfer / Deposit"
+msgstr "Cheque / Transferencia / Depósito"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_credit
+msgid "Consumer Credit"
+msgstr "A Crédito"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_card
+msgid "Consumer Credit Card / Debit Card"
+msgstr "Tarjeta Débito / Crédito"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_bond
+msgid "Consumer Gift certificates or vouchers"
+msgstr "Bonos o Certificados de Regalo"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_swap
+msgid "Consumer Swap"
+msgstr "Permuta"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_others
+msgid "ConsumerOther Sale Forms"
+msgstr "Otras Formas de Venta"
 
 #. module: dgii_reports
 #: model:ir.model,name:dgii_reports.model_res_partner
@@ -328,10 +632,11 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__cost_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__cost_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__cost_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__cost_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__cost_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__cost_itbis
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Cost Itbis"
 msgstr "ITBIS llevado al Costo"
 
@@ -345,9 +650,9 @@ msgstr "Código de país"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__create_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__create_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__create_uid
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__create_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__create_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__create_uid
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__create_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -357,57 +662,59 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__create_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__create_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__create_date
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__create_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__create_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__create_date
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__create_date
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__create_date
 msgid "Created on"
 msgstr "Creado en"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__credit
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_credit
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__credit
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__04
 msgid "Credit"
 msgstr "A Crédito"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__card
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_card
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__03
 msgid "Credit Card / Debit Card"
 msgstr "Tarjeta Débito / Crédito"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__credit_note
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__credit_note
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__06
 msgid "Credit Note"
 msgstr "Nota de Crédito"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__currency_id
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__currency_id
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__currency_id
 msgid "Currency"
 msgstr "Moneda"
 
 #. module: dgii_reports
-#: model:ir.ui.menu,name:dgii_reports.marcos_account_dgii_menu
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "DEBIT / CREDIT CARD"
+msgstr "TARJETA DÉBITO / CRÉDITO"
+
+#. module: dgii_reports
+#: model:ir.ui.menu,name:dgii_reports.dgii_report_menu
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "DGII"
-msgstr ""
+msgstr "DGII"
+
+#. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_dgii_reports
+msgid "DGII Report"
+msgstr "Reporte DGII"
 
 #. module: dgii_reports
 #: model:ir.model,name:dgii_reports.model_dgii_report_regenerate_wizard
 msgid "DGII Report Regenerate Wizard"
 msgstr "Wizard Regeneración Reporte DGII"
-
-#. module: dgii_reports
-#: model:ir.model,name:dgii_reports.model_dgii_reports_sale_summary
-msgid "DGII Report Sale Summary"
-msgstr "Resumen de Ventas"
 
 #. module: dgii_reports
 #: model:ir.model,name:dgii_reports.model_dgii_reports_cancel_line
@@ -430,21 +737,26 @@ msgid "DGII Reports Sale Line"
 msgstr "Lineas de Ventas"
 
 #. module: dgii_reports
-#: model:ir.ui.menu,name:dgii_reports.dgii_report_parent_menu
-msgid "Data Sending"
-msgstr "Envío de datos"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "DIFFERENCE TO PAY (If the value of boxes 26-28-29-30-31-32 is Positive)"
+msgstr ""
+"DIFERENCIA A PAGAR (Si el valor de las casillas 26-28-29-30-31-32 es Positivo)"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__ast_income
-msgid "Depreciable Assets Income"
-msgstr "Ingresos por Venta de Activos Depreciables"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "DIFFERENCE TO PAY (If the value of boxes 60-61 is Positive)"
+msgstr "DIFERENCIA A PAGAR (Si el valor de las casillas 60-61 es Positivo)"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__dgii_report_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__dgii_report_id
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__dgii_report_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__dgii_report_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__dgii_report_id
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__dgii_report_id
 msgid "Dgii Report"
 msgstr "Reporte DGII"
 
@@ -453,12 +765,17 @@ msgstr "Reporte DGII"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__display_name
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__display_name
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__display_name
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__display_name
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__display_name
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__display_name
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__display_name
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__display_type
+msgid "Display type"
+msgstr "Tipo de visualización"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__doc_date
@@ -471,8 +788,25 @@ msgid "Doc Number"
 msgstr "Número documento"
 
 #. module: dgii_reports
-#: code:addons/dgii_reports/models/dgii_report.py:224
-#: code:addons/dominicana-premium/dgii_reports/models/dgii_report.py:224
+#: model:ir.ui.menu,name:dgii_reports.account_reports_do_menu
+msgid "Dominican reports"
+msgstr "Reportes Dominicanos"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "EXTRAORDINARY INCOME"
+msgstr "INGRESOS EXTRAORDINARIOS"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__end_date
+msgid "End Date"
+msgstr "Fecha de finalización"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid "Error. Date format must be MM/YYYY"
 msgstr "Error. El formato de fecha debe ser MM/AAAA"
@@ -488,9 +822,14 @@ msgid "Expense type"
 msgstr "Tipo de gasto"
 
 #. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__02
+msgid "Expenses for Work, Supplies and Services"
+msgstr "Gastos de trabajo, suministros y servicios"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__exterior_filename
 msgid "Exterior Filename"
-msgstr ""
+msgstr "Nombre de archivo exterior"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__exterior_invoiced_amount
@@ -508,14 +847,21 @@ msgid "Exterior Withholded Isr"
 msgstr "ISR retenido"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__ext_income
-msgid "Extraordinary Income"
-msgstr "Ingresos Extraordinarios"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "FINANCIAL INCOME"
+msgstr "INGRESOS FINANCIEROS"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__fin_income
-msgid "Financial Income"
-msgstr "Ingresos Financieros"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__02
+msgid "Fees for Services"
+msgstr "Tarifas por servicios"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__06
+msgid "Financial Expenses"
+msgstr "Gastos financieros"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__fiscal_invoice_number
@@ -525,9 +871,16 @@ msgid "Fiscal Invoice Number"
 msgstr "NCF"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__fiscal_status
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__fiscal_status
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__fiscal_status
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__fiscal_status
 msgid "Fiscal Status"
-msgstr "Estado Fiscal"
+msgstr "Situación fiscal"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__04
+msgid "Fixed Asset Expenses"
+msgstr "Gastos de activos fijos"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_follower_ids
@@ -535,54 +888,45 @@ msgid "Followers"
 msgstr "Seguidores"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_channel_ids
-msgid "Followers (Channels)"
-msgstr "Seguidores (Canales)"
-
-#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "Seguidores (Empresas)"
 
 #. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos Financieros"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations "
+"Taxed at 16%)"
 msgstr ""
+"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
+"(Operaciones Gravadas al 16%)"
 
 #. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos de Activos Fijos"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations "
+"Taxed at 18%)"
 msgstr ""
+"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
+"(Operaciones Gravadas al 18%)"
 
 #. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos de Personal"
-msgstr ""
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "GOVERNMENT PROOFS (15 and 45)"
+msgstr "COMPROBANTES GUBERNAMENTALES (15 y 45)"
 
 #. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos de Representación"
-msgstr ""
-
-#. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos de Seguros"
-msgstr ""
-
-#. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos por Regalías y otros Intangibles"
-msgstr ""
-
-#. module: dgii_reports
-#: selection:account.move,service_type:0
-msgid "Gastos por Trabajos, Suministros y Servicios"
-msgstr ""
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "General Summary of Consumer Invoices"
-msgstr "Resumen General de Facturas de Consumo"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "GRAND TOTAL (Sum of boxes 38+67)"
+msgstr "TOTAL A PAGAR (Sumar casillas 38+67)"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -590,21 +934,16 @@ msgid "Generate Statements"
 msgstr "Generar Reportes"
 
 #. module: dgii_reports
-#: selection:dgii.reports,state:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports__state__generated
 msgid "Generated"
 msgstr "Generado"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__bond
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_bond
-msgid "Gift certificates or vouchers"
-msgstr "Bonos o Certificados de Regalo"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__good_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__good_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__good_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__good_total_amount
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__good_total_amount
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__good_total_amount
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Good Total Amount"
 msgstr "Facturado en Bienes"
 
@@ -616,59 +955,332 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I02 - Ingresos por Exportaciones de Bienes o Servicios"
-msgstr ""
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I03 - Ingresos por ventas locales de bienes o servicios exentos"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i15
+msgid "I15 - TAXABLE OPERATIONS FROM SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)"
 msgstr ""
+"I15 - OPERACIONES GRAVADAS POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3)"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I04 - Ingresos por ventas de bienes o servicios exentos por destino"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i2
+msgid "I2 - INCOME FROM EXPORTS OF GOODS (Article 342 CT)"
+msgstr "I2 - INGRESOS POR EXPORTACIONES DE BIENES SEGÚN Art. 342 CT"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I13 - Operaciones gravadas por ventas de Activos Depreciables (categoría 2 y 3)"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i28
+msgid "I28 - AUTHORIZED COMPENSABLE BALANCES (Other Taxes) AND/OR REFUNDS"
+msgstr "I28 - SALDOS COMPENSABLES AUTORIZADOS (Otros Impuestos) Y/O REEMBOLSOS"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I28 - Saldos Compensables Autorizados (Otros Impuestos) y/o Reembolsos"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i3
+msgid ""
+"I3 - INCOME FROM SERVICE EXPORTS (Article 344 CT and Article 14, Paragraph j), "
+"Regulation 293-11)"
 msgstr ""
+"I3 - INGRESOS POR EXPORTACIONES DE SERVICIOS SEGÚN Art. 344 CT y Art. 14 Literal "
+"j), Reglamento 293-11"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I35 - Recargos"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i31
+msgid "I31 - OTHER COMPUTABLE PAYMENTS TO ACCOUNT"
+msgstr "I31 - OTROS PAGOS COMPUTABLES A CUENTA"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I36 - Interés Indemnizatorio"
-msgstr ""
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i32
+msgid "I32 - AUTHORIZED COMPENSATIONS AND/OR REFUNDS"
+msgstr "I32 - COMPENSACIONES Y/O REEMBOLSOS AUTORIZADOS"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "I39 - Servicios sujetos a Retención Personas Físicas"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i35
+msgid "I35 - SURCHARGES"
+msgstr "I35 - RECARGOS"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i36
+msgid "I36 - COMPENSATION INTEREST"
+msgstr "I36 - INTERÉS INDEMNIZATORIO"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i37
+msgid "I37 - SANCTIONS"
+msgstr "I37 - SANCIONES"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i39
+msgid "I39 - SERVICES SUBJECT TO WITHHOLDING INDIVIDUALS"
+msgstr "I39 - SERVICIOS SUJETOS A RETENCIÓN PERSONAS FÍSICAS"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i4
+msgid ""
+"I4 - INCOME FROM LOCAL SALES OF EXEMPT GOODS OR SERVICES (Article 343 and Article "
+"344 CT)"
 msgstr ""
+"I4 - INGRESOS POR VENTAS LOCALES DE BIENES O SERVICIOS EXENTOS Art. 343 y Art. 344 "
+"CT"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i40
+msgid "I40 - SERVICES SUBJECT TO WITHHOLDING NON-PROFIT ENTITIES (Rule No. 01-11)"
+msgstr "I40 - SERVICIOS SUJETOS A RETENCIÓN ENTIDADES NO LUCRATIVAS (Norma No. 01-11)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i42
+msgid "I42 - SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 07-09)"
+msgstr "I42 - SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (Norma No. 07-09)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i43
+msgid "I43 - SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 02-05 AND 07-07)"
+msgstr "I43 - SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (Norma No. 02-05 y 07-07)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i44
+msgid ""
+"I44 - GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Rule No. "
+"01-11) (Operations Taxed at 18%)"
+msgstr ""
+"I44 - BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
+"(Operaciones Gravadas al 18%)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i45
+msgid ""
+"I45 - GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Rule No. "
+"01-11) (Operations Taxed at 16%)"
+msgstr ""
+"I45 - BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
+"(Operaciones Gravadas al 18%)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i47
+msgid ""
+"I47 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) "
+"(Rule No. 08-10 and 05-19)"
+msgstr ""
+"I47 - BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al "
+"18%) (Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i48
+msgid ""
+"I48 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) "
+"(Rule No. 08-10 and 05-19)"
+msgstr ""
+"I48 - BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al "
+"16%) (Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i5
+msgid "I5 - INCOME FROM THE SALES OF EXEMPT GOODS OR SERVICES BY DESTINATION"
+msgstr "I5 - INGRESOS POR VENTAS DE BIENES O SERVICIOS EXENTOS POR DESTINO"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i59
+msgid "I59 - TOTAL ITBIS RECEIVED FOR SALE"
+msgstr "I59 - TOTAL ITBIS PERCIBIDO EN VENTA"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i61
+msgid "I61 - COMPUTABLE PAYMENTS ON ACCOUNT"
+msgstr "I61 - PAGOS COMPUTABLES A CUENTA"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i64
+msgid "I64 - SURCHARGES"
+msgstr "I64 - RECARGOS"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i65
+msgid "I65 - COMPENSATION INTEREST"
+msgstr "I65 - INTERÉS INDEMNIZATORIO"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i66
+msgid "I66 - SANCTIONS"
+msgstr "I66 - SANCIONES"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i8
+msgid ""
+"I8 - INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)"
+msgstr ""
+"I8 - INGRESOS POR VENTAS LOCALES DE BIENES EXENTOS (Según Párrafos III y IV, Art. "
+"343 CT)"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_report_regenerate_wizard__id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__id
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__id
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__id
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__id
 msgid "ID"
 msgstr "ID (identificación)"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "II. INCOME FROM OPERATIONS"
+msgstr "II. INGRESOS POR OPERACIONES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"II. OPERATIONS REPORTED IN THE 607, SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
+"TYPE OF NCF"
+msgstr ""
+"II. OPERACIONES REPORTADAS EN EL 607, LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
+"POR TIPO DE NCF"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "II.A NOT TAXED"
+msgstr "II.A  NO GRAVADAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "II.B TAXED"
+msgstr "II.B GRAVADAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"III. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
+"TYPE OF SALE (TOTAL AMOUNT INCLUDING TAXES)"
+msgstr ""
+"III. OPERACIONES REPORTADAS EN EL 607/LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
+"POR TIPO DE VENTA (MONTO TOTAL INCLUYENDO IMPUESTOS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "III. SETTLEMENT"
+msgstr "III. LIQUIDACIÓN"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__imports
+msgid "IMPORTS"
+msgstr "IMPORTACIONES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IN OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES"
+msgstr "EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IN THE PRODUCTION AND/OR SALE OF EXPORTED GOODS"
+msgstr "EN LA PRODUCCIÓN Y/O VENTA DE BIENES EXPORTADOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IN THE PRODUCTION AND/OR SALE OF TAXED ASSETS"
+msgstr "EN LA PRODUCCIÓN Y/O VENTA DE BIENES GRAVADOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IN THE PROVISION OF TAXED SERVICES"
+msgstr "EN LA PRESTACIÓN DE SERVICIOS GRAVADOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "INCOME FROM EXPORTS OF GOODS (Article 342 CT)"
+msgstr "INGRESOS POR EXPORTACIONES DE BIENES SEGÚN Art. 342 CT"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"INCOME FROM EXPORTS OF SERVICES (Article 344 CT and Article 14, Paragraph j), "
+"Regulation 293-11)"
+msgstr ""
+"INGRESOS POR EXPORTACIONES DE SERVICIOS (Según Art. 344 CT y Art. 14 Literal j, "
+"Reglamento 293-11)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "INCOME FROM LEASE"
+msgstr "INGRESOS POR ARRENDAMIENTOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)"
+msgstr ""
+"INGRESOS POR VENTAS LOCALES DE BIENES EXENTOS (Según Párrafos III y IV, Art. 343 CT)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"INCOME FROM LOCAL SALES OF EXEMPT GOODS OR SERVICES (Article 343 and Article 344 CT)"
+msgstr ""
+"INGRESOS POR VENTAS LOCALES DE BIENES O SERVICIOS EXENTOS (Art. 343 y Art. 344 CT)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "INCOME FROM OPERATIONS (NON-FINANCIAL)"
+msgstr "INGRESOS POR OPERACIONES (NO FINANCIEROS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "INCOME FROM THE SALES OF DEPRECIABLE ASSETS"
+msgstr "INGRESOS POR VENTAS DE ACTIVOS DEPRECIABLES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "INCOME FROM THE SALES OF EXEMPT GOODS OR SERVICES BY DESTINATION"
+msgstr "INGRESOS POR VENTAS DE BIENES O SERVICIOS EXENTOS POR DESTINO"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__isr
+msgid "ISR Withholding"
+msgstr "Retención ISR"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__isr_withholding_type
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__isr_withholding_type
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__isr_withholding_type
+#: model:ir.model.fields,field_description:dgii_reports.field_account_tax__isr_retention_type
 msgid "ISR Withholding Type"
 msgstr "Tipo de Retención ISR"
 
@@ -679,15 +1291,212 @@ msgid "ISR withholding"
 msgstr "Retención ISR"
 
 #. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_account__box_it1
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "IT-1"
+msgstr "IT-1"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_6_line_ids
+msgid "IT1  section 6 lines"
+msgstr "IT-1  líneas sección 6"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_1_line_ids
+msgid "IT1 section 1 lines"
+msgstr "IT-1 líneas sección 1"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_2_line_ids
+msgid "IT1 section 2 lines"
+msgstr "IT-1 líneas sección 2"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_3_line_ids
+msgid "IT1 section 3 lines"
+msgstr "IT-1 líneas sección 3"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_4_line_ids
+msgid "IT1 section 4 lines"
+msgstr "IT-1 líneas sección 4"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_5_line_ids
+msgid "IT1 section 5 lines"
+msgstr "IT-1  íneas sección 5"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__itbis
+msgid "ITBIS"
 msgstr ""
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS ADMITTED BY APPLICATION OF PROPORTIONALITY (box 53 * 54)"
+msgstr "ITBIS ADMITIDO POR APLICACIÓN DE PROPORCIONALIDAD (Casillas 53 * 54)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS CHARGED FOR SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)"
+msgstr ""
+"ITBIS COBRADO POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3) (18 de la "
+"casilla 15)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS COLLECTED (16% of box 12)"
+msgstr "ITBIS COBRADO (16% de la casilla 12)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS COLLECTED (18% of box 11)"
+msgstr "ITBIS COBRADO (18% de la casilla 11)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS COLLECTED (8% of box 14) (Law No. 690-16)"
+msgstr "ITBIS COBRADO (8% de la casilla 14) (Ley No. 690-16)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS COLLECTED (9% of box 13) (Law No. 690-16)"
+msgstr "ITBIS COBRADO (9% de la casilla 13) (Ley No. 690-16)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (16% of box 48) (Rule No. "
+"08-10 and 05-19)"
+msgstr ""
+"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (16% de la casilla "
+"47) (Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (18% of box 47) (Rule No. "
+"08-10 and 05-19)"
+msgstr ""
+"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (18% de la casilla "
+"47) (Norma No. 08-10 y 05-19)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS FOR SERVICES SUBJECT TO COMPANY WITHHOLDING (18% of box 42)"
+msgstr "ITBIS POR SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (18% de la casilla 42)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS FOR SERVICES SUBJECT TO COMPANY WITHHOLDING (18% of box 43 for 0.30)"
+msgstr ""
+"ITBIS POR SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (18% de la casilla 43 por 0.30)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS FOR SERVICES SUBJECT TO WITHHOLDING INDIVIDUALS AND NON-PROFIT ENTITIES"
+msgstr ""
+"ITBIS POR SERVICIOS SUJETOS A RETENCIÓN PERSONAS FÍSICAS Y ENTIDADES NO LUCRATIVAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS PAID FOR DEDUCTIBLE SERVICES"
+msgstr "ITBIS PAGADO POR SERVICIOS DEDUCIBLES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS PAID ON IMPORTS"
+msgstr "ITBIS PAGADO EN IMPORTACIONES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS PAID ON LOCAL PURCHASES"
+msgstr "ITBIS PAGADO EN COMPRAS LOCALES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS SUBJECT TO PROPORTIONALITY"
+msgstr "ITBIS SUJETO A PROPORCIONALIDAD"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (16% of box 45)"
+msgstr "ITBIS RETENIDO A CONTRIBUYENTES ACOGIDOS AL RST (16% de la casilla 45)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (18% of box 44)"
+msgstr "ITBIS RETENIDO A CONTRIBUYENTES ACOGIDOS AL RST (18% de la casilla 44)"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__ritbis
+msgid "ITBIS Withholding"
+msgstr "Retención ITBIS"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_search
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_search
 msgid "ITBIS withholding"
 msgstr "Retención ITBIS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"IV. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
+"TYPE OF INCOME"
+msgstr ""
+"IV. OPERACIONES REPORTADAS EN EL 607/LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
+"POR TIPO DE INGRESO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IV. PENALTIES"
+msgstr "IV. PENALIDADES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "IX. ITBIS PAID"
+msgstr "IX. ITBIS PAGADO"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__identification_type
@@ -702,17 +1511,13 @@ msgid "Identification type"
 msgstr "Tipo identificación"
 
 #. module: dgii_reports
-#: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_unread
-msgid "If checked new messages require your attention."
-msgstr "Si está marcado, hay nuevos mensajes que requieren su atención"
-
-#. module: dgii_reports
 #: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
 
 #. module: dgii_reports
 #: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_has_error
+#: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Si se encuentra marcado, algunos mensajes tienen error de envío."
 
@@ -722,16 +1527,12 @@ msgid "Income Type"
 msgstr "Tipo de ingreso"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__income_withholding
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__income_withholding
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__income_withholding
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__income_withholding
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__income_withholding
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__income_withholding
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Income Withholding"
-msgstr "Retención Renta"
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-msgid "Income Withholding by a third"
 msgstr "Retención Renta"
 
 #. module: dgii_reports
@@ -740,11 +1541,30 @@ msgid "Income type"
 msgstr "Tipo de ingreso"
 
 #. module: dgii_reports
-#: model:ir.model,name:dgii_reports.model_account_move
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__07
+msgid "Insurance Expenses"
+msgstr "Gastos de seguro"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__05
+msgid "Interest Paid to Legal Entities"
+msgstr "Intereses pagados a personas jurídicas"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__06
+msgid "Interests Paid to Individuals"
+msgstr "Intereses pagados a individuos"
+
+#. module: dgii_reports
+#: model:ir.actions.act_window,name:dgii_reports.action_invoice_form_popup
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__invoice_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__invoice_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__invoice_id
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__invoice_id
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_cancel_report_line_tree
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_exterior_report_line_tree
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_tree
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_tree
 msgid "Invoice"
 msgstr "Factura"
 
@@ -780,8 +1600,9 @@ msgid "Invoiced Amount Total"
 msgstr "Total Monto Facturado"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__invoiced_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__invoiced_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__invoiced_itbis
 msgid "Invoiced ITBIS"
 msgstr "ITBIS Facturado"
 
@@ -791,19 +1612,20 @@ msgid "Invoiced ITBIS Total"
 msgstr "Total ITBIS Facturado"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__invoiced_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__invoiced_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__invoiced_itbis
 msgid "Invoiced Itbis"
 msgstr "ITBIS Facturado"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
 msgid "Invoicing"
 msgstr "Facturar"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__is_exterior
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__is_exterior
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__is_exterior
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__is_exterior
 msgid "Is Exterior"
 msgstr "Es exterior"
 
@@ -818,7 +1640,6 @@ msgid "Isr Withholding Date"
 msgstr "Tipo de Retención en ISR"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__isr_withholding_type
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__isr_withholding_type
 msgid "Isr Withholding Type"
 msgstr "Tipo de Retención ISR"
@@ -829,13 +1650,23 @@ msgid "Issued Consumer NCF Qty"
 msgstr "Cantidad NCFs Emitidos"
 
 #. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__local_purchase
+msgid "LOCAL PURCHASE"
+msgstr "COMPRAS LOCALES"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_report_regenerate_wizard____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line____last_update
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line____last_update
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary____last_update
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail____last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
@@ -845,9 +1676,9 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__write_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__write_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__write_uid
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__write_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__write_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__write_uid
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__write_uid
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización de"
@@ -857,17 +1688,12 @@ msgstr "Última actualización de"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__write_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__write_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__write_date
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__write_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__write_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__write_date
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__write_date
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__write_date
 msgid "Last Updated on"
 msgstr "Última actualización en"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__lea_income
-msgid "Lease Income"
-msgstr "Ingresos por Arrendamientos"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__legal_name
@@ -875,7 +1701,6 @@ msgid "Legal Name"
 msgstr "Razón Social"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__legal_tip
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__legal_tip
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__legal_tip
 msgid "Legal Tip"
@@ -893,8 +1718,14 @@ msgid "Legal person"
 msgstr "Persona Jurídica"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__tip
+msgid "Legal tip"
+msgstr "Propina legal"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__legal_tip
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__legal_tip
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__legal_tip
 msgid "Legal tip amount"
 msgstr "Monto propina legal"
 
@@ -927,9 +1758,14 @@ msgid "Messages"
 msgstr "Mensajes"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__07
 msgid "Mixed"
 msgstr "Mixto"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__08
+msgid "Mobile Games"
+msgstr "Juegos para móviles"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__modified_invoice_number
@@ -938,25 +1774,64 @@ msgid "Modified Invoice Number"
 msgstr "NCF o Documento Modificado"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__name
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"NEW BALANCE IN FAVOR (If the value of boxes (26-28-29-30-31-32 is Negative) or "
+"(27+28+29+30+31+32))"
+msgstr ""
+"NUEVO SALDO A FAVOR (Si el valor de las casillas (26-28-29-30-31-32 es Negativo) ó "
+"(27+28+29+30+31+32))"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "NEW BALANCE IN FAVOR (If the value of boxes 60-61 is Negative)"
+msgstr "NUEVO SALDO A FAVOR (Si el valor de las casillas 60-61 es Negativo)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "NOT SUBJECT TO ITBIS FOR COMMISSIONS (From box 42 of Annex A)"
+msgstr "NO SUJETAS A ITBIS POR COMISIONES (Proviene de la casilla 42 del Anexo A)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES (From box 38 of Annex A)"
+msgstr ""
+"NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Proviene de la casilla 38 del "
+"Anexo A)"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__name
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__name
 msgid "Name"
 msgstr "Nombre"
 
 #. module: dgii_reports
-#: selection:dgii.reports,state:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports__state__draft
 msgid "New"
 msgstr "Nuevo"
 
 #. module: dgii_reports
-#: selection:res.partner,related:0
-msgid "Not Related"
-msgstr "No Relacionada"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__none
+msgid "Non deductible"
+msgstr "No deducible"
 
 #. module: dgii_reports
-#: selection:account.move,fiscal_status:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__res_partner__related__0
+msgid "Not Related"
+msgstr "No relacionado"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__fiscal_status__blocked
 msgid "Not Sent"
-msgstr "No enviada"
+msgstr "No enviado"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -968,13 +1843,18 @@ msgstr ""
 "relativas a las fechas de retención de las facturas."
 
 #. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__display_type__line_note
+msgid "Note"
+msgstr "Nota"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_needaction_counter
 msgid "Number of Actions"
 msgstr "Número de acciones"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_has_error_counter
-msgid "Number of error"
+msgid "Number of errors"
 msgstr "Número de error"
 
 #. module: dgii_reports
@@ -988,9 +1868,110 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de envío"
 
 #. module: dgii_reports
-#: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_unread_counter
-msgid "Number of unread messages"
-msgstr "Número de mensajes no leidos"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "ON CREDIT"
+msgstr "A CRÉDITO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"OPERATIONS NOT SUBJECT TO ITBIS FOR COMMISSIONS (Subtract Box 41 Total Invoiced - "
+"Amount Subject to ITBIS)"
+msgstr ""
+"OPERACIONES NO SUJETAS A ITBIS POR COMISIONES (Restar Casilla 41 Total Facturado - "
+"Monto Sujeto a ITBIS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"OPERATIONS NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES (Subtract Box 37 Total "
+"Invoiced - Amount Subject to ITBIS)"
+msgstr ""
+"OPERACIONES NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Restar Casilla 37 "
+"Total Facturado - Monto Sujeto a ITBIS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OPERATIONS TAXED AT 16%"
+msgstr "OPERACIONES GRAVADAS AL 16%"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OPERATIONS TAXED AT 18%"
+msgstr "OPERACIONES GRAVADAS AL 18%"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OPERATIONS TAXED AT 8% (Law No. 690-16)"
+msgstr "OPERACIONES GRAVADAS AL 8% (Ley No. 690-16)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OPERATIONS TAXED AT 9% (Law No. 690-16)"
+msgstr "OPERACIONES GRAVADAS AL 9% (Ley No. 690-16)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OPERATIONS TAXED BY SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)"
+msgstr "OPERACIONES GRAVADAS POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER COMPUTABLE PAYMENTS ON ACCOUNT"
+msgstr "OTROS PAGOS COMPUTABLES A CUENTA"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER FORMS OF SALE"
+msgstr "OTRAS FORMAS DE VENTA"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER INCOME"
+msgstr "OTROS INGRESOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER NON-DEDUCTIBLE ITBIS PAID"
+msgstr "EN LA PRESTACIÓN DE SERVICIOS GRAVADOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER OPERATIONS (NEGATIVE)"
+msgstr "OTRAS OPERACIONES (NEGATIVAS)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "OTHER OPERATIONS (POSITIVE)"
+msgstr "OTRAS OPERACIONES (POSITIVAS)"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_exterior_line_search
@@ -1000,38 +1981,11 @@ msgid "Open"
 msgstr "Abierto"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__opr_income
-msgid "Operations Income (No-Financial)"
-msgstr "Ingresos por Operaciones (No Financieros)"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__03
+msgid "Other Incomes"
+msgstr "Otros ingresos"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "Operations Total"
-msgstr "Total Operaciones"
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "Operations by Income Type"
-msgstr "Total Operaciones"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__ncf_sale_summary_ids
-msgid "Operations by NCF type"
-msgstr "Operaciones por Tipo de NCF"
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
-msgid "Operations by Sale Type"
-msgstr "Operaciones por Tipo de Venta"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_others
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__others
-msgid "Other Sale Forms"
-msgstr "Otras Formas de Venta"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__other_taxes
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__other_taxes
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__other_taxes
 msgid "Other Taxes"
@@ -1043,8 +1997,10 @@ msgid "Other Taxes Total"
 msgstr "Total Otros Impuestos/Tasas"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__other_taxes
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__other_taxes
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__other_taxes
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__other
 msgid "Other taxes"
 msgstr "Otros Impuestos"
 
@@ -1054,9 +2010,30 @@ msgid "Others"
 msgstr "Otras Formas de Ventas"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__otr_income
-msgid "Others Income"
-msgstr "Otros Ingresos"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__rext
+msgid "Overseas payments (law 253-12)"
+msgstr "Pagos en el extranjero (ley 253-12)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "PROOFS DEBIT NOTE (03 and 33)"
+msgstr "COMPROBANTES NOTA DE DÉBITO (03 y 33)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "PROOFS FOR EXPORTS (16 and 46)"
+msgstr "COMPROBANTES PARA EXPORTACIONES (16 y 46) "
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "PROOFS OF CREDIT NOTE (04 and 34)"
+msgstr "COMPROBANTES NOTA DE CRÉDITO (04 y 34)"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_exterior_line_search
@@ -1071,20 +2048,14 @@ msgid "Parent Code"
 msgstr "Código padre"
 
 #. module: dgii_reports
-#: selection:account.move,fiscal_status:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__fiscal_status__normal
 msgid "Partial"
 msgstr "Parcial"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__payment_date
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__payment_date
 msgid "Payment Date"
 msgstr "Fecha de pago"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__payment_form
-msgid "Payment Form"
-msgstr "Forma de pago"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__payment_type
@@ -1092,12 +2063,16 @@ msgid "Payment Type"
 msgstr "Tipo de pago"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__payment_date
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__payment_date
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__payment_date
 msgid "Payment date"
 msgstr "Fecha de Pago"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__payment_form
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__payment_form
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__payment_form
 msgid "Payment form"
 msgstr "Forma de pago"
 
@@ -1122,6 +2097,11 @@ msgid "Period"
 msgstr "Periodo"
 
 #. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__01
+msgid "Personnel Expenses"
+msgstr "Gastos de personal"
+
+#. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_search
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_search
 msgid "Physical person"
@@ -1130,6 +2110,7 @@ msgstr "Persona Físca"
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__presumed_income
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__presumed_income
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__04
 msgid "Presumed Income"
 msgstr "Renta presunta"
 
@@ -1144,9 +2125,10 @@ msgid "Previous balance"
 msgstr "Balance anterior"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__proportionality_tax
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__proportionality_tax
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__proportionality_tax
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__proportionality_tax
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__proportionality_tax
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Proportionality Tax"
 msgstr "ITBIS sujeto a Proporcionalidad"
 
@@ -1206,14 +2188,14 @@ msgid "Purchased Service Type"
 msgstr "Tipo de Servicio"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__qty
-msgid "Qty"
-msgstr "Cantidad"
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__quantity
+msgid "QUANTITY"
+msgstr "CANTIDAD"
 
 #. module: dgii_reports
 #: model:ir.actions.server,name:dgii_reports.action_run_norma_recompute
 msgid "Recalcular norma 07-2018"
-msgstr ""
+msgstr "Recalcular norma 07-2018"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
@@ -1228,14 +2210,17 @@ msgstr "Regenerar Reporte"
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
 msgid ""
-"Regenerate this report may cause data variation. Don't do that if you want to preserve equality\n"
+"Regenerate this report may cause data variation. Don't do that if you want to "
+"preserve equality\n"
 "                        between the report you sent and the data in your system."
-msgstr "Regenerar este reporte puede causar variación en los datos. No haga esto si desea preservar la igualdad entre el reporte que envió y los datos en el sistema."
+msgstr ""
+"Regenerar este reporte puede causar variación en los datos. No haga esto si desea "
+"preservar la igualdad entre el reporte que envió y los datos en el sistema."
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_res_partner__related
 #: model:ir.model.fields,field_description:dgii_reports.field_res_users__related
-#: selection:res.partner,related:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__res_partner__related__1
 msgid "Related"
 msgstr "Relacionada"
 
@@ -1245,31 +2230,128 @@ msgid "Related Part"
 msgstr "Parte Relacionada"
 
 #. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__03
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__01
+msgid "Rentals"
+msgstr "Alquileres"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_report_regenerate_wizard__report_id
 msgid "Report"
 msgstr "Reporte"
 
 #. module: dgii_reports
-#: selection:account.move,fiscal_status:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__fiscal_status__done
 msgid "Reported"
-msgstr "Reportada"
+msgstr "Reportado"
 
 #. module: dgii_reports
 #: model:ir.actions.act_window,name:dgii_reports.dgii_report_action
-#: model:ir.ui.menu,name:dgii_reports.dgii_report_menu
 msgid "Reports"
 msgstr "Informes"
 
 #. module: dgii_reports
-#: selection:account.account,account_fiscal_type:0
-msgid "Retención de Renta por Terceros"
-msgstr "Retención Renta"
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__05
+msgid "Representation Expenses"
+msgstr "Gastos de representación"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__rnc_cedula
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__rnc_cedula
 msgid "Rnc Cedula"
-msgstr "Rnc/Cédula"
+msgstr "RNC/Cédula"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__08
+msgid "Royalties and Other Intangibles Expenses"
+msgstr "Regalías y otros gastos intangibles"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SALES OF GOODS BY COMMISSION"
+msgstr "VENTAS DE BIENES POR COMISIÓN"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SALES OF SERVICES ON BEHALF OF THIRD PARTIES"
+msgstr "VENTAS DE SERVICIOS EN NOMBRE DE TERCEROS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SANCTIONS"
+msgstr "SANCIONES"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__services
+msgid "SERVICES"
+msgstr "SERVICIOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 02-05 and 07-07)"
+msgstr "SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (Norma No. 02-05 y 07-07)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SERVICES SUBJECT TO COMPANY WITHHOLDING (Rule No. 07-09)"
+msgstr "SERVICIOS SUJETOS A RETENCIÓN SOCIEDADES (Norma No. 07-09)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SERVICES SUBJECT TO WITHHOLDING INDIVIDUALS"
+msgstr "SERVICIOS SUJETOS A RETENCIÓN PERSONAS FÍSICAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SERVICES SUBJECT TO WITHHOLDING NON-PROFIT ENTITIES (Rule No. 01-11)"
+msgstr "SERVICIOS SUJETOS A RETENCIÓN ENTIDADES NO LUCRATIVAS (Norma No. 01-11)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SINGLE INCOME REGISTRY PROOFS (12)"
+msgstr "COMPROBANTES REGISTRO ÚNICO DE INGRESOS (12)"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega de SMS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SPECIAL REGIME REGISTRATION PROOFS (14 and 44)"
+msgstr "COMPROBANTES REGISTRO REGIMENES ESPECIALES (14 y 44)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SURCHARGES"
+msgstr "RECARGOS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "SWAPS"
+msgstr "PERMUTAS"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__sale_filename
@@ -1333,42 +2415,91 @@ msgid "Search Sale Line"
 msgstr "Búsqueda Lineas Ventas"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__selective_tax
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__display_type__line_section
+msgid "Section"
+msgstr "Sección"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__1
+msgid "Section 1"
+msgstr "Sección 1"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__2
+msgid "Section 2"
+msgstr "Sección 2"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__3
+msgid "Section 3"
+msgstr "Sección 3"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__4
+msgid "Section 4"
+msgstr "Sección 4"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__5
+msgid "Section 5"
+msgstr "Sección 5"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__section__6
+msgid "Section 6"
+msgstr "Sección 6"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__isc
+msgid "Selective Consumption Tax (SCT)"
+msgstr "Impuesto Selectivo al Consumo (SCT)"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__selective_tax
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__selective_tax
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__selective_tax
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_ncf_total_isc
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__selective_tax
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__selective_tax
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Selective Tax"
 msgstr "Impuesto Selectivo"
 
 #. module: dgii_reports
-#: selection:dgii.reports,state:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports__state__sent
 msgid "Sent"
 msgstr "Enviado"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_summary__sequence
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__sequence
 msgid "Sequence"
 msgstr "Secuencia"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__service_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__service_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__service_total_amount
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__service_total_amount
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__service_total_amount
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__service_total_amount
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Service Total Amount"
 msgstr "Facturado en Servicios"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__service_type
-msgid "Service Type"
-msgstr "Tipo de Servicio"
-
-#. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__service_type_detail
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__service_type_detail
 msgid "Service Type Detail"
+msgstr "Detalle del Servicio"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__service_type
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__service_type
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__service_type
+msgid "Service type"
+msgstr "Tipo de servicio"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__service_type_detail
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__service_type_detail
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__service_type_detail
+msgid "Service type detail"
 msgstr "Detalle del Servicio"
 
 #. module: dgii_reports
@@ -1377,9 +2508,9 @@ msgid "Set as sent"
 msgstr "Marcar como enviado"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__state
-msgid "State"
-msgstr "Estado"
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__start_date
+msgid "Start Date"
+msgstr "Fecha de inicio"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -1389,12 +2520,238 @@ msgid "Statements"
 msgstr "Extractos"
 
 #. module: dgii_reports
-#: selection:account.move,payment_form:0
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_swap
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__swap
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__swap
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__05
 msgid "Swap"
 msgstr "Permuta"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TAX TO PAY (Subtract box 25 from box 21)"
+msgstr "IMPUESTO A PAGAR (Si el valor de las casillas 21-25 es Positivo)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TAX TO PAY (Sum of boxes 50+51+52+55+58+59)"
+msgstr "IMPUESTO A PAGAR (Sumar casillas 50+51+52+55+58+59)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TECHNICAL MANAGEMENT (Art. 4 Norma 07-07)"
+msgstr "DIRECCIÓN TÉCNICA (Art. 4 Norma 07-07)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TO BE INCLUDED IN ASSETS (CATEGORY I)"
+msgstr "A INCLUIR EN ACTIVOS (CATEGORÍA I)"
+
+#. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "TOTAL"
+msgstr "TOTAL"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ASSETS SUBJECT TO RETENTION PROOF OF PURCHASE"
+msgstr "TOTAL BIENES SUJETOS A RETENCIÓN COMPROBANTES DE COMPRAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL BY TYPE OF INCOME (Sum boxes 20+21+22+23+24+25)"
+msgstr "TOTAL POR TIPO DE INGRESO (Sumar casillas 20+21+22+23+24+25)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL COMMISSION OPERATIONS (Sum boxes 39+40)"
+msgstr "TOTAL OPERACIONES COMISIONISTAS (Sumar casillas 39+40)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS (From box 33 of Annex A)"
+msgstr ""
+"TOTAL PAGOS COMPUTABLES POR RETENCIONES (Proviene de la casilla 33 del Anexo A)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS/PERCEPTION (Sum boxes 27+28+29+30+31+32)"
+msgstr ""
+"TOTAL PAGOS COMPUTABLES POR RETENCIONES/PERCEPCIÓN (Sumar casillas "
+"27+28+29+30+31+32)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"TOTAL CONSTRUCTION OPERATIONS (Total Invoiced: Sum boxes 34+35, Amount: Sum boxes "
+"34+35+36)"
+msgstr ""
+"TOTAL OPERACIONES CONSTRUCTORAS (Total Facturado: Sumar casillas 34+35, Monto: "
+"Sumar casillas 34+35+36)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL CREDIT NOTES ISSUED WITH MORE THAN THIRTY"
+msgstr ""
+"TOTAL NOTAS DE CRÉDITO EMITIDAS CON MÁS DE TREINTA (30) DÍAS DESDE LA FACTURACIÓN"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL DEDUCTIBLE ITBIS (Sum of boxes 22+23+24)"
+msgstr "TOTAL ITBIS DEDUCIBLE (Sumar casillas 22+23+24)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL FOR ASSETS SUBJECT TO WITHHOLDING PROOF OF PURCHASE (Sum of boxes 56+57)"
+msgstr ""
+"TOTAL POR BIENES SUJETOS A RETENCIÓN COMPROBANTE DE COMPRAS (Sumar casillas 56+57)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"TOTAL GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Sum of "
+"boxes 44+45)"
+msgstr ""
+"TOTAL BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
+"(Sumar casillas 44+45)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL INCOME FROM NON-TAXED OPERATIONS (Sum of boxes 2+3+4+5+6+7+8)"
+msgstr "TOTAL INGRESOS POR OPERACIONES NO GRAVADAS (Sumar casillas 2+3+4+5+6+7+8)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL INCOME FROM TAXED OPERATIONS (Subtract boxes 9 from 1)"
+msgstr "TOTAL INGRESOS POR OPERACIONES GRAVADAS (Restar casillas 1-9) "
+
+#. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "TOTAL INVOICED"
+msgstr "TOTAL FACTURADO"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL INVOICES IN TAX RECEIPTS FOR SPECIAL REGIMES"
+msgstr "TOTAL FACTURAS EN COMPROBANTES FISCALES PARA REGIMENES ESPECIALES"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ITBIS COLLECTED (Sum of boxes 16+17+18+19+20)"
+msgstr "TOTAL ITBIS COBRADO (Sumar casillas 16+17+18+19+20)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ITBIS DEDUCTIBLE (52+55)"
+msgstr "TOTAL ITBIS DEDUCIBLE (52+55)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ITBIS DEDUCTIBLE NOT SUBJECT TO PROPORTIONALITY (49+50+51)"
+msgstr "TOTAL ITBIS DEDUCIBLE NO SUJETO A PROPORCIONALIDAD (49+50+51)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ITBIS RECEIVED FOR SALE"
+msgstr "TOTAL ITBIS PERCIBIDO EN VENTA"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL ITBIS WITHHOLDED FROM TAXPAYERS UNDER THE RST (Sum of boxes 53+54)"
+msgstr "TOTAL ITBIS RETENIDO A CONTRIBUYENTES ACOGIDOS AL RST (Sumar casillas 53+54)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL NON-DEDUCTIBLE ITBIS (45+46+47)"
+msgstr "TOTAL ITBIS NO DEDUCIBLE (45+46+47)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL OPERATIONS (Sum boxes 1+2+3-4+5+6+7+8+9-10)"
+msgstr "TOTAL OPERACIONES (Sumar casillas 1+2+3-4+5+6+7+8+9-10)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL OPERATIONS BY TYPE OF SALE (Sum boxes 12+13+14+15+16+17+18)"
+msgstr "TOTAL OPERACIONES POR TIPO DE VENTA (Sumar casillas 12+13+14+15+16+17+18)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL OPERATIONS FOR THE PERIOD (From box 11 of Annex A)"
+msgstr "TOTAL DE OPERACIONES DEL PERIODO (Proviene de la casilla 11 del Anexo A)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL SERVICES SUBJECT TO WITHHOLDING TO INDIVIDUALS AND NON-PROFIT ENTITIES"
+msgstr ""
+"TOTAL SERVICIOS SUJETOS A RETENCIÓN A PERSONAS FÍSICAS Y ENTIDADES NO LUCRATIVAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL TO PAY"
+msgstr "TOTAL A PAGAR"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "TOTAL TO PAY (Sum of boxes 62+64+65+66)"
+msgstr "TOTAL A PAGAR (Sumar casillas 62+64+65+66)"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -1402,9 +2759,15 @@ msgid "TXT Files"
 msgstr "Archivos txt"
 
 #. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_account_tax
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__tax_id
 msgid "Tax"
 msgstr "Impuesto"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_tax__l10n_do_tax_type
+msgid "Tax DGII Type"
+msgstr "Tipo de impuestos Dominicano"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__tax_id_type
@@ -1413,9 +2776,13 @@ msgstr "Tipo Id Tributaria"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Taxes"
 msgstr "Impuestos"
+
+#. module: dgii_reports
+#: model:ir.model.fields,help:dgii_reports.field_dgii_reports_it1_line__display_type
+msgid "Technical field for UX purpose."
+msgstr "Campo técnico para propósitos UX."
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -1423,20 +2790,27 @@ msgid "The previous report is still not marked as sent."
 msgstr "El reporte anterior no fue marcado como enviado."
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__third_income_withholding
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__third_income_withholding
 msgid "Third Income Withholding"
 msgstr "Retención Renta"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__third_withheld_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__third_withheld_itbis
 msgid "Third Withheld Itbis"
 msgstr "ITBIS Retenido"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__income_type_total
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__sale_type_total
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid ""
+"This module needs pycountry to get 609 ISO 3166 country codes. Please install "
+"pycountry on your system. (See requirements file)"
+msgstr ""
+"Este módulo necesita pycountry para obtener 609 códigos de país ISO 3166. Por "
+"favor, instale pycountry en su sistema. (Ver ficha de requisitos)"
+
+#. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_exterior_report_line_tree
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_tree
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_tree
@@ -1444,14 +2818,46 @@ msgid "Total"
 msgstr "Total"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_unread
-msgid "Unread Messages"
-msgstr "Mensajes por leer"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "V. AMOUNT TO PAY"
+msgstr "V. MONTO A PAGAR"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__message_unread_counter
-msgid "Unread Messages Counter"
-msgstr "Contador de mensajes sin leer"
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "V. COMPUTABLE PAYMENTS FOR WITHHOLDINGS/PERCEPTIONS"
+msgstr "V. PAGOS COMPUTABLES POR RETENCIONES/PERCEPCIÓN"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "VALID PROOFS FOR TAX CREDIT (01 and 31)"
+msgstr "COMPROBANTES VÁLIDO PARA CRÉDITO FISCAL (01 y 31)"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "VI. CONSTRUCTION OPERATIONS"
+msgstr "VI. OPERACIONES DE CONSTRUCTORAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "VII. COMMISSION OPERATIONS"
+msgstr "VII. OPERACIONES DE COMISIONISTAS"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "VIII. INFORMATIVE DATA"
+msgstr "VIII. DATOS INFORMATIVOS"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__website_message_ids
@@ -1464,19 +2870,9 @@ msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
 
 #. module: dgii_reports
-#: selection:dgii.reports,state:0
+#: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports__state__error
 msgid "With error"
-msgstr "Con Errores"
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
-msgid "Withheld ITBIS"
-msgstr "ITBIS Retenido"
-
-#. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-msgid "Withheld ITBIS by a third"
-msgstr "ITBIS Retenido"
+msgstr "Con error"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_exterior_line_search
@@ -1489,14 +2885,12 @@ msgid "Withholded Isr"
 msgstr "ISR Retenido"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_account_invoice__withholded_itbis
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_purchase_line__withholded_itbis
 msgid "Withholded Itbis"
 msgstr "ITBIS Retenido"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_supplier_form_inherited
 msgid "Withholding"
 msgstr "Retenciones"
 
@@ -1506,9 +2900,16 @@ msgid "Withholding Date"
 msgstr "Fecha de Retención"
 
 #. module: dgii_reports
-#: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
-msgid "Withholding date"
-msgstr "Fecha de Retención"
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__withholding_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__withholding_itbis
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__withholding_itbis
+msgid "Withholding ITBIS"
+msgstr "Retención de ITBIS"
+
+#. module: dgii_reports
+#: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__isr_retention_type__07
+msgid "Withholding by State Providers"
+msgstr "Retención por parte de proveedores estatales"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_search
@@ -1518,17 +2919,22 @@ msgstr "Tipo de Rentención"
 #. module: dgii_reports
 #: model_terms:ir.actions.act_window,help:dgii_reports.dgii_report_action
 msgid "You can create your DGII Tax Statements here."
-msgstr "Puedes crear tus declaraciones de la DGII aquí"
+msgstr "Puedes crear tus declaraciones de la DGII aquí."
 
 #. module: dgii_reports
-#: code:addons/dgii_reports/models/dgii_report.py:57
-#: code:addons/dominicana-premium/dgii_reports/models/dgii_report.py:57
-#: sql_constraint:dgii.reports:0
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#: model:ir.model.constraint,message:dgii_reports.constraint_dgii_reports_name_unique
 #, python-format
 msgid "You cannot have more than one report by period."
 msgstr "No puede tener más de un reporte por periodo."
 
 #. module: dgii_reports
-#: model:ir.model,name:dgii_reports.model_dgii_reports
-msgid "dgii.reports"
-msgstr ""
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__section
+msgid "section"
+msgstr "sección"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__state
+msgid "state"
+msgstr "Estado"
