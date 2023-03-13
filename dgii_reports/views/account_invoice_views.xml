@@ -57,7 +57,7 @@
                             <field name="income_withholding"/>
                         </group>
                         <group string="606">
-                            <field name="fiscal_status" widget="state_selection" readonly="1"/>
+                            <field name="fiscal_status" widget="state_selection"/>
                         </group>
                     </group>
                 </page>

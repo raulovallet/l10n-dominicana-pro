@@ -8,6 +8,7 @@ try:
     from stdnum.do import rnc, cedula
 except (ImportError, IOError) as err:
     _logger.debug(str(err))
+    
 class Partner(models.Model):
     _inherit = "res.partner"
 

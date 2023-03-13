@@ -19,14 +19,20 @@
         </field>
     </record>
 
-    <record id="l10n_do_accounting_account_journal_dashboard_kanban_view" model="ir.ui.view">
-        <field name="name">l10n.do.accounting.account.journal.dashboard.kanban.view</field>
+    <record id="inherit_view_account_journal_tree" model="ir.ui.view">
+        <field name="name">inherit.view.account.journal.tree</field>
         <field name="model">account.journal</field>
-        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="inherit_id" ref="account.view_account_journal_tree" />
         <field name="arch" type="xml">
-            <xpath expr="//kanban" position="attributes">
-                <attribute name="js_class">fiscal_sequence_warning</attribute>
+            
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="l10n_do_fiscal_journal" widget="boolean_toggle" attrs="{
+                    'invisible':[
+                        ('type', 'in', ('cash','bank','general'))
+                    ]
+                }"/>
             </xpath>
+            
         </field>
     </record>
 

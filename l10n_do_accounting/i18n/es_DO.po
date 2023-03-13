@@ -1090,7 +1090,7 @@ msgstr "Socio [{}] {} no tiene RNC/Céd, se requiere para NCF tipo {}"
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_journal__payment_form
 msgid "Payment Form"
-msgstr "Formulario de pago"
+msgstr "Forma de pago"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_type__prefix
