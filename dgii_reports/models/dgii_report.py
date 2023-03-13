@@ -1912,7 +1912,7 @@ class DgiiReportsIt1(models.Model):
         selection=[
             # Attachment a
             ('1', 'Section 1'),
-            ('2', 'Section 2)'),
+            ('2', 'Section 2'),
             ('3', 'Section 3'),
             ('4', 'Section 4'),
             ('5', 'Section 5'),
