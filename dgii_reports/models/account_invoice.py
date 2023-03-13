@@ -256,11 +256,11 @@ class AccountInvoice(models.Model):
             else:
                 inv.payment_form = '04'
 
-    @api.depends('fiscal_type_id.purchase_type')
+    @api.depends('fiscal_type_id')
     def _compute_is_exterior(self):
         for inv in self:
-            inv.is_exterior = True if inv.fiscal_type_id.purchase_type == \
-                'exterior' else False
+            inv.is_exterior = True if inv.fiscal_type_id and \
+                inv.fiscal_type_id.prefix in ('B17') else False
 
     @api.onchange('service_type')
     def onchange_service_type(self):

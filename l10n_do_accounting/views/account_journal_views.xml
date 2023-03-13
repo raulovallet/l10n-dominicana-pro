@@ -19,4 +19,21 @@
         </field>
     </record>
 
+    <record id="inherit_view_account_journal_tree" model="ir.ui.view">
+        <field name="name">inherit.view.account.journal.tree</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_tree" />
+        <field name="arch" type="xml">
+            
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="l10n_do_fiscal_journal" widget="boolean_toggle" attrs="{
+                    'invisible':[
+                        ('type', 'in', ('cash','bank','general'))
+                    ]
+                }"/>
+            </xpath>
+            
+        </field>
+    </record>
+
 </odoo>

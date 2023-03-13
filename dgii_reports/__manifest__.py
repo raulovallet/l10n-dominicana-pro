@@ -14,7 +14,7 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.0.5',
+    'version': '16.0.1.0.6',
 
     # any module necessary for this one to work correctly
     'depends': [
@@ -26,7 +26,6 @@
     # always loaded
     'data': [
         'data/invoice_service_type_detail_data.xml',
-        'data/account_fiscal_type_data.xml',
         'data/account_tax_data.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
@@ -34,7 +33,6 @@
         'views/account_account_views.xml',
         'views/account_invoice_views.xml',
         'views/dgii_report_views.xml',
-        'views/account_fiscal_type_views.xml',
         'views/account_tax_views.xml',
         'wizard/dgii_report_regenerate_wizard_views.xml',
     ],
