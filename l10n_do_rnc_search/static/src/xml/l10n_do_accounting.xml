@@ -1,0 +1,16 @@
+<template>
+    <t t-name="FieldDgiiAutoComplete" owl="1">
+
+        <span>
+            <div class="input-group colorpicker-component">
+                <input type="text" class="col-md-12 form-control" placeholder="Name/VAT/TAX ID"
+                       autocomplete="off" t-ref="input_name" t-on-input="_onChangeName"/>
+                <span class="input-group-addon">
+                    <i></i>
+                </span>
+            </div>
+
+        </span>
+       
+    </t>
+</template>
