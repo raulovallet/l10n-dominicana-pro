@@ -403,7 +403,7 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
 
-            if inv.amount_untaxed == 0 and inv.move_type != 'entry':
+            if inv.amount_untaxed == 0 and inv.is_invoice():
                 raise UserError(
                     _(
                         u"You cannot validate an invoice whose "
@@ -411,7 +411,7 @@ class AccountInvoice(models.Model):
                     )
                 )
 
-            if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
+            if inv.is_l10n_do_fiscal_invoice and inv.is_invoice():
 
                 if inv.fiscal_type_id and not inv.fiscal_type_id.assigned_sequence:
                     inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
@@ -464,12 +464,34 @@ class AccountInvoice(models.Model):
                             )
                         )
                 
-                # Check origin_out is correct format
+                # Check refund stuff
                 if inv.origin_out and inv.move_type in ('out_refund', 'in_refund'):
                     self.env['account.fiscal.type'].check_format_fiscal_number(
                         inv.origin_out,
                         'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'  
                     )
+
+                    origin_invoice = self.env['account.move'].search([
+                        ('ref', '=', inv.origin_out), 
+                        ('partner_id', '=', inv.partner_id.id),
+                        ('state', '=', 'posted'),
+                        ('is_l10n_do_fiscal_invoice', '=', True),
+                        ('move_type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice')
+                    ], limit=1)
+                    
+                    if not origin_invoice:
+                        raise UserError(_(
+                                'The invoice ({}) to which the credit note refers does not exist in the system or is not under the name of {}'
+                            ).format(inv.origin_out, inv.partner_id.name)
+                        )
+                    
+                    delta_time = inv.invoice_date - origin_invoice.invoice_date
+
+                    if delta_time.days > 30 and inv.line_ids.filtered(lambda l: l.tax_line_id and 'itbis' in l.tax_line_id.name.lower()):
+                        raise UserError(_(
+                                'The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed.'
+                            ).format(inv.origin_out, delta_time.days)
+                        )
 
         res = super(AccountInvoice, self)._post(soft)
 
@@ -582,7 +604,7 @@ class AccountInvoice(models.Model):
                 
 
     def button_cancel(self, force_cancel=False):
-     
+
         if self.journal_id.l10n_do_fiscal_journal and force_cancel == False:
 
             return self.action_invoice_cancel()
