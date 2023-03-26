@@ -737,7 +737,7 @@ msgstr "Tipos fiscales"
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "Fiscal number can not be blank"
-msgstr "El número fiscal no puede estar en blanco"
+msgstr "El número de comprobante fiscal no puede estar en blanco"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move_reversal__is_fiscal_refund

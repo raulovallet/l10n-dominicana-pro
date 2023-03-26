@@ -413,15 +413,8 @@ class AccountInvoice(models.Model):
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
 
-                if inv.fiscal_type_id and not \
-                    inv.fiscal_type_id.assigned_sequence and \
-                    inv.ref:
-                        if inv.fiscal_type_id.prefix and inv.fiscal_type_id.prefix != inv.ref[:3]:
-                            raise UserError(_(
-                                "The prefix of the fiscal sequence %s must be %s"
-                            )% (inv.fiscal_type_id.name, inv.fiscal_type_id.prefix,))
-                        
-                        inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
+                if inv.fiscal_type_id and not inv.fiscal_type_id.assigned_sequence:
+                    inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
                         
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again
