@@ -927,7 +927,7 @@ msgstr "Fecha límite de mi actividad"
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_invoice_tree
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form
 msgid "NCF"
-msgstr "Referencia de reembolso"
+msgstr "NCF"
 
 #. module: l10n_do_accounting
 #. odoo-python

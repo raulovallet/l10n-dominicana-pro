@@ -123,6 +123,9 @@ class AccountInvoice(models.Model):
     is_debit_note = fields.Boolean(
         string="Is debit note"
     )
+    ref = fields.Char(
+        string="NCF"
+    )
 
     @api.depends("is_l10n_do_fiscal_invoice", "move_type", "journal_id", "partner_id")
     def _compute_available_fiscal_type(self):
@@ -410,8 +413,8 @@ class AccountInvoice(models.Model):
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
 
-                if inv.fiscal_type_id and \
-                    not inv.fiscal_type_id.assigned_sequence and \
+                if inv.fiscal_type_id and not \
+                    inv.fiscal_type_id.assigned_sequence and \
                     inv.ref:
                         if inv.fiscal_type_id.prefix and inv.fiscal_type_id.prefix != inv.ref[:3]:
                             raise UserError(_(
