@@ -409,7 +409,13 @@ class AccountInvoice(models.Model):
                 )
 
             if inv.is_l10n_do_fiscal_invoice and inv.move_type not in ('entry', 'out_receipt', 'in_receipt'):
+                
+                if not inv.fiscal_type_id:
+                   raise UserError(_(
+                                "A fiscal invoice cannot be validated without selecting the type of fiscal value")) 
 
+
+                    
                 if inv.fiscal_type_id and \
                     not inv.fiscal_type_id.assigned_sequence and \
                     inv.ref:
