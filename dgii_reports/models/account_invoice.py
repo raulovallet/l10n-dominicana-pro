@@ -169,11 +169,12 @@ class AccountInvoice(models.Model):
                     
                     else:
                         service_amount += line.price_subtotal
+                
+                service_amount = inv._convert_to_local_currency(service_amount)
+                good_amount = inv._convert_to_local_currency(good_amount)
 
-            inv.service_total_amount = inv._convert_to_local_currency(
-                service_amount)
-            inv.good_total_amount = inv._convert_to_local_currency(
-                good_amount)
+            inv.service_total_amount = service_amount
+            inv.good_total_amount = good_amount
 
     @api.depends(
         'state',
