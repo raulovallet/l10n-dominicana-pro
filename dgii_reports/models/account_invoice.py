@@ -147,6 +147,7 @@ class AccountInvoice(models.Model):
 
     @api.depends(
         'state',
+        'invoice_date',
         'invoice_line_ids', 
         'invoice_line_ids.product_id',
         'invoice_line_ids.price_subtotal'
@@ -159,7 +160,7 @@ class AccountInvoice(models.Model):
             service_amount = 0
             good_amount = 0
             
-            if inv.state != 'draft':
+            if inv.state != 'draft' and inv.invoice_date:
                 for line in inv.invoice_line_ids:
                     if not line.product_id:
                         service_amount += line.price_subtotal
