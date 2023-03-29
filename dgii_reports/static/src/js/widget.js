@@ -2,10 +2,11 @@ odoo.define('dgii_report.dgii_report_widget', function (require) {
     "use strict";
 
     var field_registry = require('web.field_registry');
-    var UrlChar = field_registry.get('url');
+    var basic_fields = require('web.basic_fields');
 
-    var UrlDgiiReportsWidget = UrlChar.extend({
+    var UrlDgiiReportsWidget = basic_fields.UrlWidget.extend({
         _renderReadonly: function () {
+            console.log('UrlDgiiReportsWidget')
             this.$el.text(this.attrs.text || this.value)
                 .addClass('o_form_uri o_text_overflow')
                 .attr('target', '_blank')
