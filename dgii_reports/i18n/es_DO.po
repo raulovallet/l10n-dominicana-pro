@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-10 22:53+0000\n"
-"PO-Revision-Date: 2023-03-13 12:40-0400\n"
+"POT-Creation-Date: 2023-03-30 16:36+0000\n"
+"PO-Revision-Date: 2023-03-30 12:38-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -23,15 +23,14 @@ msgstr ""
 #: model:ir.model.fields,help:dgii_reports.field_account_payment__fiscal_status
 msgid ""
 "* The 'Green' status means the invoice was sent to the DGII.\n"
-"* The 'Red' status means the invoice is in a DGII report but has not yet been sent "
-"to the DGII.\n"
+"* The 'Red' status means the invoice is in a DGII report but has not yet been sent to "
+"the DGII.\n"
 "* The 'Grey' status means Has not yet been reported or was partially reported."
 msgstr ""
 "* El estado ‘Verde’ significa que la factura fue enviada a la DGII.\n"
-"* El estado 'Rojo' significa que la factura está en un informe de la DGII pero aún "
-"no ha sido enviada a la DGII.\n"
-"* El estado ‘Gris’ significa que aún no se ha informado o se ha informado "
-"parcialmente."
+"* El estado 'Rojo' significa que la factura está en un informe de la DGII pero aún no "
+"ha sido enviada a la DGII.\n"
+"* El estado ‘Gris’ significa que aún no se ha informado o se ha informado parcialmente."
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -84,8 +83,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
 msgid "<span class=\"fa fa-warning fa-lg\" title=\"Warning\" aria-label=\"Warning\"/>"
 msgstr ""
-"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-"
-"label=\"Advertencia\"/>"
+"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-label=\"Advertencia\"/>"
 
 #. module: dgii_reports
 #. odoo-python
@@ -180,8 +178,7 @@ msgstr ""
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a45s
 msgid "A45s - OPERATIONS OF PRODUCERS OF EXEMPT GOODS OR SERVICES (Services)"
-msgstr ""
-"A45s - EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS (SERVICIOS)"
+msgstr "A45s - EN OPERACIONES DE PRODUCTORES DE BIENES O SERVICIOS EXENTOS (SERVICIOS)"
 
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_attachment_a__a46c
@@ -285,8 +282,8 @@ msgstr "MONTO"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) (Rule "
-"No. 08-10 and 05-19)"
+"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) (Rule No. "
+"08-10 and 05-19)"
 msgstr ""
 "BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al 16%) "
 "(Norma No. 08-10 y 05-19)"
@@ -296,8 +293,8 @@ msgstr ""
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) (Rule "
-"No. 08-10 and 05-19)"
+"ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) (Rule No. "
+"08-10 and 05-19)"
 msgstr ""
 "BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al 18%) "
 "(Norma No. 08-10 y 05-19)"
@@ -459,8 +456,8 @@ msgstr "CHEQUE / TRANSFERENCIA"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"COEFFICIENT OF PROPORTIONALITY ((((Boxes 2 + 5 + 10 of IT1) / Box 1 of IT1)) * 100) "
-"If applicable."
+"COEFFICIENT OF PROPORTIONALITY ((((Boxes 2 + 5 + 10 of IT1) / Box 1 of IT1)) * 100) If "
+"applicable."
 msgstr ""
 "COEFICIENTE DE PROPORCIONALIDAD ((((Casillas 2 + 5 + 10 del IT1)  / Casilla 1 del "
 "IT1)) * 100) Si aplica."
@@ -498,8 +495,7 @@ msgstr "PAGOS COMPUTABLES POR VENTAS DE PAQUETES DE ALOJAMIENTO Y OCUPACIÓN"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"COMPUTABLE PAYMENTS FOR SALES OF AIR TRANSPORTATION TICKETS (Norm No. 02-05) (BSP-"
-"IATA)"
+"COMPUTABLE PAYMENTS FOR SALES OF AIR TRANSPORTATION TICKETS (Norm No. 02-05) (BSP-IATA)"
 msgstr ""
 "PAGOS COMPUTABLES POR VENTAS DE PASAJES DE TRANSPORTE AÉREO (Norma No. 02-05) (BSP-"
 "IATA)"
@@ -614,6 +610,11 @@ msgid "Consumer Gift certificates or vouchers"
 msgstr "Bonos o Certificados de Regalo"
 
 #. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "Consumer Invoices Summary"
+msgstr "Resumen Facturas Consumo"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_swap
 msgid "Consumer Swap"
 msgstr "Permuta"
@@ -704,7 +705,7 @@ msgstr "TARJETA DÉBITO / CRÉDITO"
 #: model:ir.ui.menu,name:dgii_reports.dgii_report_menu
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
 msgid "DGII"
-msgstr "DGII"
+msgstr ""
 
 #. module: dgii_reports
 #: model:ir.model,name:dgii_reports.model_dgii_reports
@@ -741,8 +742,7 @@ msgstr "Lineas de Ventas"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid "DIFFERENCE TO PAY (If the value of boxes 26-28-29-30-31-32 is Positive)"
-msgstr ""
-"DIFERENCIA A PAGAR (Si el valor de las casillas 26-28-29-30-31-32 es Positivo)"
+msgstr "DIFERENCIA A PAGAR (Si el valor de las casillas 26-28-29-30-31-32 es Positivo)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -897,22 +897,22 @@ msgstr "Seguidores (Empresas)"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations "
-"Taxed at 16%)"
+"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations Taxed "
+"at 16%)"
 msgstr ""
-"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
-"(Operaciones Gravadas al 16%)"
+"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST (Operaciones "
+"Gravadas al 16%)"
 
 #. module: dgii_reports
 #. odoo-python
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations "
-"Taxed at 18%)"
+"GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Operations Taxed "
+"at 18%)"
 msgstr ""
-"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
-"(Operaciones Gravadas al 18%)"
+"BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST (Operaciones "
+"Gravadas al 18%)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -927,6 +927,11 @@ msgstr "COMPROBANTES GUBERNAMENTALES (15 y 45)"
 #, python-format
 msgid "GRAND TOTAL (Sum of boxes 38+67)"
 msgstr "TOTAL A PAGAR (Sumar casillas 38+67)"
+
+#. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
+msgid "General Summary of Consumer Invoices"
+msgstr "Resumen General de Facturas de Consumo"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
@@ -962,8 +967,7 @@ msgstr "Tiene mensaje"
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i15
 msgid "I15 - TAXABLE OPERATIONS FROM SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)"
-msgstr ""
-"I15 - OPERACIONES GRAVADAS POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3)"
+msgstr "I15 - OPERACIONES GRAVADAS POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3)"
 
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i2
@@ -981,8 +985,8 @@ msgid ""
 "I3 - INCOME FROM SERVICE EXPORTS (Article 344 CT and Article 14, Paragraph j), "
 "Regulation 293-11)"
 msgstr ""
-"I3 - INGRESOS POR EXPORTACIONES DE SERVICIOS SEGÚN Art. 344 CT y Art. 14 Literal "
-"j), Reglamento 293-11"
+"I3 - INGRESOS POR EXPORTACIONES DE SERVICIOS SEGÚN Art. 344 CT y Art. 14 Literal j), "
+"Reglamento 293-11"
 
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i31
@@ -1017,11 +1021,10 @@ msgstr "I39 - SERVICIOS SUJETOS A RETENCIÓN PERSONAS FÍSICAS"
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i4
 msgid ""
-"I4 - INCOME FROM LOCAL SALES OF EXEMPT GOODS OR SERVICES (Article 343 and Article "
-"344 CT)"
+"I4 - INCOME FROM LOCAL SALES OF EXEMPT GOODS OR SERVICES (Article 343 and Article 344 "
+"CT)"
 msgstr ""
-"I4 - INGRESOS POR VENTAS LOCALES DE BIENES O SERVICIOS EXENTOS Art. 343 y Art. 344 "
-"CT"
+"I4 - INGRESOS POR VENTAS LOCALES DE BIENES O SERVICIOS EXENTOS Art. 343 y Art. 344 CT"
 
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i40
@@ -1059,8 +1062,8 @@ msgstr ""
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i47
 msgid ""
-"I47 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) "
-"(Rule No. 08-10 and 05-19)"
+"I47 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 18%) (Rule "
+"No. 08-10 and 05-19)"
 msgstr ""
 "I47 - BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al "
 "18%) (Norma No. 08-10 y 05-19)"
@@ -1068,8 +1071,8 @@ msgstr ""
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_account__box_it1__i48
 msgid ""
-"I48 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) "
-"(Rule No. 08-10 and 05-19)"
+"I48 - ASSETS SUBJECT TO RETENTION OF PROOF OF PURCHASE (Operations Taxed at 16%) (Rule "
+"No. 08-10 and 05-19)"
 msgstr ""
 "I48 - BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (Operaciones Gravadas al "
 "16%) (Norma No. 08-10 y 05-19)"
@@ -1109,8 +1112,8 @@ msgstr "I66 - SANCIONES"
 msgid ""
 "I8 - INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)"
 msgstr ""
-"I8 - INGRESOS POR VENTAS LOCALES DE BIENES EXENTOS (Según Párrafos III y IV, Art. "
-"343 CT)"
+"I8 - INGRESOS POR VENTAS LOCALES DE BIENES EXENTOS (Según Párrafos III y IV, Art. 343 "
+"CT)"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_report_regenerate_wizard__id
@@ -1136,8 +1139,8 @@ msgstr "II. INGRESOS POR OPERACIONES"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"II. OPERATIONS REPORTED IN THE 607, SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
-"TYPE OF NCF"
+"II. OPERATIONS REPORTED IN THE 607, SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE "
+"OF NCF"
 msgstr ""
 "II. OPERACIONES REPORTADAS EN EL 607, LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
 "POR TIPO DE NCF"
@@ -1161,8 +1164,8 @@ msgstr "II.B GRAVADAS"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"III. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
-"TYPE OF SALE (TOTAL AMOUNT INCLUDING TAXES)"
+"III. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE "
+"OF SALE (TOTAL AMOUNT INCLUDING TAXES)"
 msgstr ""
 "III. OPERACIONES REPORTADAS EN EL 607/LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
 "POR TIPO DE VENTA (MONTO TOTAL INCLUYENDO IMPUESTOS)"
@@ -1236,8 +1239,7 @@ msgstr "INGRESOS POR ARRENDAMIENTOS"
 #. odoo-python
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
-msgid ""
-"INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)"
+msgid "INCOME FROM LOCAL SALES OF EXEMPT GOODS (Paragraphs III and IV, Article 343 CT)"
 msgstr ""
 "INGRESOS POR VENTAS LOCALES DE BIENES EXENTOS (Según Párrafos III y IV, Art. 343 CT)"
 
@@ -1294,7 +1296,7 @@ msgstr "Retención ISR"
 #: model:ir.model.fields,field_description:dgii_reports.field_account_account__box_it1
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "IT-1"
-msgstr "IT-1"
+msgstr ""
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_6_line_ids
@@ -1344,8 +1346,8 @@ msgstr "ITBIS ADMITIDO POR APLICACIÓN DE PROPORCIONALIDAD (Casillas 53 * 54)"
 #, python-format
 msgid "ITBIS CHARGED FOR SALES OF DEPRECIABLE ASSETS (Categories 2 and 3)"
 msgstr ""
-"ITBIS COBRADO POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3) (18 de la "
-"casilla 15)"
+"ITBIS COBRADO POR VENTAS DE ACTIVOS DEPRECIABLES (Categoría 2 y 3) (18 de la casilla "
+"15)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1383,8 +1385,8 @@ msgid ""
 "ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (16% of box 48) (Rule No. "
 "08-10 and 05-19)"
 msgstr ""
-"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (16% de la casilla "
-"47) (Norma No. 08-10 y 05-19)"
+"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (16% de la casilla 47) "
+"(Norma No. 08-10 y 05-19)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1394,8 +1396,8 @@ msgid ""
 "ITBIS FOR GOODS SUBJECT TO RETENTION OF PROOF OF PURCHASE (18% of box 47) (Rule No. "
 "08-10 and 05-19)"
 msgstr ""
-"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (18% de la casilla "
-"47) (Norma No. 08-10 y 05-19)"
+"ITBIS POR BIENES SUJETOS A RETENCIÓN DE COMPROBANTE DE COMPRAS (18% de la casilla 47) "
+"(Norma No. 08-10 y 05-19)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1478,11 +1480,11 @@ msgstr "Retención ITBIS"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid ""
-"IV. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY "
-"TYPE OF INCOME"
+"IV. OPERATIONS REPORTED IN THE 607/SALES BOOK AND ELECTRONIC INVOICE (E-NCF) BY TYPE "
+"OF INCOME"
 msgstr ""
-"IV. OPERACIONES REPORTADAS EN EL 607/LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) "
-"POR TIPO DE INGRESO"
+"IV. OPERACIONES REPORTADAS EN EL 607/LIBRO DE VENTAS Y FACTURA ELECTRONICA (E-NCF) POR "
+"TIPO DE INGRESO"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1804,8 +1806,8 @@ msgstr "NO SUJETAS A ITBIS POR COMISIONES (Proviene de la casilla 42 del Anexo A
 #, python-format
 msgid "NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES (From box 38 of Annex A)"
 msgstr ""
-"NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Proviene de la casilla 38 del "
-"Anexo A)"
+"NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Proviene de la casilla 38 del Anexo "
+"A)"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__name
@@ -1893,8 +1895,8 @@ msgid ""
 "OPERATIONS NOT SUBJECT TO ITBIS FOR CONSTRUCTION SERVICES (Subtract Box 37 Total "
 "Invoiced - Amount Subject to ITBIS)"
 msgstr ""
-"OPERACIONES NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Restar Casilla 37 "
-"Total Facturado - Monto Sujeto a ITBIS)"
+"OPERACIONES NO SUJETAS A ITBIS POR SERVICIOS DE CONSTRUCCIÓN (Restar Casilla 37 Total "
+"Facturado - Monto Sujeto a ITBIS)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1992,9 +1994,9 @@ msgid "Other Taxes"
 msgstr "Otros Impuestos"
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_ncf_total_othr
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_ncf_total_other
 msgid "Other Taxes Total"
-msgstr "Total Otros Impuestos/Tasas"
+msgstr "Total de otros impuestos"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__other_taxes
@@ -2195,7 +2197,7 @@ msgstr "CANTIDAD"
 #. module: dgii_reports
 #: model:ir.actions.server,name:dgii_reports.action_run_norma_recompute
 msgid "Recalcular norma 07-2018"
-msgstr "Recalcular norma 07-2018"
+msgstr ""
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
@@ -2210,8 +2212,8 @@ msgstr "Regenerar Reporte"
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
 msgid ""
-"Regenerate this report may cause data variation. Don't do that if you want to "
-"preserve equality\n"
+"Regenerate this report may cause data variation. Don't do that if you want to preserve "
+"equality\n"
 "                        between the report you sent and the data in your system."
 msgstr ""
 "Regenerar este reporte puede causar variación en los datos. No haga esto si desea "
@@ -2556,7 +2558,7 @@ msgstr "A INCLUIR EN ACTIVOS (CATEGORÍA I)"
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "TOTAL"
-msgstr "TOTAL"
+msgstr ""
 
 #. module: dgii_reports
 #. odoo-python
@@ -2584,8 +2586,7 @@ msgstr "TOTAL OPERACIONES COMISIONISTAS (Sumar casillas 39+40)"
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid "TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS (From box 33 of Annex A)"
-msgstr ""
-"TOTAL PAGOS COMPUTABLES POR RETENCIONES (Proviene de la casilla 33 del Anexo A)"
+msgstr "TOTAL PAGOS COMPUTABLES POR RETENCIONES (Proviene de la casilla 33 del Anexo A)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2594,8 +2595,7 @@ msgstr ""
 msgid ""
 "TOTAL COMPUTABLE PAYMENTS FOR WITHHOLDINGS/PERCEPTION (Sum boxes 27+28+29+30+31+32)"
 msgstr ""
-"TOTAL PAGOS COMPUTABLES POR RETENCIONES/PERCEPCIÓN (Sumar casillas "
-"27+28+29+30+31+32)"
+"TOTAL PAGOS COMPUTABLES POR RETENCIONES/PERCEPCIÓN (Sumar casillas 27+28+29+30+31+32)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2605,8 +2605,8 @@ msgid ""
 "TOTAL CONSTRUCTION OPERATIONS (Total Invoiced: Sum boxes 34+35, Amount: Sum boxes "
 "34+35+36)"
 msgstr ""
-"TOTAL OPERACIONES CONSTRUCTORAS (Total Facturado: Sumar casillas 34+35, Monto: "
-"Sumar casillas 34+35+36)"
+"TOTAL OPERACIONES CONSTRUCTORAS (Total Facturado: Sumar casillas 34+35, Monto: Sumar "
+"casillas 34+35+36)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2639,8 +2639,8 @@ msgid ""
 "TOTAL GOODS OR SERVICES SUBJECT TO WITHHOLDING TO TAXPAYERS UNDER THE RST (Sum of "
 "boxes 44+45)"
 msgstr ""
-"TOTAL BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST "
-"(Sumar casillas 44+45)"
+"TOTAL BIENES O SERVICIOS SUJETOS A RETENCIÓN A CONTRIBUYENTES ACOGIDOS AL RST (Sumar "
+"casillas 44+45)"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2736,8 +2736,7 @@ msgstr "TOTAL DE OPERACIONES DEL PERIODO (Proviene de la casilla 11 del Anexo A)
 #: code:addons/dgii_reports/models/dgii_report.py:0
 #, python-format
 msgid "TOTAL SERVICES SUBJECT TO WITHHOLDING TO INDIVIDUALS AND NON-PROFIT ENTITIES"
-msgstr ""
-"TOTAL SERVICIOS SUJETOS A RETENCIÓN A PERSONAS FÍSICAS Y ENTIDADES NO LUCRATIVAS"
+msgstr "TOTAL SERVICIOS SUJETOS A RETENCIÓN A PERSONAS FÍSICAS Y ENTIDADES NO LUCRATIVAS"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2807,15 +2806,15 @@ msgid ""
 "This module needs pycountry to get 609 ISO 3166 country codes. Please install "
 "pycountry on your system. (See requirements file)"
 msgstr ""
-"Este módulo necesita pycountry para obtener 609 códigos de país ISO 3166. Por "
-"favor, instale pycountry en su sistema. (Ver ficha de requisitos)"
+"Este módulo necesita pycountry para obtener 609 códigos de país ISO 3166. Por favor, "
+"instale pycountry en su sistema. (Ver ficha de requisitos)"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_exterior_report_line_tree
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_tree
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_tree
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 #. module: dgii_reports
 #. odoo-python
