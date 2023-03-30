@@ -123,9 +123,6 @@ class AccountInvoice(models.Model):
     is_debit_note = fields.Boolean(
         string="Is debit note"
     )
-    ref = fields.Char(
-        string="NCF"
-    )
 
     @api.depends("is_l10n_do_fiscal_invoice", "move_type", "journal_id", "partner_id")
     def _compute_available_fiscal_type(self):
