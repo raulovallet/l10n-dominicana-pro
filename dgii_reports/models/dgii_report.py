@@ -291,6 +291,82 @@ class DgiiReport(models.Model):
         domain=[('section', '=', '6')]
     )
 
+    # General Summary of Consumer Invoices
+    csmr_ncf_qty = fields.Integer(
+        string='Issued Consumer NCF Qty', 
+        copy=False
+    )
+    csmr_ncf_total_amount = fields.Monetary(
+        string='Invoiced Amount Total',
+        copy=False
+    )
+    csmr_ncf_total_itbis = fields.Monetary(
+        string='Invoiced ITBIS Total', 
+        copy=False,
+    )
+    csmr_ncf_total_isc = fields.Monetary(
+        string='Selective Tax', 
+        copy=False
+    )
+    csmr_ncf_total_other = fields.Monetary(
+        string='Other Taxes Total', 
+        copy=False
+    )
+    csmr_ncf_total_lgl_tip = fields.Monetary(
+        string='Legal Tip Total', 
+        copy=False
+    )
+
+    # General Summary of Consumer Invoices - Sale Form
+    csmr_cash = fields.Monetary(
+        string='Consumer Cash', 
+        copy=False
+    )
+    csmr_bank = fields.Monetary(
+        string='Consumer Check / Transfer / Deposit',
+        copy=False
+    )
+    csmr_card = fields.Monetary(
+        string='Consumer Credit Card / Debit Card',
+        copy=False
+    )
+    csmr_credit = fields.Monetary(
+        string='Consumer Credit', 
+        copy=False
+    )
+    csmr_bond = fields.Monetary(
+        string='Consumer Gift certificates or vouchers', 
+        copy=False
+    )
+    csmr_swap = fields.Monetary(
+        string='Consumer Swap', 
+        copy=False
+    )
+    csmr_others = fields.Monetary(
+        string='ConsumerOther Sale Forms', 
+        copy=False
+    )
+
+    def _get_csmr_vals_dict(self):
+        return {
+            'csmr_ncf_qty': 0,
+            'csmr_ncf_total_amount': 0,
+            'csmr_ncf_total_itbis': 0,
+            'csmr_ncf_total_isc': 0,
+            'csmr_ncf_total_other': 0,
+            'csmr_ncf_total_lgl_tip': 0,
+            'csmr_cash': 0,
+            'csmr_bank': 0,
+            'csmr_card': 0,
+            'csmr_credit': 0,
+            'csmr_bond': 0,
+            'csmr_swap': 0,
+            'csmr_others': 0
+        }
+    
+    def _set_csmr_fields_vals(self, csmr_dict):
+        self.write(csmr_dict)
+
     def _get_country_number(self, partner_id):
         """
         Returns ISO 3166 country number from partner
@@ -668,6 +744,7 @@ class DgiiReport(models.Model):
             excluded_line = line
             payment_dict = self._get_payments_dict()
             income_dict = self._get_income_type_dict()
+            csmr_dict = self._get_csmr_vals_dict()
 
             report_data = ''
             for inv in invoice_ids:
@@ -725,6 +802,23 @@ class DgiiReport(models.Model):
                     inv.move_type == 'out_refund' else payments.get('others')
                 }
 
+                if str(values['fiscal_invoice_number'])[-10:-8] == '02':
+                    csmr_dict['csmr_ncf_qty'] += 1
+                    csmr_dict['csmr_ncf_total_amount'] += \
+                        values['invoiced_amount']
+                    csmr_dict['csmr_ncf_total_itbis'] += \
+                        values['invoiced_itbis']
+                    csmr_dict['csmr_ncf_total_isc'] += values['selective_tax']
+                    csmr_dict['csmr_ncf_total_other'] += values['other_taxes']
+                    csmr_dict['csmr_ncf_total_lgl_tip'] += values['legal_tip']
+                    csmr_dict['csmr_cash'] += values['cash']
+                    csmr_dict['csmr_bank'] += values['bank']
+                    csmr_dict['csmr_card'] += values['card']
+                    csmr_dict['csmr_credit'] += values['credit']
+                    csmr_dict['csmr_bond'] += values['bond']
+                    csmr_dict['csmr_swap'] += values['swap']
+                    csmr_dict['csmr_others'] += values['others']
+
                 line += 1
                 values.update({'line': line})
                 SaleLine.create(values)
@@ -740,7 +834,8 @@ class DgiiReport(models.Model):
                 for k in payment_dict:
                     payment_dict[k] += payments[k] * -1 if inv.move_type == \
                         'out_refund' else payments[k]
-
+            
+            self._set_csmr_fields_vals(csmr_dict)
             self._generate_607_txt(report_data, line - excluded_line)
 
     def process_608_report_data(self, values):
