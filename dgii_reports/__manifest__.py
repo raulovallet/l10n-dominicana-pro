@@ -38,11 +38,11 @@
         'wizard/dgii_report_regenerate_wizard_views.xml',
     ],
 
-    'assets':{
-        'web.assets_backend': [
-            '/dgii_reports/static/src/scss/dgii_reports.scss',
-            '/dgii_reports/static/src/js/widget.js'
-        ]
-    }
+#     'assets':{
+#         'web.assets_backend': [
+#             '/dgii_reports/static/src/scss/dgii_reports.scss',
+#             '/dgii_reports/static/src/js/widget.js'
+#         ]
+#     }
 
 }
