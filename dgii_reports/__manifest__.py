@@ -14,10 +14,11 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.0.6',
+    'version': '16.0.1.0.8',
 
     # any module necessary for this one to work correctly
     'depends': [
+        'web',
         'account',
         'l10n_do',
         'l10n_do_accounting'

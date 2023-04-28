@@ -49,9 +49,7 @@
                         ('is_l10n_do_fiscal_invoice', '=', False), 
                     ],
                     'required': [
-                        ('is_l10n_do_fiscal_invoice','=',True), 
-                        ('move_type', '=', 'in_invoice'), 
-                        ('is_debit_note', '=', False)
+                        ('is_l10n_do_fiscal_invoice','=',True)
                     ],
                     'readonly': [
                         ('state','!=','draft')

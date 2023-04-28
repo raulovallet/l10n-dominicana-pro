@@ -824,7 +824,7 @@ msgstr "Tipos fiscales"
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "Fiscal number can not be blank"
-msgstr "El número fiscal no puede estar en blanco"
+msgstr "El número de comprobante fiscal no puede estar en blanco"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move_reversal__is_fiscal_refund
@@ -1023,11 +1023,14 @@ msgid "My Activity Deadline"
 msgstr "Fecha límite de mi actividad"
 
 #. module: l10n_do_accounting
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_bank_statement_line__ref
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move__ref
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move_reversal__refund_ref
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_payment__ref
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_invoice_tree
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form
 msgid "NCF"
-msgstr "Referencia de reembolso"
+msgstr "NCF"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -1071,7 +1074,7 @@ msgstr ""
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "NCF:"
-msgstr ""
+msgstr "NCF:"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence_validate_wizard__name
@@ -1371,8 +1374,17 @@ msgstr "El tipo de número fiscal (%s) no es una nota de crédito."
 #. odoo-python
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
-msgid "The prefix of the fiscal sequence %s must be %s"
-msgstr "El prefijo de la secuencia fiscal %s debe ser %s"
+msgid "The invoice ({}) to which the credit note refers does not exist in the system or is not under the name of {}"
+msgstr "La factura ({}) a la que se refiere la nota de crédito no existe en el sistema o no está a nombre de {}"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/account_invoice.py:0
+#, python-format
+msgid "The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed."
+msgstr ""
+"La factura ({}) a la que se refiere esta nota de crédito tiene más de 30 días de antigüedad ({}), por lo tanto, debe remover los "
+"impuestos de ITBIS."
 
 #. module: l10n_do_accounting
 #. odoo-python
