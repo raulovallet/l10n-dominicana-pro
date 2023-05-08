@@ -533,7 +533,7 @@ class DgiiReport(models.Model):
         :param invoice: account.move object
         :return: boolean
         """
-        if not invoice.payment_date:
+        if not invoice.payment_date and (invoice.withholding_itbis == 0 or invoice.income_withholding == 0):
             return False
 
         payment_date = invoice.payment_date
