@@ -30,6 +30,8 @@ class AccountInvoice(models.Model):
     @api.depends('payment_state', 'invoice_date', 'invoice_payments_widget')
     def _compute_invoice_payment_date(self):
         for inv in self:
+            payment_date = False
+            
             if inv.payment_state in ('paid', 'in_payment'):
                 dates = [
                     payment['date'] for payment in inv._get_invoice_payment_widget()
@@ -37,8 +39,10 @@ class AccountInvoice(models.Model):
                 if dates:
                     max_date = max(dates)
                     invoice_date = inv.invoice_date
-                    inv.payment_date = max_date if max_date >= invoice_date \
+                    payment_date = max_date if max_date >= invoice_date \
                         else invoice_date
+
+            inv.payment_date = payment_date
 
     @api.constrains('line_ids',  'line_ids.tax_line_id')
     def _check_isr_tax(self):
