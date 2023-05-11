@@ -35,27 +35,27 @@ except (ImportError, IOError) as err:
 
 class Odoojs(http.Controller):
 
-    # @http.route('/dgii_ws', auth='public', cors="*")
-    # def index(self, **kwargs):
-    #     term = kwargs.get("term", False)
-    #     query_dgii_wsmovil = request.env['ir.config_parameter'].sudo(
-    #     ).get_param('dgii.wsmovil')
+    @http.route('/dgii_ws', auth='public', cors="*")
+    def index(self, **kwargs):
+        term = kwargs.get("term", False)
+        query_dgii_wsmovil = request.env['ir.config_parameter'].sudo(
+        ).get_param('dgii.wsmovil')
 
-    #     if term and query_dgii_wsmovil == 'True':
-    #         if term.isdigit() and len(term) in [9, 11]:
-    #             result = rnc.check_dgii(term)
-    #         else:
-    #             result = rnc.search_dgii(term, end_at=20, start_at=1)
-    #         if result is not None:
-    #             if not isinstance(result, list):
-    #                 result = [result]
+        if term and query_dgii_wsmovil == 'True':
+            if term.isdigit() and len(term) in [9, 11]:
+                result = rnc.check_dgii(term)
+            else:
+                result = rnc.search_dgii(term, end_at=20, start_at=1)
+            if result is not None:
+                if not isinstance(result, list):
+                    result = [result]
 
-    #             for d in result:
-    #                 d["name"] = " ".join(
-    #                     re.split(r"\s+", d["name"], flags=re.UNICODE)
-    #                 )  # remove all duplicate white space from the name
-    #                 d["label"] = u"{} - {}".format(d["rnc"], d["name"])
-    #             return json.dumps(result)
+                for d in result:
+                    d["name"] = " ".join(
+                        re.split(r"\s+", d["name"], flags=re.UNICODE)
+                    )  # remove all duplicate white space from the name
+                    d["label"] = u"{} - {}".format(d["rnc"], d["name"])
+                return json.dumps(result)
 
 
     @http.route('/validate_rnc/', auth='public', cors="*")
