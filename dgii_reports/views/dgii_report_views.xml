@@ -422,7 +422,7 @@
                 <field name="invoice_partner_id"/>
                 <field name="fiscal_invoice_number" widget="dgii_reports_url"/>
                 <field name="invoice_date"/>
-                <field name="anulation_type"/>
+                <field name="annulation_type"/>
             </tree>
         </field>
     </record>
@@ -534,8 +534,8 @@
                 <group expand="0" string="Group By">
                     <filter string="Contact" name="invoice_partner_id" domain="[]"
                             context="{'group_by':'invoice_partner_id'}"/>
-                    <filter string="Anulation type" name="anulation_type" domain="[]"
-                            context="{'group_by':'anulation_type'}"/>
+                    <filter string="Anulation type" name="annulation_type" domain="[]"
+                            context="{'group_by':'annulation_type'}"/>
                 </group>
             </search>
         </field>

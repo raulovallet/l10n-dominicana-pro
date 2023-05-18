@@ -344,7 +344,7 @@ msgid "An invoice cannot have multiple withholding taxes."
 msgstr "Una factura no puede tener múltiples retenciones."
 
 #. module: dgii_reports
-#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__anulation_type
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__annulation_type
 msgid "Anulation Type"
 msgstr "Tipo de anulación"
 

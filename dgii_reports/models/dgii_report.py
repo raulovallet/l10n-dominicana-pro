@@ -843,7 +843,7 @@ class DgiiReport(models.Model):
         NCF = str(values['fiscal_invoice_number']).ljust(11)
         INV_DATE = str(self._get_formatted_date(
             values['invoice_date'])).ljust(8)
-        ANU_TYPE = str(values['anulation_type']).ljust(2)
+        ANU_TYPE = str(values['annulation_type']).ljust(2)
 
         return "|".join([NCF, INV_DATE, ANU_TYPE])
 
@@ -888,7 +888,7 @@ class DgiiReport(models.Model):
                         'invoice_partner_id': inv.partner_id.id,
                         'fiscal_invoice_number': inv.ref,
                         'invoice_date': inv.invoice_date,
-                        'anulation_type': '', # inv.anulation_type, TODO: Wait for Jorge
+                        'annulation_type': inv.annulation_type,
                         'invoice_id': inv.id
                     }
                     CancelLine.create(values)
@@ -1934,7 +1934,7 @@ class DgiiCancelReportLine(models.Model):
 
     fiscal_invoice_number = fields.Char(size=19)
     invoice_date = fields.Date()
-    anulation_type = fields.Char(size=2)
+    annulation_type = fields.Char(size=2)
 
     invoice_partner_id = fields.Many2one('res.partner')
     invoice_id = fields.Many2one('account.move')
