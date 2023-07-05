@@ -14,7 +14,7 @@ class PortalAccount(CustomerPortal):
 
         try:
             invoice_sudo = self._document_check_access(
-                "account.invoice", invoice_id, access_token
+                "account.move", invoice_id, access_token
             )
         except (AccessError, MissingError):
             return request.redirect("/my")

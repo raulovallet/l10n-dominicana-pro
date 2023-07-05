@@ -17,12 +17,13 @@ class PosOrder(models.Model):
         string="NCF expiration date",
     )
     fiscal_type_id = fields.Many2one(
-        'account.fiscal.type',
+        string='Fiscal type',
+        comodel_name='account.fiscal.type',
         string="Fiscal Type",
     )
     fiscal_sequence_id = fields.Many2one(
-        'account.fiscal.sequence',
         string="Fiscal Sequence",
+        comodel_name='account.fiscal.sequence',
         copy=False,
     )
     is_used_in_order = fields.Boolean(
@@ -50,7 +51,7 @@ class PosOrder(models.Model):
         """
         invoice_vals = super(PosOrder, self)._prepare_invoice()
         if self.config_id.invoice_journal_id.l10n_do_fiscal_journal:
-            invoice_vals['reference'] = self.ncf
+            invoice_vals['ref'] = self.ncf
             invoice_vals['origin_out'] = self.ncf_origin_out
             invoice_vals['ncf_expiration_date'] = self.ncf_expiration_date
             invoice_vals['fiscal_type_id'] = self.fiscal_type_id.id
@@ -76,7 +77,7 @@ class PosOrder(models.Model):
             args.update({'note': data['note']})
         return args
 
-    @api.multi
+    
     def _create_order_payments(self):
         """
         Create all orders payment from statements
@@ -119,13 +120,13 @@ class PosOrder(models.Model):
                               ' in order to close the statement.')
                         )
 
-    @api.multi
+    
     def action_pos_order_invoice_no_return_pdf(self):
         """
         Create invoice on background
         :return:
         """
-        invoice = self.env['account.invoice']
+        invoice = self.env['account.move']
         for order in self:
             # Force company for all SUPERUSER_ID action
             local_context = dict(
@@ -266,13 +267,13 @@ class PosOrder(models.Model):
                 to_reconcile_lines += tmpline
         to_reconcile_lines.filtered(lambda l: not l.reconciled).reconcile()
 
-    @api.multi
+    
     def return_from_ui(self, orders):
         super(PosOrder, self).return_from_ui(orders)
         for tmp_order in orders:
             # eliminates the return of the order several times at the same time
             returned_order = self.search([
-                ('pos_reference', '=', tmp_order['data']['name']),
+                ('pos_ref', '=', tmp_order['data']['name']),
                 ('date_order', '=', tmp_order['data']['creation_date']),
                 ('returned_order', '=', True)
             ])
@@ -307,7 +308,7 @@ class PosOrder(models.Model):
             )
 
             refund_invoice.write({
-                'reference': self.ncf,
+                'ref': self.ncf,
                 'origin_out': self.ncf_origin_out,
                 'ncf_expiration_date': self.ncf_expiration_date,
                 'fiscal_type_id': self.fiscal_type_id.id,
@@ -436,8 +437,8 @@ class PosOrder(models.Model):
 
         for payment in payments:
             if payment['returned_ncf']:
-                cn_invoice = self.env['account.invoice'].search([
-                    ('reference', '=', payment['returned_ncf']),
+                cn_invoice = self.env['account.move'].search([
+                    ('ref', '=', payment['returned_ncf']),
                     ('type', '=', 'out_refund'),
                     ('is_l10n_do_fiscal_invoice', '=', True),
                 ])
@@ -469,7 +470,7 @@ class PosOrder(models.Model):
 
     def confirm_return_order_is_correct(self, uid, lines):
         pos_orders = self.env['pos.order'].search([
-            ('pos_history_reference_uid', '=', uid)
+            ('pos_history_ref_uid', '=', uid)
         ])
         lines_obj = self.env['pos.order.line'].search([
             ('order_id', 'in', pos_orders.ids)

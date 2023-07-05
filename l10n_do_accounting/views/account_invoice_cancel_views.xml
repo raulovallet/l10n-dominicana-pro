@@ -20,9 +20,15 @@
     <record id="action_account_invoice_cancel" model="ir.actions.act_window">
         <field name="name">Cancel Selected Invoice</field>
         <field name="res_model">account.invoice.cancel</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="account_invoice_cancel_view"/>
+        <field name="view_id" ref="l10n_do_accounting.account_invoice_cancel_view"/>
         <field name="target">new</field>
     </record>
+
+    <!-- <record id="project_task_action_to_schedule_fsm_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="45"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="project.view_task_form2"/>
+        <field name="act_window_id" ref="project_task_action_to_schedule_fsm"/>
+    </record> -->
 </odoo>

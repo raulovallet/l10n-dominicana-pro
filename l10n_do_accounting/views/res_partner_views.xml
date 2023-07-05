@@ -5,17 +5,24 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <field name="name" position="replace">
-                <field name="name" default_focus="1" placeholder="Nombre, RNC o Cédula" attrs="{'required': [('type', '=', 'contact')]}" widget="dgii_autocomplete"/>
-            </field>
-            <field name="vat" position="replace"></field>
-            <xpath expr="//div[hasclass('o_row')]">
-                <field name="is_fiscal_info_required" invisible="1"/>
-                <field name="vat" placeholder="RNC/Cédula" attrs="{'required': [('is_fiscal_info_required','=',True)]}"/>
+            <xpath expr="//field[@name='vat']" position="attributes">
+                <attribute name="attrs">{'invisible': [('country_id', '=', %(base.do)s)]}</attribute>
             </xpath>
-
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="is_fiscal_info_required" invisible="1"/>
+                <field name="vat" placeholder="ej. NNNNNNNNN" string="RNC" attrs="{
+                    'readonly': [('parent_id','!=',False)],
+                    'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', False)],
+                    'required': [('is_fiscal_info_required','=',True)]
+                }"/>
+                <field name="vat" placeholder="ej. MMMMMMMMMMM" string="Cédula" attrs="{
+                    'readonly': [('parent_id','!=',False)],
+                    'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', True)],
+                    'required': [('is_fiscal_info_required','=',True)]
+                }"/>
+            </xpath>
             <group name="sale" position ="inside">
-                <field name="sale_fiscal_type_id" attrs="{'required': [('customer', '=', 'True')]}"/>
+                <field name="sale_fiscal_type_id"/>
             </group>
             <group name="purchase" position ="inside">
                 <field name="expense_type"/>

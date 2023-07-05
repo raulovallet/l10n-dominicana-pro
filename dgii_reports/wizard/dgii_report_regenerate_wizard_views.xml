@@ -22,7 +22,7 @@
 
     <record id="dgii_report_regenerate_wizard_action" model="ir.actions.act_window">
         <field name="name">Regenerate Report</field>
-        <field name="view_type">form</field>
+
         <field name="target">new</field>
         <field name="view_mode">form</field>
         <field name="res_model">dgii.report.regenerate.wizard</field>

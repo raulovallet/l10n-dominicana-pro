@@ -8,10 +8,11 @@ try:
     from stdnum.do import rnc, cedula
 except (ImportError, IOError) as err:
     _logger.debug(str(err))
+    
 class Partner(models.Model):
     _inherit = "res.partner"
 
-    @api.multi
+    
     @api.depends('sale_fiscal_type_id')
     def _compute_is_fiscal_info_required(self):
         for rec in self:

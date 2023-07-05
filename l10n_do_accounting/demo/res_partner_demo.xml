@@ -10,13 +10,12 @@
         <field name="country_id" ref="base.do"/>
         <field name="city">Santo Domingo</field>
         <field name="vat">131098193</field>
-        <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_credito_fiscal"/>
         <field name="email">info@marcos.do</field>
         <field name="phone">809-540-4253</field>
         <field name="website">https://marcos.do/</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_1.png"/>
-        <field name="supplier" eval="1"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_1.png"/>
         <field name="expense_type">02</field>
+        <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_credito_fiscal"/>
     </record>
 
     <record id="res_partner_demo_2" model="res.partner">
@@ -32,8 +31,7 @@
         <field name="email">info@iterativo.do</field>
         <field name="phone">829-956-5191</field>
         <field name="website">https://iterativo.do/</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_2.png"/>
-        <field name="supplier" eval="1"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_2.png"/>
         <field name="expense_type">02</field>
     </record>
 
@@ -48,11 +46,9 @@
         <field name="email">vsantos@gruponeotec.com</field>
         <field name="phone">809-534-0970</field>
         <field name="website">http://gruponeotec.com/</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_3.png"/>
-        <field name="supplier" eval="1"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_3.png"/>
         <field name="expense_type">02</field>
-        <field name="purchase_fiscal_type_id"
-               ref="l10n_do_accounting.fiscal_type_fiscal_purchase"/>
+        <field name="purchase_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_fiscal_purchase"/>
     </record>
 
     <record id="res_partner_demo_4" model="res.partner">
@@ -66,8 +62,7 @@
         <field name="email">info@indexa.do</field>
         <field name="phone">829-939-3231</field>
         <field name="website">https://indexa.do/</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_4.png"/>
-        <field name="supplier" eval="1"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_4.png"/>
         <field name="expense_type">02</field>
     </record>
 
@@ -81,10 +76,8 @@
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_consumo"/>
         <field name="email">joselopezg8@gmail.com</field>
         <field name="phone">829-939-3231</field>
-        <field name="supplier" eval="1"/>
         <field name="expense_type">02</field>
-        <field name="purchase_fiscal_type_id"
-               ref="l10n_do_accounting.fiscal_type_informal"/>
+        <field name="purchase_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_informal"/>
     </record>
 
     <record id="res_partner_demo_6" model="res.partner">
@@ -106,7 +99,7 @@
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_gubernamental"/>
         <field name="email">info@micm.gob.do</field>
         <field name="phone">809-567-7192</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_7.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_7.png"/>
     </record>
 
     <record id="res_partner_demo_8" model="res.partner">
@@ -116,7 +109,7 @@
         <field name="vat">401505657</field>
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_gubernamental"/>
         <field name="phone">809-731-1100</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_8.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_8.png"/>
     </record>
 
     <!-- For REGIMEN ESPECIAL NCF's testing -->
@@ -128,7 +121,7 @@
         <field name="vat">101168481</field>
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_especial"/>
         <field name="phone">809-549-2031</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_9.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_9.png"/>
     </record>
 
     <record id="res_partner_demo_10" model="res.partner">
@@ -138,7 +131,7 @@
         <field name="vat">401051842</field>
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_especial"/>
         <field name="phone">800-248-6437</field>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_10.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_10.png"/>
     </record>
 
     <!-- For EXPORTACIONES NCF's testing -->
@@ -149,7 +142,7 @@
         <field name="country_id" ref="base.us"/>
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_exportacion"/>
         <field name="purchase_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_fiscal_import"/>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_11.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_11.png"/>
     </record>
 
     <record id="res_partner_demo_12" model="res.partner">
@@ -158,7 +151,49 @@
         <field name="country_id" ref="base.br"/>
         <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_exportacion"/>
         <field name="purchase_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_fiscal_import"/>
-        <field name="image" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_12.png"/>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_12.png"/>
+    </record>
+
+    <record id="res_partner_demo_13" model="res.partner">
+        <field name="name">Raul Ovalle</field>
+        <field eval="0" name="is_company"/>
+        <field name="country_id" ref="base.do"/>
+        <field name="vat">22400507046</field>
+        <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_consumo"/>
+        <field name="email">raulovallet@gmail.com</field>
+        <field name="phone">845-512-9136</field>
+        <field name="expense_type">02</field>
+        <field name="purchase_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_informal"/>
+    </record>
+
+    <record id="res_partner_demo_14" model="res.partner">
+        <field name="name">Neotec - Inversiones Ademad</field>
+        <field eval="1" name="is_company"/>
+        <field name="street">Calle Desiderio Arias no. 44</field>
+        <field name="country_id" ref="base.do"/>
+        <field name="city">Santo Domingo</field>
+        <field name="vat">132152859</field>
+        <field name="email">info@neotec.do</field>
+        <field name="phone">809-466-5533</field>
+        <field name="website">https://neotec.do/</field>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_14.png"/>
+        <field name="expense_type">02</field>
+        <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_credito_fiscal"/>
+    </record>
+
+    <record id="res_partner_demo_15" model="res.partner">
+        <field name="name">GUAVANA - BLUE UX DOMINICANA SRL</field>
+        <field eval="1" name="is_company"/>
+        <field name="street">Calle Erik Leonard Ekman #34</field>
+        <field name="country_id" ref="base.do"/>
+        <field name="city">Santo Domingo</field>
+        <field name="vat">131680526</field>
+        <field name="email">info@guavana.com</field>
+        <field name="phone">829-261-6989</field>
+        <field name="website">http://www.guavana.com/</field>
+        <field name="image_1920" type="base64" file="l10n_do_accounting/static/img/res_partner_demo_15.png"/>
+        <field name="expense_type">02</field>
+        <field name="sale_fiscal_type_id" ref="l10n_do_accounting.fiscal_type_credito_fiscal"/>
     </record>
 
 </odoo>

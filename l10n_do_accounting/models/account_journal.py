@@ -5,12 +5,12 @@ from odoo.exceptions import ValidationError
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
-    l10n_do_fiscal_journal = fields.Boolean(string="Fiscal Journal")
-    l10n_do_ncf_remote_validation = fields.Boolean(
-        string="Validate With DGII",
-        default=False)
+    l10n_do_fiscal_journal = fields.Boolean(
+        string="Fiscal Journal"
+    )
     payment_form = fields.Selection(
-        [
+        string="Payment Form",
+        selection=[
             ("cash", "Cash"),
             ("bank", "Check / Transfer"),
             ("card", "Credit Card"),
@@ -19,13 +19,12 @@ class AccountJournal(models.Model):
             ("bond", "Bonds or Gift Certificate"),
             ("others", "Other Sale Type"),
         ],
-        string="Payment Form",
     )
 
     @api.constrains("l10n_do_fiscal_journal")
     def check_l10n_do_fiscal_journal(self):
         for journal in self:
-            if journal.env["account.invoice"].search_count(
+            if journal.env["account.move"].search_count(
                 [
                     ("journal_id", "=", journal.id),
                     ("state", "!=", "draft"),

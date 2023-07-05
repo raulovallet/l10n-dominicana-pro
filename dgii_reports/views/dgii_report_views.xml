@@ -16,14 +16,21 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,generated,sent"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="company_id" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <div class="oe_title">
-                                <h1>
-                                    <field name="company_id" readonly="1"/>
-                                </h1>
-                            </div>
+                            <field name="name" placeholder="MM/YYYY" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="start_date" attrs="{'invisible': [('start_date', '=', False)]}"/>
+                            <field name="end_date" attrs="{'invisible': [('end_date', '=', False)]}"/>
+                            <field name="previous_balance" readonly="1"/>
                         </group>
+                    </group>
+                    <group>
+
                         <field name="previous_report_pending" invisible="1"/>
                         <group attrs="{'invisible': [('previous_report_pending', '=', False)]}">
                             <div class="alert alert-warning info_icon" role="alert">
@@ -37,32 +44,26 @@
                     </group>
                     <notebook>
                         <page name="statements" string="Statements">
-                            <group>
-                                <group>
-                                    <field name="name" placeholder="MM/YYYY"
-                                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                    <field name="previous_balance" readonly="1"/>
-                                </group>
-                            </group>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <group name="606" col="2" class="bs-callout-info">
+                                    <group name="606" class="bs-callout-info">
                                         <button type="object" name="get_606_tree_view">
                                             <h2>606</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="purchase_records" readonly="1"/>
                                         <field name="purchase_invoiced_amount" readonly="1"/>
                                         <field name="service_total_amount" readonly="1"/>
                                         <field name="good_total_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_invoiced_itbis" readonly="1"/>
                                         <field name="purchase_withholded_itbis" readonly="1"/>
                                         <field name="cost_itbis" readonly="1"/>
                                         <field name="advance_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="income_withholding" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="purchase_selective_tax" readonly="1"/>
                                         <field name="purchase_other_taxes" readonly="1"/>
                                         <field name="purchase_legal_tip" readonly="1"/>
@@ -73,14 +74,15 @@
                                         <button type="object" name="get_607_tree_view">
                                             <h2>607</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="sale_records" readonly="1"/>
                                         <field name="sale_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_invoiced_itbis" readonly="1"/>
                                         <field name="sale_withholded_itbis" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_withholded_isr" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="sale_selective_tax" readonly="1"/>
                                         <field name="sale_other_taxes" readonly="1"/>
                                         <field name="sale_legal_tip" readonly="1"/>
@@ -91,6 +93,7 @@
                                         <button type="object" name="get_608_tree_view">
                                             <h2>608</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="cancel_records" readonly="1"/>
                                     </group>
                                 </div>
@@ -99,9 +102,10 @@
                                         <button type="object" name="get_609_tree_view">
                                             <h2>609</h2>
                                         </button>
+                                        <separator colspan="1"/>
                                         <field name="exterior_records" readonly="1"/>
                                         <field name="exterior_invoiced_amount" readonly="1"/>
-                                        <separator colspan="2"/>
+                                        <separator colspan="1"/>
                                         <field name="presumed_income" readonly="1"/>
                                         <field name="exterior_withholded_isr" readonly="1"/>
                                     </group>
@@ -122,40 +126,141 @@
                                 </group>
                             </group>
                         </page>
-                        <page name="it1" string="IT-1">
-                            <group string="607 Reported Operations by NCF Type">
-                                <field name="ncf_sale_summary_ids" nolabel="1" widget="one2many_list" readonly="1">
-                                    <tree create="false" edit="false">
-                                        <field name="sequence" invisible="1"/>
+                        <page name="it1a" string="Attachment A (IT-1)">
+                            <field name="it1_section_1_line_ids" nolabel="1"  readonly="1" widget="section_and_note_one2many">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in [11]">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
                                         <field name="name"/>
-                                        <field name="qty"/>
-                                        <field name="amount" sum="Operations Total"/>
+                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
-                                    </tree>
-                                </field>
-                            </group>
-                            <group>
-                                <group col="3" string="Operations by Sale Type">
-                                    <field name="cash" readonly="1"/>
-                                    <field name="bank" readonly="1"/>
-                                    <field name="card" readonly="1"/>
-                                    <field name="credit" readonly="1"/>
-                                    <field name="bond" readonly="1"/>
-                                    <field name="swap" readonly="1"/>
-                                    <field name="others" readonly="1"/>
-                                    <field name="sale_type_total" readonly="1"/>
-                                </group>
-                                <group col="3" string="Operations by Income Type">
-                                    <field name="opr_income" readonly="1"/>
-                                    <field name="fin_income" readonly="1"/>
-                                    <field name="ext_income" readonly="1"/>
-                                    <field name="lea_income" readonly="1"/>
-                                    <field name="ast_income" readonly="1"/>
-                                    <field name="otr_income" readonly="1"/>
-                                    <field name="income_type_total" readonly="1"/>
-                                </group>
-                            </group>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <field name="it1_section_2_line_ids" nolabel="1"  readonly="1" widget="section_and_note_one2many">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (19, 26, 33)">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="name"/>
+                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="dgii_report_id" invisible="1"/>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <field name="it1_section_3_line_ids" nolabel="1"  readonly="1" widget="section_and_note_one2many">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (37, 38, 41, 42)">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name"/>
+                                    <field name="local_purchase" string="TOTAL INVOICED" attrs="{'invisible':[('sequence', 'in', ())]}"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="name"/>
+                                        <field name="local_purchase" string="TOTAL INVOICED" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="dgii_report_id" invisible="1"/>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <field name="it1_section_4_line_ids" nolabel="1"  readonly="1" widget="section_and_note_one2many">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="name"/>
+                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="dgii_report_id" invisible="1"/>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <field name="it1_section_5_line_ids"  nolabel="1" widget="section_and_note_one2many" readonly="1">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (48, 52, 54, 55, 56)">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name" style="max-width: 480px !important;"/>
+                                    <field name="local_purchase" attrs="{'invisible':[('sequence','=', 54)]}"/>
+                                    <field name="services" attrs="{'invisible':[('sequence','=', 54)]}"/>
+                                    <field name="imports" attrs="{'invisible':[('sequence','=', 54)]}"/>
+                                    <field name="amount" string="TOTAL" attrs="{'invisible':[('sequence','=', 54)]}"/>
+                                    <field name="coefficient" style="max-width: 45px !important;"   widget="percentage" attrs="{'invisible':[('sequence','!=', 54)]}"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="name"/>
+                                        <field name="local_purchase" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
+                                        <field name="services" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
+                                        <field name="imports" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
+                                        <field name="amount" string="TOTAL" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
+                                        <field name="coefficient" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '!=', 54)]}" widget="percentage" truncate="4"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="dgii_report_id" invisible="1"/>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page name="it1" string="IT-1">
+                            <field name="it1_section_6_line_ids" nolabel="1" readonly="1" widget="section_and_note_one2many">
+                                <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (9, 10, 21, 25, 26, 27, 28, 33, 34, 38, 41, 46, 49, 55, 58, 59, 60, 62, 63, 67, 68)" limit="80">
+                                    <field name="sequence" string="Box"/>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="dgii_report_id" invisible="1"/>
+                                    <field name="display_type" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="name"/>
+                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="dgii_report_id" invisible="1"/>
+                                        <field name="display_type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
                         </page>
                         <page name="consumer" string="Consumer Invoices Summary">
                             <group string="General Summary of Consumer Invoices">
@@ -164,7 +269,7 @@
                                     <field name="csmr_ncf_total_amount" readonly="1"/>
                                     <field name="csmr_ncf_total_itbis" readonly="1"/>
                                     <field name="csmr_ncf_total_isc" readonly="1"/>
-                                    <field name="csmr_ncf_total_othr" readonly="1"/>
+                                    <field name="csmr_ncf_total_other" readonly="1"/>
                                     <field name="csmr_ncf_total_lgl_tip" readonly="1"/>
                                 </group>
                                 <group col="3">
@@ -178,7 +283,6 @@
                                 </group>
                             </group>
                         </page>
-
                     </notebook>
 
                 </sheet>
@@ -218,7 +322,7 @@
     <record id="dgii_report_action" model="ir.actions.act_window">
         <field name="name">Reports</field>
         <field name="res_model">dgii.reports</field>
-        <field name="view_type">form</field>
+
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="dgii_report_search_view"/>
         <field name="help" type="html">
@@ -227,18 +331,9 @@
         </field>
     </record>
 
-    <menuitem id="marcos_account_dgii_menu" name="DGII"
-              parent="account.menu_finance"
-              sequence="5"
-              groups="account.group_account_user"/>
-
-    <menuitem id="dgii_report_parent_menu" name="Data Sending"
-              parent="marcos_account_dgii_menu"
-              sequence="5"/>
-
-    <menuitem action="dgii_report_action" id="dgii_report_menu"
-              parent="dgii_report_parent_menu"
-              sequence="14"/>
+    <menuitem id="account_reports_do_menu" name="Dominican reports" parent="account.menu_finance_reports" sequence="5" groups="account.group_account_readonly"/>
+    
+    <menuitem id="dgii_report_menu" name="DGII" action="dgii_report_action"  parent="account_reports_do_menu" sequence="14" />
 
     <!--606-->
     <record id="dgii_report_purchase_line_tree" model="ir.ui.view">
@@ -246,6 +341,7 @@
         <field name="model">dgii.reports.purchase.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -283,6 +379,7 @@
         <field name="arch" type="xml">
             <tree create="false" edit="false"
                   decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="rnc_cedula" widget="dgii_reports_url"/>
@@ -319,12 +416,13 @@
         <field name="model">dgii.reports.cancel.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="invoice_partner_id"/>
                 <field name="fiscal_invoice_number" widget="dgii_reports_url"/>
                 <field name="invoice_date"/>
-                <field name="anulation_type"/>
+                <field name="annulation_type"/>
             </tree>
         </field>
     </record>
@@ -335,6 +433,7 @@
         <field name="model">dgii.reports.exterior.line</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
+                <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="legal_name"/>
@@ -435,8 +534,8 @@
                 <group expand="0" string="Group By">
                     <filter string="Contact" name="invoice_partner_id" domain="[]"
                             context="{'group_by':'invoice_partner_id'}"/>
-                    <filter string="Anulation type" name="anulation_type" domain="[]"
-                            context="{'group_by':'anulation_type'}"/>
+                    <filter string="Anulation type" name="annulation_type" domain="[]"
+                            context="{'group_by':'annulation_type'}"/>
                 </group>
             </search>
         </field>
@@ -457,6 +556,14 @@
                 <filter string="Withholded ISR" name="withholding" domain="[('withholded_isr', '!=', 0)]"/>
             </search>
         </field>
+    </record>
+
+    <record id="action_invoice_form_popup" model="ir.actions.act_window">
+        <field name="name">Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account.view_move_form"/>
+        <field name="target">new</field>
     </record>
 
 </odoo>

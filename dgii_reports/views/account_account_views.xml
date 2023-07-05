@@ -6,8 +6,9 @@
         <field name="model">account.account</field>
         <field name="inherit_id" ref="account.view_account_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='group_id']" position="after">
-                <field name="account_fiscal_type"/>
+            <xpath expr="//field[@name='allowed_journal_ids']" position="after">
+                <field name="box_attachment_a"/>
+                <field name="box_it1"/>
             </xpath>
         </field>
     </record>
