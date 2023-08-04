@@ -1,13 +1,14 @@
+from odoo import models, fields, api, _
+import logging
 import json
 import re
-
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+_logger = logging.getLogger(__name__)
 
 try:
     from stdnum.do import rnc, cedula
 except (ImportError, IOError) as err:
     _logger.debug(str(err))
+
     
 class Partner(models.Model):
     _inherit = "res.partner"
@@ -83,14 +84,17 @@ class Partner(models.Model):
         string="Expense Type",
     )
 
-    is_fiscal_info_required = fields.Boolean(compute="_compute_is_fiscal_info_required")
+    is_fiscal_info_required = fields.Boolean(
+        compute="_compute_is_fiscal_info_required"
+    )
 
-    country_id = fields.Many2one('res.country',
-                                 string='Country',
-                                 ondelete='restrict',
-                                 default=lambda self: self.env.ref('base.do'))
+    country_id = fields.Many2one(
+        comodel_name='res.country',
+        string='Country',
+        ondelete='restrict',
+        default=lambda self: self.env.ref('base.do')
+    )
 
-    
     def _get_fiscal_type_domain(self, prefix):
         fiscal_type = self.env[
             'account.fiscal.type'].search([
@@ -109,73 +113,29 @@ class Partner(models.Model):
             vat = str(partner.vat) if partner.vat else False
             is_dominican_partner = bool(partner.country_id == self.env.ref('base.do'))
 
-            if partner.country_id and not is_dominican_partner:
+            if not is_dominican_partner:
                 partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B16')
 
-            elif vat and (
-                not partner.sale_fiscal_type_id
-                or partner.sale_fiscal_type_id == 'final'
-            ):
-                if partner.country_id and is_dominican_partner:
-                    if vat.isdigit() and len(vat) == 9:
-                        if partner.name and 'MINISTERIO' in partner.name:
-                            partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B15')
-                        elif partner.name and any(
-                            [n for n in ('IGLESIA', 'ZONA FRANCA') if n in partner.name]
-                        ):
-                            partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B14')
-                        else:
-                            partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B01')
+            elif vat:
 
-                    elif len(vat) == 11:
-                        if vat.isdigit():
-                            partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B01')
-                        else:
-                            partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B02')
-            elif not partner.sale_fiscal_type_id:
-                partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B02')
+                if vat.isdigit() and len(vat) == 9:
+                    if partner.name and 'MINISTERIO' in partner.name:
+                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B15')
+
+                    elif partner.name and any([n for n in ('IGLESIA', 'ZONA FRANCA') if n in partner.name]):
+                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B14')
+
+                    else:
+                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B01')
+
+                else:
+                    partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B02')
+
             else:
-                partner.sale_fiscal_type_id = (
-                    partner.sale_fiscal_type_id
-                )
+                partner.sale_fiscal_type_id = partner.sale_fiscal_type_id
 
     def _inverse_sale_fiscal_type_id(self):
         pass
-
-    @api.onchange("vat")
-    def _check_rnc(self):
-        for partner_rnc in self:
-            if partner_rnc.vat:
-                if (
-                    len(partner_rnc.vat) not in [9, 11]
-                ):
-                    raise UserError(
-                        _(
-                            "Check Vat Format or should not have any Caracter like '-'"
-                        )
-                    )
-                    
-                if (
-                    not (
-                        (len(partner_rnc.vat) == 9 and rnc.is_valid(partner_rnc.vat))
-                        or (len(partner_rnc.vat) == 11 and cedula.is_valid(partner_rnc.vat))
-                    )
-                ):
-
-                    raise UserError(
-                        _(
-                            "Check Vat, Seems like it's not correct"
-                        )
-                    )
-                else:
-
-                    result = rnc.check_dgii(partner_rnc.vat)
-                    if result is not None:
-                        # remove all duplicate white space from the name
-                        result["name"] = " ".join(
-                            re.split(r"\s+", result["name"], flags=re.UNICODE))
-                        
-                        partner_rnc.name = result["name"]
 
     @api.model
     def get_sale_fiscal_type_id_selection(self):
