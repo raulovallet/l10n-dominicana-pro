@@ -1,0 +1,33 @@
+<odoo>
+
+    <!-- VIEWS: "Res Parter"
+
+        - Model·········: res_partner
+        - Base Addons···: contacts    
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Form view for "res_partner" -->
+    <record id="view_res_partner_form" model="ir.ui.view">
+        <field name="name">view.res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@id='company']" position="attributes">
+                <attribute name='attrs'>{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '=', %(base.do)s), ('is_company', '=', False)]}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@id='individual']" position="attributes">
+                <attribute name='attrs'>{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '=', %(base.do)s), ('is_company', '=', True)]}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@id='individual']" position="after">
+                <field id="company" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc or RNC e.g. NNNNNNNNN" attrs="{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', False)]}"/>
+                <field id="individual" class="text-break" name="name" default_focus="1" placeholder="e.g. Brandom Freeman or Cedula e.g. NNNNNNNNNNN" attrs="{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', True)]}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

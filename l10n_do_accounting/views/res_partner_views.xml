@@ -15,7 +15,7 @@
                     'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', False)],
                     'required': [('is_fiscal_info_required','=',True)]
                 }"/>
-                <field name="vat" placeholder="ej. MMMMMMMMMMM" string="Cédula" attrs="{
+                <field name="vat" placeholder="ej. NNNNNNNNNNN" string="Cédula" attrs="{
                     'readonly': [('parent_id','!=',False)],
                     'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', True)],
                     'required': [('is_fiscal_info_required','=',True)]
