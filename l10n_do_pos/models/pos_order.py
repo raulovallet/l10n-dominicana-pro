@@ -8,21 +8,22 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     ncf = fields.Char(
-        string="NCF",
+        string='NCF',
+        copy=False,
     )
     ncf_origin_out = fields.Char(
-        "Affects",
+        string='Affects',
+        copy=False,
     )
     ncf_expiration_date = fields.Date(
-        string="NCF expiration date",
+        string='NCF expiration date',
     )
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
         comodel_name='account.fiscal.type',
-        string="Fiscal Type",
     )
     fiscal_sequence_id = fields.Many2one(
-        string="Fiscal Sequence",
+        string='Fiscal Sequence',
         comodel_name='account.fiscal.sequence',
         copy=False,
     )
@@ -139,12 +140,12 @@ class PosOrder(models.Model):
                 continue
 
             if not order.partner_id:
-                if not order.config_id.default_partner_id:
+                if not order.config_id.pos_partner_id:
                     raise UserError(
                         _('This point of sale not have default customer,'
                           ' please set default customer in config POS'))
                 order.write({
-                    'partner_id': order.config_id.default_partner_id.id
+                    'partner_id': order.config_id.pos_partner_id.id
                 })
 
             invoice = invoice.new(order._prepare_invoice())
