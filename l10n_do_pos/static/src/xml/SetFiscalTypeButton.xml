@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="SetFiscalTypeButton" owl="1">
+        <div class="button" style="color:red">
+            <i class="fa fa-edit" role="img" aria-label="Set Type position" title="Set fiscal Type"/>
+            <t t-esc='currentFiscalTypeName'/>
+        </div>
+    </t>
+
+</templates>

@@ -157,7 +157,7 @@ msgid "Default customer"
 msgstr "Cliente predeterminado"
 
 #. module: l10n_do_pos
-#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_config__default_partner_id
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_config__pos_partner_id
 msgid "Default partner"
 msgstr "Empresa predeterminado"
 

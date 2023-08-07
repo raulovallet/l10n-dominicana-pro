@@ -1,28 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <t t-extend="PaymentScreenWidget">
-        <t t-jquery=".payment-buttons" t-operation="append">
-            <t t-if="widget.pos.invoice_journal.l10n_do_fiscal_journal">
-                <div class='button js_set_fiscal_type'>
-                    <i class='fa fa-edit' aria-label="Fiscal type"
-                       title="Fiscal type"/>
-                    <span class='js_fiscal_type_name' style="color:red">
-                        <t t-if="widget.pos.get_order()">
-                            <t t-if="widget.pos.get_order().fiscal_type">
-                                <t t-esc="widget.pos.get_order().fiscal_type.name"/>
-                            </t>
-                            <t t-if="!widget.pos.get_order().fiscal_type">
-                                Select fiscal type
-                            </t>
-                        </t>
-                    </span>
-                </div>
+    <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('partner-button')]" position="inside">
+            <t t-if="env.pos.config.l10n_do_fiscal_journal">
+                <SetFiscalTypeButton/>
             </t>
         </t>
     </t>
 
-    <t t-extend="ActionpadWidget">
+    <!-- <t t-extend="ActionpadWidget">
         <t t-jquery=".fa.fa-user" t-operation="after">
             <t t-if="widget.pos.invoice_journal.l10n_do_fiscal_journal">
                 <t t-set="order" t-value="widget.pos.get_order()"/>
@@ -81,44 +68,6 @@
                 </span>
             </t>
         </t>
-
-        <!--<t t-jquery="t[t-if='!order.computed_state']" t-operation="replace">-->
-            <!--<t t-if="!order.computed_state">-->
-                <!--<td>-->
-                    <!--<t t-if="order.state == 'done'">-->
-                        <!--Posted-->
-                    <!--</t>-->
-                    <!--<t t-if="order.state == 'paid'">-->
-                        <!--Paid-->
-                    <!--</t>-->
-                    <!--<t t-if="order.state == 'cancel'">-->
-                        <!--Cancelled-->
-                    <!--</t>-->
-                    <!--<t t-if="order.state == 'invoiced'">-->
-                        <!--Invoiced-->
-                    <!--</t>-->
-                <!--</td>-->
-            <!--</t>-->
-        <!--</t>-->
-
-        <!--<t t-jquery="t[t-if='order.computed_state']" t-operation="replace">-->
-            <!--<t t-if="order.computed_state">-->
-                <!--<td>-->
-                    <!--<t t-if="order.computed_state == 'done'">-->
-                        <!--Posted-->
-                    <!--</t>-->
-                    <!--<t t-if="order.computed_state == 'paid'">-->
-                        <!--Paid-->
-                    <!--</t>-->
-                    <!--<t t-if="order.computed_state == 'cancel'">-->
-                        <!--Cancelled-->
-                    <!--</t>-->
-                    <!--<t t-if="order.computed_state == 'invoiced'">-->
-                        <!--Invoiced-->
-                    <!--</t>-->
-                <!--</td>-->
-            <!--</t>-->
-        <!--</t>-->
     </t>
 
     <t t-extend="Chrome">
@@ -292,7 +241,7 @@
                     <tr t-foreach="orderlines" t-as="orderline">
                         <td>
                             <t t-esc="orderline.get_product().display_name"/>
-                             <t t-if="orderline.get_discount() > 0">
+                            <t t-if="orderline.get_discount() > 0">
                                 <div class="pos-disc-font">
                                     With a <t t-esc="orderline.get_discount()"/>% discount
                                 </div>
@@ -445,7 +394,7 @@
                 </table>
             </t>
         </t>
-    </t>
+    </t> -->
 
     <!--TODO: this part is for use posbox-->
     <!--<t t-extend="XmlReceipt">-->
