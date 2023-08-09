@@ -15,8 +15,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
              */
             async validateOrder(isForceValidate) {
 
-                var self = this;
-                console.log(this)
                 var current_order = this.env.pos.get_order();
                 var client = current_order.get_partner();
                 var total = current_order.get_total_with_tax();
@@ -31,14 +29,11 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                 }
     
     
-                if (self.env.pos.config.l10n_do_fiscal_journal) {
+                if (this.env.pos.config.l10n_do_fiscal_journal) {
     
-                    // if (!self.analyze_payment_methods()) {
+                    // if (!this.analyze_payment_methods()) {
                     //     return false;
                     // }
-
-                    console.log(fiscal_type.name)
-
     
                     if (current_order.fiscal_type.requires_document && !client) {
     
@@ -103,7 +98,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
     
                     // This part is for credit note
                     // if (current_order.get_mode() === 'return') {
-                    //     var origin_order = self.pos.db.orders_history_by_id[current_order.return_lines[0].order_id[0]];
+                    //     var origin_order = this.pos.db.orders_history_by_id[current_order.return_lines[0].order_id[0]];
 
                     //     if(origin_order === undefined){
                     //         this.showPopup('ErrorPopup', {
@@ -132,6 +127,91 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
     
                 }
                 await super.validateOrder(...arguments);
+            }
+
+            async _finalizeValidation() {
+
+                var current_order = this.env.pos.get_order();
+                console.log(this.env.pos.config.l10n_do_fiscal_journal, current_order)
+                if (this.env.pos.config.l10n_do_fiscal_journal && !current_order.to_invoice && !current_order.ncf) {
+
+                    try {
+                        console.log('fiscal try')
+
+                        fiscal_data = await this.env.services.rpc({
+                            model: 'pos.order',
+                            method: 'get_next_fiscal_sequence',
+                            args: [
+                                false,
+                                current_order.fiscal_type.id,
+                                this.env.pos.company.id,
+                                'no mode',
+                                current_order.export_as_JSON().lines,
+                                current_order.uid,
+                                payments,
+                            ],
+                        })
+
+                        console.log('fiscal data', fiscal_data)
+                        
+                        if (fiscal_data){
+                            current_order.ncf = fiscal_data.ncf;
+                            current_order.fiscal_type_id = current_order.fiscal_type.id;
+                            current_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
+                            current_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
+
+                        }else{
+                            this.showPopup('ErrorPopup', {
+                                title: this.env._t('Error: no internet connection.'),
+                                body: this.env._t('Some, if not all, post-processing after syncing order failed.'),
+                            });
+                        }
+
+                        // For credit notes
+                        // if (current_order.get_mode() === 'return') {
+                        //     var origin_order =
+                        //         this.env.pos.db.orders_history_by_id[
+                        //             current_order.return_lines[0].order_id[0]];
+                        //     current_order.ncf_origin_out = origin_order.ncf;
+                        // }
+                        this.env.pos.set_order(current_order);
+                        console.log('NCF Generated', res);
+
+                    } catch (error) {
+                        console.log(err);
+                        console.log(ev);
+                        console.log('fiscal catch')
+                        
+                        // var error_body = _t('Your Internet connection is probably down.');
+                        
+                        // if (err.data) {
+                        //     var except = err.data;
+                        //     error_body = except.arguments ||
+                        //         except.message || error_body;
+                        // }
+
+                        // this.showPopup('ErrorPopup', {
+                        //     title: _t('Error: Could not Save Changes'),
+                        //     body: error_body,
+                        // });
+
+                        throw error;
+
+                    } finally {
+                        console.log('fiscal finally')
+                        await super._finalizeValidation();
+
+                    }
+
+                    // var payments = [];
+                    // current_order.get_paymentlines().forEach(function (item) {
+                    //     return payments.push(item.export_as_JSON());
+                    // });
+
+                } else {
+                    await super._finalizeValidation();
+                }
+
             }
         };
 
@@ -413,70 +493,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
     //     },
 
-    //     finalize_validation: function () {
 
-    //         var self = this;
-    //         var _super = this._super.bind(this);
-    //         var current_order = this.pos.get_order();
-    //         if (self.pos.config.l10n_do_fiscal_journal &&
-    //             !current_order.to_invoice && !current_order.ncf) {
-    //             self.pos.loading_screen_on();
-    //             var payments = [];
-    //             current_order.get_paymentlines().forEach(function (item) {
-    //                 return payments.push(item.export_as_JSON());
-    //             });
-    //             rpc.query({
-    //                 model: 'pos.order',
-    //                 method: 'get_next_fiscal_sequence',
-    //                 args: [
-    //                     false,
-    //                     current_order.fiscal_type.id,
-    //                     self.pos.company.id,
-    //                     current_order.get_mode(),
-    //                     current_order.export_as_JSON().lines,
-    //                     current_order.uid,
-    //                     payments,
-    //                 ],
-    //             }).then(function (res) {
-    //                 self.pos.loading_screen_off();
-    //                 current_order.ncf = res.ncf;
-    //                 current_order.fiscal_type_id = current_order.fiscal_type.id;
-    //                 current_order.ncf_expiration_date = res.ncf_expiration_date;
-    //                 current_order.fiscal_sequence_id = res.fiscal_sequence_id;
-    //                 // For credit notes
-    //                 if (current_order.get_mode() === 'return') {
-    //                     var origin_order =
-    //                         self.pos.db.orders_history_by_id[
-    //                             current_order.return_lines[0].order_id[0]];
-    //                     current_order.ncf_origin_out = origin_order.ncf;
-    //                 }
-    //                 self.pos.set_order(current_order);
-    //                 console.log(res);
-    //             }, function (err, ev) {
-    //                 self.pos.loading_screen_off();
-    //                 console.log(err);
-    //                 console.log(ev);
-    //                 ev.preventDefault();
-    //                 var error_body =
-    //                     _t('Your Internet connection is probably down.');
-    //                 if (err.data) {
-    //                     var except = err.data;
-    //                     error_body = except.arguments ||
-    //                         except.message || error_body;
-    //                 }
-    //                 self.gui.show_popup('error', {
-    //                     title: _t('Error: Could not Save Changes'),
-    //                     body: error_body,
-    //                 });
-    //             }).done(function () {
-    //                 self.pos.loading_screen_off();
-    //                 _super();
-    //             });
-    //         } else {
-    //             this._super();
-    //         }
-
-    //     },
     //     click_paymentmethods: function (id) {
     //         var self = this;
     //         var cashregister = null;

@@ -437,7 +437,7 @@ class PosOrder(models.Model):
             self.confirm_return_order_is_correct(uid, lines)
 
         for payment in payments:
-            if payment['returned_ncf']:
+            if payment.get('returned_ncf', False):
                 cn_invoice = self.env['account.move'].search([
                     ('ref', '=', payment['returned_ncf']),
                     ('type', '=', 'out_refund'),
@@ -445,8 +445,7 @@ class PosOrder(models.Model):
                 ])
                 if cn_invoice.residual != cn_invoice.amount_total:
                     raise UserError(
-                        _('This credit note (%s) has been'
-                          ' used' % payment['returned_ncf'])
+                        _('This credit note (%s) has been used' % payment['returned_ncf'])
                     )
 
         fiscal_sequence = self.env['account.fiscal.sequence'].search([
