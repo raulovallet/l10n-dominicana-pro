@@ -108,23 +108,19 @@ odoo.define('l10n_do_pos.models', function (require) {
                 this.set_fiscal_type(this.pos.get_fiscal_type_by_prefix('B02'));
             }
         }
+        export_as_JSON() {
+            const json = super.export_as_JSON(...arguments);
 
-        // export_as_JSON() {
+            if (this.pos.config.l10n_do_fiscal_journal){
+                json.ncf = this.ncf;
+                json.ncf_origin_out = this.ncf_origin_out;
+                json.ncf_expiration_date = this.ncf_expiration_date;
+                json.fiscal_type_id = this.fiscal_type_id;
+                json.fiscal_sequence_id = this.fiscal_sequence_id;
+            }
 
-        //     var self = this;
-        //     var loaded = _super_order.export_as_JSON.call(this);
-        //     var current_order = self.pos.get_order();
-
-        //     if (self.pos.get_order()) {
-        //         loaded.ncf = current_order.ncf;
-        //         loaded.ncf_origin_out = current_order.ncf_origin_out;
-        //         loaded.ncf_expiration_date = current_order.ncf_expiration_date;
-        //         loaded.fiscal_type_id = current_order.fiscal_type_id;
-        //         loaded.fiscal_sequence_id = current_order.fiscal_sequence_id;
-        //     }
-
-        //     return loaded;
-        // }
+            return json;
+        }
 
         // TODO: Try for return order
         // For returned order (credit note)
