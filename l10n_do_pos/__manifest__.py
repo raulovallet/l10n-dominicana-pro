@@ -5,7 +5,7 @@
     'license': 'LGPL-3',
     'website': "https://github.com/odoo-dominicana",
     'category': 'Localization',
-    'version': '16.0.2.0.0',
+    'version': '16.0.2.0.1',
     'depends': [
         'base',
         'point_of_sale',
@@ -15,7 +15,7 @@
         'security/ir.model.access.csv',
         'data/data.xml',
         'views/res_config_settings_views.xml',
-        # 'views/pos_order_views.xml',
+        'views/pos_order_views.xml',
         # 'views/account_journal_views.xml'
     ],
     'assets': {
