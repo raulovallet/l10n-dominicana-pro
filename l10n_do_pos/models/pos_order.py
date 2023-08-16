@@ -46,11 +46,12 @@ class PosOrder(models.Model):
 
         return fields
 
-    def _prepare_invoice(self):
+    def _prepare_invoice_vals(self):
         """
         Prepare the dict of values to create the new invoice for a pos order.
         """
-        invoice_vals = super(PosOrder, self)._prepare_invoice()
+        invoice_vals = super(PosOrder, self)._prepare_invoice_vals()
+
         if self.config_id.invoice_journal_id.l10n_do_fiscal_journal:
             invoice_vals['ref'] = self.ncf
             invoice_vals['origin_out'] = self.ncf_origin_out
@@ -60,14 +61,14 @@ class PosOrder(models.Model):
 
         return invoice_vals
 
-    @api.model
-    def _payment_fields(self, ui_paymentline):
-        """
-        This part is for credit note.
-        """
-        fields = super(PosOrder, self)._payment_fields(ui_paymentline)
-        fields.update({'note': ui_paymentline.get('returned_ncf')})
-        return fields
+    # @api.model
+    # def _payment_fields(self, ui_paymentline):
+    #     """
+    #     This part is for credit note.
+    #     """
+    #     fields = super(PosOrder, self)._payment_fields(ui_paymentline)
+    #     fields.update({'note': ui_paymentline.get('returned_ncf')})
+    #     return fields
 
     def _prepare_bank_statement_line_payment_values(self, data):
         """
@@ -121,13 +122,13 @@ class PosOrder(models.Model):
                               ' in order to close the statement.')
                         )
 
-    
     def action_pos_order_invoice_no_return_pdf(self):
         """
         Create invoice on background
         :return:
         """
         invoice = self.env['account.move']
+
         for order in self:
             # Force company for all SUPERUSER_ID action
             local_context = dict(
@@ -135,117 +136,79 @@ class PosOrder(models.Model):
                 force_company=order.company_id.id,
                 company_id=order.company_id.id)
 
-            if order.invoice_id:
-                invoice += order.invoice_id
+            if order.account_move:
+                invoice += order.account_move
                 continue
 
             if not order.partner_id:
+                
                 if not order.config_id.pos_partner_id:
-                    raise UserError(
-                        _('This point of sale not have default customer,'
-                          ' please set default customer in config POS'))
+                    raise UserError(_('This point of sale not have default customer, please set default customer in config POS'))
+                
                 order.write({
                     'partner_id': order.config_id.pos_partner_id.id
                 })
 
-            invoice = invoice.new(order._prepare_invoice())
-            invoice.is_from_pos = True
-            invoice._onchange_partner_id()
-            invoice.fiscal_position_id = order.fiscal_position_id
+            move_vals = order._prepare_invoice_vals()
+            new_move = order._create_invoice(move_vals)
 
-            inv = invoice._convert_to_write({
-                name: invoice[name] for name in invoice._cache
-            })
-            new_invoice = invoice\
-                .with_context(local_context).sudo().create(inv)
-            message = _("This invoice has been created from the point of sale "
-                        "session: <a href=# data-oe-model=pos.order "
-                        "data-oe-id=%d>%s</a>") % (order.id, order.name)
-            new_invoice.message_post(body=message)
-            order.sudo().write({
-                'invoice_id': new_invoice.id,
-                'state': 'invoiced',
-                'sale_journal': order.config_id.invoice_journal_id.id,
-            })
-            invoice += new_invoice
+            order.write({'account_move': new_move.id, 'state': 'invoiced'})
+            new_move.sudo().with_company(order.company_id).with_context(skip_invoice_sync=True)._post()
+            payment_moves = order._apply_invoice_payments()
 
-            for line in order.lines:
-                self.with_context(local_context)._action_create_invoice_line(
-                    line,
-                    new_invoice.id
-                )
-            new_invoice.with_context(local_context).sudo().compute_taxes()
-            order.sudo().write({'state': 'invoiced'})
+    # @api.model
+    # def _process_order(self, order, draft, existing_order):
+    #     """
+    #     this part is using for eliminate cash return
+    #     :param pos_order:
+    #     :return pos_order:
+    #     """
+    #     if pos_order['amount_return'] > 0:
 
-    @api.model
-    def _process_order(self, pos_order):
-        """
-        this part is using for eliminate cash return
-        :param pos_order:
-        :return pos_order:
-        """
-        if pos_order['amount_return'] > 0:
+    #         pos_session_obj = self.env['pos.session'].browse(
+    #             pos_order['pos_session_id']
+    #         )
+    #         cash_journal_id = pos_session_obj.cash_journal_id.id
+    #         if not cash_journal_id:
+    #             # If none, select for change one of the cash journals of the PO
+    #             # This is used for example when a customer pays by credit card
+    #             # an amount higher than total amount of the order and gets cash
+    #             # back
+    #             cash_journal = [statement.journal_id
+    #                             for statement in pos_session_obj.statement_ids
+    #                             if statement.journal_id.type == 'cash']
+    #             if not cash_journal:
+    #                 raise UserError(
+    #                     _("No cash statement found for this session. "
+    #                       "Unable to record returned cash."))
 
-            pos_session_obj = self.env['pos.session'].browse(
-                pos_order['pos_session_id']
-            )
-            cash_journal_id = pos_session_obj.cash_journal_id.id
-            if not cash_journal_id:
-                # If none, select for change one of the cash journals of the PO
-                # This is used for example when a customer pays by credit card
-                # an amount higher than total amount of the order and gets cash
-                # back
-                cash_journal = [statement.journal_id
-                                for statement in pos_session_obj.statement_ids
-                                if statement.journal_id.type == 'cash']
-                if not cash_journal:
-                    raise UserError(
-                        _("No cash statement found for this session. "
-                          "Unable to record returned cash."))
+    #             cash_journal_id = cash_journal[0].id
 
-                cash_journal_id = cash_journal[0].id
+    #         for index, statement in enumerate(pos_order['statement_ids']):
 
-            for index, statement in enumerate(pos_order['statement_ids']):
+    #             if statement[2]['journal_id'] == cash_journal_id:
+    #                 pos_order['statement_ids'][index][2]['amount'] = \
+    #                     statement[2]['amount'] - pos_order['amount_return']
 
-                if statement[2]['journal_id'] == cash_journal_id:
-                    pos_order['statement_ids'][index][2]['amount'] = \
-                        statement[2]['amount'] - pos_order['amount_return']
+    #         pos_order['amount_return'] = 0
 
-            pos_order['amount_return'] = 0
-
-        return super(PosOrder, self)._process_order(pos_order)
+    #     return super(PosOrder, self)._process_order(pos_order)
 
     @api.model
-    def create_from_ui(self, orders):
+    def create_from_ui(self, orders, draft=False):
+        order_ids = super(PosOrder, self).create_from_ui(orders, draft)
+        
+        for order in self.sudo().browse([o['id'] for o in order_ids]):
+            
+            if order.config_id.invoice_journal_id.l10n_do_fiscal_journal \
+                    and order.state != 'invoiced' \
+                    and order.amount_total != 0 \
+                    and order.ncf:
+                order.action_pos_order_invoice_no_return_pdf()
+                # if order._should_create_picking_real_time():
+                #     self._create_order_picking()
 
-        res = super(PosOrder, self).create_from_ui(orders)
-
-        order_list = []
-        if type(res) is 'DictType':
-            order_list = res['orders']
-        else:
-            for re in res:
-                order_list.append({'id': re})
-
-        for order in order_list:
-
-            order_obj = self.env['pos.order'].search([
-                ('id', '=', order['id'])
-            ])
-            if order_obj.config_id.invoice_journal_id.l10n_do_fiscal_journal \
-                    and order_obj.state != 'invoiced' \
-                    and order_obj.amount_total != 0 \
-                    and order_obj.ncf:
-
-                order_obj.action_pos_order_invoice_no_return_pdf()
-                order_obj.invoice_id.sudo().action_invoice_open()
-                order_obj.sudo()._create_order_payments()
-                order_obj.sudo()._reconcile_payments()
-                order_obj.account_move = order_obj.invoice_id.move_id
-                if not order_obj.picking_id:
-                    order_obj.create_picking()
-
-        return res
+        return order_ids
 
     def _reconcile_refund_invoice(self, refund_invoice):
         """

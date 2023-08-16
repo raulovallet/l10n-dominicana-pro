@@ -26,5 +26,5 @@ class PosSession(models.Model):
         result = super()._loader_params_res_partner()
         
         result['search_params']['fields'].append('sale_fiscal_type_id')
-        
+
         return result
