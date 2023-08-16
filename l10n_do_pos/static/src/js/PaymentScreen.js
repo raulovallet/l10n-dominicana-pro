@@ -132,13 +132,11 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
             async _finalizeValidation() {
 
                 var current_order = this.env.pos.get_order();
-                console.log(this.env.pos.config.l10n_do_fiscal_journal, current_order)
                 if (this.env.pos.config.l10n_do_fiscal_journal && !current_order.to_invoice && !current_order.ncf) {
 
                     try {
-                        console.log('fiscal try')
 
-                        fiscal_data = await this.env.services.rpc({
+                        var fiscal_data = await this.env.services.rpc({
                             model: 'pos.order',
                             method: 'get_next_fiscal_sequence',
                             args: [
@@ -148,25 +146,15 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 'no mode',
                                 current_order.export_as_JSON().lines,
                                 current_order.uid,
-                                payments,
+                                [],
                             ],
-                        })
-
-                        console.log('fiscal data', fiscal_data)
+                        });
                         
-                        if (fiscal_data){
-                            current_order.ncf = fiscal_data.ncf;
-                            current_order.fiscal_type_id = current_order.fiscal_type.id;
-                            current_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
-                            current_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
-
-                        }else{
-                            this.showPopup('ErrorPopup', {
-                                title: this.env._t('Error: no internet connection.'),
-                                body: this.env._t('Some, if not all, post-processing after syncing order failed.'),
-                            });
-                        }
-
+                        console.log('NCF Generated', fiscal_data);
+                        current_order.ncf = fiscal_data.ncf;
+                        current_order.fiscal_type_id = current_order.fiscal_type.id;
+                        current_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
+                        current_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
                         // For credit notes
                         // if (current_order.get_mode() === 'return') {
                         //     var origin_order =
@@ -174,45 +162,89 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         //             current_order.return_lines[0].order_id[0]];
                         //     current_order.ncf_origin_out = origin_order.ncf;
                         // }
-                        this.env.pos.set_order(current_order);
-                        console.log('NCF Generated', res);
 
                     } catch (error) {
-                        console.log(err);
-                        console.log(ev);
-                        console.log('fiscal catch')
-                        
-                        // var error_body = _t('Your Internet connection is probably down.');
-                        
-                        // if (err.data) {
-                        //     var except = err.data;
-                        //     error_body = except.arguments ||
-                        //         except.message || error_body;
-                        // }
-
-                        // this.showPopup('ErrorPopup', {
-                        //     title: _t('Error: Could not Save Changes'),
-                        //     body: error_body,
-                        // });
 
                         throw error;
+                    } 
 
-                    } finally {
-                        console.log('fiscal finally')
-                        await super._finalizeValidation();
-
-                    }
-
-                    // var payments = [];
-                    // current_order.get_paymentlines().forEach(function (item) {
-                    //     return payments.push(item.export_as_JSON());
-                    // });
+                    this.env.pos.set_order(current_order);
+                    await super._finalizeValidation();
 
                 } else {
+
                     await super._finalizeValidation();
+
                 }
 
             }
+
+            async open_vat_popup() {
+                var self = this;
+                var current_order = this.env.pos.get_order();
+                self.keyboard_on();
+                const { confirmed, payload: code } = await this.showPopup('TextInputPopup', {
+                    title: this.env._t('Generate a Gift Card'),
+                    startingValue: '',
+                    placeholder: this.env._t('Enter the gift card code'),
+                });
+
+                this.showPopup('TextInputPopup', {
+                    title: _t('You need to select a customer with RNC/Céd for this fiscal type, place writes RNC/Céd'),
+                    'vat': '',
+                    confirm: function (vat) {
+                        self.keyboard_off();
+                        if (!(vat.length === 9 || vat.length === 11) ||
+                            Number.isNaN(Number(vat))) {
+
+                            self.gui.show_popup('error', {
+                                title: _t('This not RNC or Cédula'),
+                                body: _t('Please check if RNC or Cédula is' +
+                                    ' correct'),
+                                cancel: function () {
+                                    self.open_vat_popup();
+                                },
+                            });
+
+                        } else {
+                            // TODO: in future try optimize search partners
+                            // link get_partner_by_id
+                            self.keyboard_off();
+                            var partner = self.pos.partners.find(
+                                function (partner_obj) {
+                                    return partner_obj.vat === vat;
+                                }
+                            );
+                            if (partner) {
+                                current_order.set_client(partner);
+                            } else {
+                                // TODO: in future create automatic partner
+                                self.gui.show_screen('clientlist');
+                            }
+                        }
+
+                    },
+                    cancel: function () {
+                        self.keyboard_off();
+                        if (!current_order.get_client()) {
+                            current_order.set_fiscal_type(
+                                this.pos.get_fiscal_type_by_prefix('B02')
+                            );
+                        }
+                    },
+                });
+            }
+            // keyboard_off () {
+            //     // That one comes from BarcodeEvents
+            //     $(body).keypress(this.keyboard_handler);
+            //     // That one comes from the pos, but we prefer to cover
+            //     // all the basis
+            //     $(body).keydown(this.keyboard_keydown_handler);
+            // }
+            // keyboard_on () {
+            //     $(body).off('keypress', this.keyboard_handler);
+            //     $(body).off('keydown', this.keyboard_keydown_handler);
+            // }
         };
 
 
@@ -266,17 +298,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
     // screens.PaymentScreenWidget.include({
 
-    //     keyboard_off: function () {
-    //         // That one comes from BarcodeEvents
-    //         $(body:).keypress(this.keyboard_handler);
-    //         // That one comes from the pos, but we prefer to cover
-    //         // all the basis
-    //         $(body:).keydown(this.keyboard_keydown_handler);
-    //     },
-    //     keyboard_on: function () {
-    //         $(body:).off('keypress', this.keyboard_handler);
-    //         $(body:).off('keydown', this.keyboard_keydown_handler);
-    //     },
+
 
     //     renderElement: function () {
     //         this._super();
@@ -313,91 +335,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
     //     },
 
-    //     open_vat_popup: function () {
-    //         var self = this;
-    //         var current_order = self.pos.get_order();
-    //         self.keyboard_on();
-    //         self.gui.show_popup('textinput', {
-    //             title: _t('You need to select a customer with RNC/Céd for' +
-    //                 ' this fiscal type, place writes RNC/Céd'),
-    //             'vat': '',
-    //             confirm: function (vat) {
-    //                 self.keyboard_off();
-    //                 if (!(vat.length === 9 || vat.length === 11) ||
-    //                     Number.isNaN(Number(vat))) {
 
-    //                     self.gui.show_popup('error', {
-    //                         title: _t('This not RNC or Cédula'),
-    //                         body: _t('Please check if RNC or Cédula is' +
-    //                             ' correct'),
-    //                         cancel: function () {
-    //                             self.open_vat_popup();
-    //                         },
-    //                     });
-
-    //                 } else {
-    //                     // TODO: in future try optimize search partners
-    //                     // link get_partner_by_id
-    //                     self.keyboard_off();
-    //                     var partner = self.pos.partners.find(
-    //                         function (partner_obj) {
-    //                             return partner_obj.vat === vat;
-    //                         }
-    //                     );
-    //                     if (partner) {
-    //                         current_order.set_client(partner);
-    //                     } else {
-    //                         // TODO: in future create automatic partner
-    //                         self.gui.show_screen('clientlist');
-    //                     }
-    //                 }
-
-    //             },
-    //             cancel: function () {
-    //                 self.keyboard_off();
-    //                 if (!current_order.get_client()) {
-    //                     current_order.set_fiscal_type(
-    //                         this.pos.get_fiscal_type_by_prefix('B02')
-    //                     );
-    //                 }
-    //             },
-    //         });
-    //     },
-
-    //     click_set_fiscal_type: function () {
-    //         var self = this;
-    //         var fiscal_type_list = _.map(self.pos.fiscal_types,
-    //             function (fiscal_type) {
-    //                 if (fiscal_type.type === 'out_invoice') {
-    //                     return {
-    //                         label: fiscal_type.name,
-    //                         item: fiscal_type,
-    //                     };
-    //                 }
-    //                 return false;
-    //             });
-
-    //         self.gui.show_popup('selection', {
-    //             title: _t('Select Fiscal Type'),
-    //             list: fiscal_type_list,
-    //             confirm: function (fiscal_type) {
-    //                 var current_order = self.pos.get_order();
-    //                 var client = self.pos.get_client();
-    //                 current_order.set_fiscal_type(fiscal_type);
-    //                 if (fiscal_type.requires_document && !client) {
-    //                     self.open_vat_popup();
-    //                 }
-    //                 if (fiscal_type.requires_document && client) {
-    //                     if (!client.vat ) {
-    //                         self.open_vat_popup();
-    //                     }
-    //                 }
-    //             },
-    //             is_selected: function (fiscal_type) {
-    //                 return fiscal_type === self.pos.get_order().fiscal_type;
-    //             },
-    //         });
-    //     },
 
     //     analyze_payment_methods: function () {
 
