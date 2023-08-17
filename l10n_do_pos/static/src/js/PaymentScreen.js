@@ -126,7 +126,8 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     // }
     
                 }
-                await super.validateOrder(...arguments);
+                console.log('validateOrder', current_order)
+                // await super.validateOrder(...arguments);
             }
 
             async _finalizeValidation() {
