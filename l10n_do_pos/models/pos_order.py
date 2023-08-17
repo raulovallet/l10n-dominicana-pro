@@ -31,6 +31,15 @@ class PosOrder(models.Model):
         default=False
     )
 
+    def _export_for_ui(self, order):
+        result = super(PosOrder, self)._export_for_ui(order)
+        result['ncf'] = order.ncf
+        result['ncf_origin_out'] = order.ncf_origin_out
+        result['ncf_expiration_date'] = order.ncf_expiration_date
+        result['fiscal_type_id'] = order.fiscal_type_id.id if order.fiscal_type_id else False
+        result['fiscal_sequence_id'] = order.fiscal_sequence_id.id if order.fiscal_sequence_id else False
+        return result
+
     @api.model
     def _order_fields(self, ui_order):
         """

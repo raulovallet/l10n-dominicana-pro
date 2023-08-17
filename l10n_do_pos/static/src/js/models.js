@@ -4,7 +4,7 @@ odoo.define('l10n_do_pos.models', function (require) {
     var { Order, PosGlobalState } = require('point_of_sale.models');
     var Registries = require('point_of_sale.Registries');
 
-    const L10nDoPosPosGlobalState = (PosGlobalState) => class L10nDoPosPosGlobalState extends PosGlobalState {
+    const L10nDoPosPosGlobalState = PosGlobalState => class extends PosGlobalState {
         async _processData(loadedData) {
             await super._processData(loadedData);
             this.fiscal_types = loadedData['account.fiscal.type']
@@ -45,7 +45,7 @@ odoo.define('l10n_do_pos.models', function (require) {
 
     }
 
-    const L10nDoPosOrder = (Order) => class L10nDoPosOrder extends Order {
+    const L10nDoPosOrder = Order => class extends Order {
         /**
          * @override
          */
@@ -103,7 +103,8 @@ odoo.define('l10n_do_pos.models', function (require) {
                 this.set_fiscal_type(this.pos.get_fiscal_type_by_prefix('B02'));
             }
         }
-
+        
+        //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
 
@@ -116,6 +117,17 @@ odoo.define('l10n_do_pos.models', function (require) {
             }
 
             return json;
+        }
+
+        init_from_JSON(json) {
+            super.init_from_JSON(...arguments);
+            if (this.pos.config.l10n_do_fiscal_journal){
+                this.ncf = json.ncf;
+                this.ncf_origin_out = json.ncf_origin_out;
+                this.ncf_expiration_date = json.ncf_expiration_date;
+                this.fiscal_type_id = json.fiscal_type_id;
+                this.fiscal_sequence_id = json.fiscal_sequence_id;
+            }
         }
 
         // TODO: Try for return order
