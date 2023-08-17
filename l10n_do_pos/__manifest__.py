@@ -24,6 +24,7 @@
             
             '/l10n_do_pos/static/src/js/models.js',
             '/l10n_do_pos/static/src/js/PaymentScreen.js',
+            '/l10n_do_pos/static/src/js/TicketScreen.js',
             '/l10n_do_pos/static/src/js/buttons/SetFiscalTypeButton.js',
 
             '/l10n_do_pos/static/src/xml/PaymentScreen.xml',
