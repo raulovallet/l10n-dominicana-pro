@@ -149,3 +149,7 @@
         opacity: 0;
     }
 }
+
+.no-clickeable {
+    pointer-events: none;
+}

@@ -7,6 +7,20 @@
                 <SetFiscalTypeButton/>
             </t>
         </t>
+        
+        <xpath expr="//div[hasclass('paymentmethods-container')]" position="attributes">
+            <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+        </t>
+
+        <xpath expr="//div[hasclass('right-content')]" position="attributes">
+            <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+        </t>
+    </t>
+
+    <t t-name="PaymentScreenNumpad" t-inherit="point_of_sale.PaymentScreenNumpad" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('numpad')]" position="attributes">
+            <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+        </t>
     </t>
 
     <!-- <t t-extend="ActionpadWidget">

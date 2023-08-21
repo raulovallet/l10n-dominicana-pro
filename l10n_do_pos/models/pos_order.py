@@ -79,14 +79,14 @@ class PosOrder(models.Model):
     #     fields.update({'note': ui_paymentline.get('returned_ncf')})
     #     return fields
 
-    def _prepare_bank_statement_line_payment_values(self, data):
-        """
-        This part is for credit note.
-        """
-        args = super(PosOrder, self)._prepare_bank_statement_line_payment_values(data)
-        if 'note' in data:
-            args.update({'note': data['note']})
-        return args
+    # def _prepare_bank_statement_line_payment_values(self, data):
+    #     """
+    #     This part is for credit note.
+    #     """
+    #     args = super(PosOrder, self)._prepare_bank_statement_line_payment_values(data)
+    #     if 'note' in data:
+    #         args.update({'note': data['note']})
+    #     return args
 
     
     def _create_order_payments(self):
@@ -96,40 +96,41 @@ class PosOrder(models.Model):
         """
         for order in self:
             if order.config_id.invoice_journal_id.l10n_do_fiscal_journal:
-                for statement in order.statement_ids:
-                    # This part is for return order (credits notes)
-                    if statement.journal_id.is_for_credit_notes:
-                        # Note in statement line is equals to returned_ncf
-                        # (NCF credit note)
-                        credit_note_order = self.env['pos.order']\
-                            .search([('ncf', '=', statement.note)])
-                        if not credit_note_order:
-                            raise UserError(_('Credit note not exist'))
+                pass
+                # for statement in order.statement_ids:
+                #     # This part is for return order (credits notes)
+                #     if statement.journal_id.is_for_credit_notes:
+                #         # Note in statement line is equals to returned_ncf
+                #         # (NCF credit note)
+                #         credit_note_order = self.env['pos.order']\
+                #             .search([('ncf', '=', statement.note)])
+                #         if not credit_note_order:
+                #             raise UserError(_('Credit note not exist'))
 
-                        if credit_note_order.invoice_id.state == 'paid':
-                            raise UserError(
-                                _('The credit note used in another invoice,'
-                                  ' please unlink that invoice.')
-                            )
-                        credit_note_order.update({
-                            'is_used_in_order': True
-                        })
-                        lines = credit_note_order.invoice_id.move_id.line_ids
-                        statement.write({
-                            'move_name': credit_note_order.invoice_id.move_name,
-                            'journal_entry_ids': [(4, x) for x in lines.ids]
-                        })
-                        order._reconcile_refund_invoice(
-                            credit_note_order.invoice_id
-                        )
-                    else:
-                        statement.sudo().fast_counterpart_creation()
+                #         if credit_note_order.invoice_id.state == 'paid':
+                #             raise UserError(
+                #                 _('The credit note used in another invoice,'
+                #                   ' please unlink that invoice.')
+                #             )
+                #         credit_note_order.update({
+                #             'is_used_in_order': True
+                #         })
+                #         lines = credit_note_order.invoice_id.move_id.line_ids
+                #         statement.write({
+                #             'move_name': credit_note_order.invoice_id.move_name,
+                #             'journal_entry_ids': [(4, x) for x in lines.ids]
+                #         })
+                #         order._reconcile_refund_invoice(
+                #             credit_note_order.invoice_id
+                #         )
+                #     else:
+                #         statement.sudo().fast_counterpart_creation()
 
-                    if not statement.journal_entry_ids.ids:
-                        raise UserError(
-                            _('All the account entries lines must be processed'
-                              ' in order to close the statement.')
-                        )
+                #     if not statement.journal_entry_ids.ids:
+                #         raise UserError(
+                #             _('All the account entries lines must be processed'
+                #               ' in order to close the statement.')
+                #         )
 
     def action_pos_order_invoice_no_return_pdf(self):
         """
@@ -390,9 +391,11 @@ class PosOrder(models.Model):
             )
 
     def get_next_fiscal_sequence(
-            self, fiscal_type_id,
-            company_id, mode,
-            lines, uid, payments):
+            self, 
+            fiscal_type_id,
+            company_id, 
+            payments
+        ):
         """
         search active fiscal sequence dependent with fiscal type
         :param order:[fiscal_type_id, company_id, mode, lines,]
@@ -404,9 +407,6 @@ class PosOrder(models.Model):
 
         if not fiscal_type:
             raise UserError(_('Fiscal type not found'))
-
-        if mode == 'return':
-            self.confirm_return_order_is_correct(uid, lines)
 
         for payment in payments:
             if payment.get('returned_ncf', False):
@@ -440,33 +440,3 @@ class PosOrder(models.Model):
             'ncf_expiration_date': fiscal_sequence.expiration_date
         }
 
-    def confirm_return_order_is_correct(self, uid, lines):
-        pos_orders = self.env['pos.order'].search([
-            ('pos_history_ref_uid', '=', uid)
-        ])
-        lines_obj = self.env['pos.order.line'].search([
-            ('order_id', 'in', pos_orders.ids)
-        ])
-        products_available = {}
-        # TODO: this part can be optimized:
-        for line in lines_obj:
-            if line.product_id.id in products_available:
-                products_available[line.product_id.id] += line.qty
-            else:
-                products_available[line.product_id.id] = line.qty
-
-        products_in_order = {}
-        for order_line in lines:
-            if order_line[2]['product_id'] in products_in_order:
-                products_in_order[order_line[2]['product_id']] \
-                    += order_line[2]['qty']
-            else:
-                products_in_order[order_line[2]['product_id']] \
-                    = order_line[2]['qty']
-
-        for product in products_in_order:
-            if abs(products_in_order[product]) > products_available[product]:
-                raise UserError(
-                    _('This credit note jave problem, '
-                      'please contact your admin system')
-                )

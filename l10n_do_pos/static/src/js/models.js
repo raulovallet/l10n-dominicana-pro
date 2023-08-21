@@ -42,7 +42,36 @@ odoo.define('l10n_do_pos.models', function (require) {
             });
             return false;
         }
+        
+        async get_fiscal_data(order) {
+            return this.env.services.rpc({
+                model: 'pos.order',
+                method: 'get_next_fiscal_sequence',
+                args: [
+                    false,
+                    order.fiscal_type.id,
+                    this.env.pos.company.id,
+                    [],
+                ],
+            });
+        }
+        isCreditNoteMode() {
+            const current_order = this.env.pos.get_order();
+            return this.env.pos.config.l10n_do_fiscal_journal && current_order && current_order._isRefundAndSaleOrder();
+        }
+        get_credit_note_payment_method() {
+            var credit_note_payment_method = false;
+            
+            this.env.pos.payment_methods.forEach(
+                function (payment_method) {
+                    if (payment_method.is_credit_note) {
+                        credit_note_payment_method = payment_method;
+                    }
+                }
+            );
 
+            return credit_note_payment_method;
+        }
     }
 
     const L10nDoPosOrder = Order => class extends Order {
@@ -52,34 +81,35 @@ odoo.define('l10n_do_pos.models', function (require) {
         constructor(obj, options) {
             super(...arguments); 
 
-            this.ncf = '';
-            this.ncf_origin_out = '';
-            this.ncf_expiration_date = '';
-            this.fiscal_type_id = false;
-            this.fiscal_sequence_id = false;
+            if (!options.json) {
+                this.ncf = '';
+                this.ncf_origin_out = '';
+                this.ncf_expiration_date = '';
+                this.fiscal_type_id = false;
+                this.fiscal_sequence_id = false;
 
-            var partner = this.get_partner();
+                var partner = this.get_partner();
 
-            // this.set_fiscal_position_auto = false;
-
-            if (false) {
-
-                this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B04');
-
-            } else if (partner && partner.sale_fiscal_type_id) {
-
-                this.fiscal_type = this.pos.get_fiscal_type_by_id(partner.sale_fiscal_type_id[0]);
-
-            } else {
-
-                this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B02');
-
+                if (false) {
+    
+                    this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B04');
+    
+                } else if (partner && partner.sale_fiscal_type_id) {
+    
+                    this.fiscal_type = this.pos.get_fiscal_type_by_id(partner.sale_fiscal_type_id[0]);
+    
+                } else {
+    
+                    this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B02');
+    
+                }    
             }
             
         }
 
         set_fiscal_type(fiscal_type) {
             this.fiscal_type = fiscal_type;
+            this.fiscal_type_id = fiscal_type.id;
             if (fiscal_type && fiscal_type.fiscal_position_id){
                 this.set_fiscal_position(_.find(this.pos.fiscal_positions, function(fp) {
                     return fp.id === fiscal_type.fiscal_position_id[0];
@@ -107,7 +137,6 @@ odoo.define('l10n_do_pos.models', function (require) {
         //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
-
             if (this.pos.config.l10n_do_fiscal_journal){
                 json.ncf = this.ncf;
                 json.ncf_origin_out = this.ncf_origin_out;
@@ -122,12 +151,22 @@ odoo.define('l10n_do_pos.models', function (require) {
         init_from_JSON(json) {
             super.init_from_JSON(...arguments);
             if (this.pos.config.l10n_do_fiscal_journal){
-                this.ncf = json.ncf;
-                this.ncf_origin_out = json.ncf_origin_out;
-                this.ncf_expiration_date = json.ncf_expiration_date;
-                this.fiscal_type_id = json.fiscal_type_id;
-                this.fiscal_sequence_id = json.fiscal_sequence_id;
+                this.ncf = json.ncf || '';
+                this.ncf_origin_out = json.ncf_origin_out || '';
+                this.ncf_expiration_date = json.ncf_expiration_date || '';
+                this.fiscal_type_id = json.fiscal_type_id || false;
+                this.fiscal_sequence_id = json.fiscal_sequence_id || false;
+
+                if(json.fiscal_type_id)
+                    this.set_fiscal_type(this.pos.get_fiscal_type_by_id(json.fiscal_type_id));
+
+                if(json.fiscal_type)
+                    this.set_fiscal_type(json.fiscal_type);
+
             }
+        }
+        set_ncf_origin_out(ncf_origin_out) {
+            this.ncf_origin_out = ncf_origin_out;
         }
 
         // TODO: Try for return order

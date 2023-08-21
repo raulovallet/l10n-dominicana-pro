@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="TicketScreen" t-inherit="point_of_sale.TicketScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('header-row')]/div[1]" position="after">
+            <t t-if="env.pos.config.l10n_do_fiscal_journal">
+                <div class="col wide">NCF</div>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('order-row')]/div[1]" position="after">
+            <t t-if="env.pos.config.l10n_do_fiscal_journal">
+                <div class="col wide">
+                    <div t-if="env.isMobile">NCF</div>
+                    <div><t t-esc="order.ncf"></t></div>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+
+</templates>
