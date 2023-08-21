@@ -96,38 +96,8 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         }
                     }
     
-                    // This part is for credit note
-                    // if (current_order.get_mode() === 'return') {
-                    //     var origin_order = this.pos.db.orders_history_by_id[current_order.return_lines[0].order_id[0]];
-
-                    //     if(origin_order === undefined){
-                    //         this.showPopup('ErrorPopup', {
-                    //             title: _t('Credit note error'),
-                    //             body: _t('Please create credit note again'),
-                    //         });
-                    //     }
-    
-                    //     if (origin_order.amount_total < Math.abs(total)) {
-                    //         this.showPopup('ErrorPopup', {
-                    //             title: _t('The amount of the credit is very high'),
-                    //             body: _t('Total amount of the credit note cannot be greater than original'),
-                    //         });
-                    //         return false;
-                    //     }
-    
-                    //     if (origin_order.partner_id[0] !== client.id) {
-                    //         this.showPopup('ErrorPopup', {
-                    //             title: _t('Credit note error'),
-                    //             body: _t('The customer of the credit note must' +
-                    //                 ' be the same as the original'),
-                    //         });
-                    //         return false;
-                    //     }
-                    // }
-    
                 }
-                console.log('validateOrder', current_order)
-                // await super.validateOrder(...arguments);
+                await super.validateOrder(...arguments);
             }
 
             async _finalizeValidation() {
@@ -137,19 +107,8 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                     try {
 
-                        var fiscal_data = await this.env.services.rpc({
-                            model: 'pos.order',
-                            method: 'get_next_fiscal_sequence',
-                            args: [
-                                false,
-                                current_order.fiscal_type.id,
-                                this.env.pos.company.id,
-                                'no mode',
-                                current_order.export_as_JSON().lines,
-                                current_order.uid,
-                                [],
-                            ],
-                        });
+                        var fiscal_data = await this.env.pos.get_fiscal_data(current_order);
+                        
                         
                         console.log('NCF Generated', fiscal_data);
                         current_order.ncf = fiscal_data.ncf;
