@@ -7,31 +7,9 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
     const L10nDoPosTicketScreen = TicketScreen => class extends TicketScreen {
         async _onDoRefund() {
             const order = this.getSelectedSyncedOrder();
-            const refund_fiscal_type = this.env.pos.get_fiscal_type_by_prefix('B04');
-            const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
-
-            if (!credit_note_payment_method) {
-                await this.showPopup('ErrorPopup', {
-                    'title': this.env._t('Error'),
-                    'body': this.env._t('There are no credit note payment method configured.'),
-                });
-                return;
-            } 
-
-            if (order.ncf == '') {
-                await this.showPopup('ErrorPopup', {
-                    'title': this.env._t('Error'),
-                    'body': this.env._t('This order has no NCF'),
-                });
-                return;
-            }
 
             if (!order) {
                 this._state.ui.highlightHeaderNote = !this._state.ui.highlightHeaderNote;
-                return;
-            }
-
-            if(!refund_fiscal_type){
                 return;
             }
 
@@ -51,7 +29,25 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
             }
 
             if (this.env.pos.config.l10n_do_fiscal_journal){
-                
+                const refund_fiscal_type = this.env.pos.get_fiscal_type_by_prefix('B04');
+                const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
+
+                if (!credit_note_payment_method) {
+                    await this.showPopup('ErrorPopup', {
+                        'title': this.env._t('Error'),
+                        'body': this.env._t('There are no credit note payment method configured.'),
+                    });
+                    return;
+                } 
+
+                if(!refund_fiscal_type){
+                    await this.showPopup('ErrorPopup', {
+                        'title': this.env._t('Error'),
+                        'body': this.env._t('The fiscal type credit note does not exist. Please activate or configure it.'),
+                    });
+                    return;
+                }
+
                 if (order.ncf == '') {
                     await this.showPopup('ErrorPopup', {
                         'title': this.env._t('Error'),
@@ -60,14 +56,6 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
                     return;
                 }
                 
-                // TODO: maybe do not need this validation
-                // const {confirmed} = await this.showPopup('ConfirmPopup', {
-                //     'title': this.env._t('Credit Note'),
-                //     'body': this.env._t('Are you sure you want to create this credit note?'),
-                // });
-
-                // if (!confirmed) 
-                //     return;
             }
             //TODO: check updatePricelist
 
@@ -82,9 +70,10 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
                 
                 try {
                     const refund_fiscal_type = this.env.pos.get_fiscal_type_by_prefix('B04');
+                    const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
                     new_order.set_ncf_origin_out(order.ncf);
                     new_order.set_fiscal_type(refund_fiscal_type);
-                    new_order.add_paymentline(refund_fiscal_type);
+                    new_order.add_paymentline(credit_note_payment_method);
                     this.showScreen('PaymentScreen');
 
                     // T3ODO: maybe do not need this validation

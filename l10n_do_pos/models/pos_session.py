@@ -9,7 +9,7 @@ class PosSession(models.Model):
             'search_params': {
                 'domain': [('active', '=', True), ('type', 'in', ('out_invoice', 'out_refund'))],
                 'fields': [
-                    'name', 'requires_document', 'fiscal_position_id', 'prefix'
+                    'name', 'requires_document', 'fiscal_position_id', 'prefix', 'type'
                 ],
             },
         }

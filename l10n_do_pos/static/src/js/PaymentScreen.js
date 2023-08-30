@@ -5,6 +5,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
     var PaymentScreen = require('point_of_sale.PaymentScreen');
     var Registries = require('point_of_sale.Registries');
     var core = require('web.core');
+    const NumberBuffer = require('point_of_sale.NumberBuffer');
     var _t = core._t;
 
 
@@ -115,13 +116,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         current_order.fiscal_type_id = current_order.fiscal_type.id;
                         current_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
                         current_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
-                        // For credit notes
-                        // if (current_order.get_mode() === 'return') {
-                        //     var origin_order =
-                        //         this.env.pos.db.orders_history_by_id[
-                        //             current_order.return_lines[0].order_id[0]];
-                        //     current_order.ncf_origin_out = origin_order.ncf;
-                        // }
 
                     } catch (error) {
 
@@ -138,73 +132,97 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                 }
 
             }
-
-            async open_vat_popup() {
-                var self = this;
-                var current_order = this.env.pos.get_order();
-                self.keyboard_on();
-                const { confirmed, payload: code } = await this.showPopup('TextInputPopup', {
-                    title: this.env._t('Generate a Gift Card'),
-                    startingValue: '',
-                    placeholder: this.env._t('Enter the gift card code'),
-                });
-
-                this.showPopup('TextInputPopup', {
-                    title: _t('You need to select a customer with RNC/Céd for this fiscal type, place writes RNC/Céd'),
-                    'vat': '',
-                    confirm: function (vat) {
-                        self.keyboard_off();
-                        if (!(vat.length === 9 || vat.length === 11) ||
-                            Number.isNaN(Number(vat))) {
-
-                            self.gui.show_popup('error', {
-                                title: _t('This not RNC or Cédula'),
-                                body: _t('Please check if RNC or Cédula is' +
-                                    ' correct'),
-                                cancel: function () {
-                                    self.open_vat_popup();
-                                },
+            /**
+             * @override
+             */
+            async addNewPaymentLine({ detail: paymentMethod }) {
+                if(this.env.pos.config.l10n_do_fiscal_journal && paymentMethod && paymentMethod.is_credit_note){
+                    
+                    const { confirmed, payload: ncf } = await this.showPopup('TextInputPopup', {
+                        startingValue: '',
+                        title: this.env._t('Please enter the NCF'),
+                        placeholder: this.env._t('NCF'),
+                    });
+                    
+                    if(!confirmed || !ncf)  return;
+                    
+                    const payment_lines = this.currentOrder.get_paymentlines();
+                    
+                    for (let line of payment_lines) {
+                        if (line.payment_method.is_credit_note && line.credit_note_ncf === ncf) {
+                            this.showPopup('ErrorPopup', {
+                                title: _t('Error'),
+                                body: _t('The credit note has already been used in this order'),
                             });
+                            return false;
+                        }
+                    }
 
-                        } else {
-                            // TODO: in future try optimize search partners
-                            // link get_partner_by_id
-                            self.keyboard_off();
-                            var partner = self.pos.partners.find(
-                                function (partner_obj) {
-                                    return partner_obj.vat === vat;
-                                }
-                            );
-                            if (partner) {
-                                current_order.set_client(partner);
-                            } else {
-                                // TODO: in future create automatic partner
-                                self.gui.show_screen('clientlist');
-                            }
+                    try {
+
+                        var credit_note = await this.env.pos.get_credit_note(ncf);
+
+                    } catch (error) {
+
+                        throw error;
+                    } 
+
+                    if(credit_note.residual_amount <= 0){
+                        this.showPopup('ErrorPopup', {
+                            title: _t('Error'),
+                            body: _t('The credit note has no residual amount'),
+                        });
+                        return false;
+                    }
+
+                    const current_partner = this.currentOrder.get_partner();
+
+                    if((!current_partner && this.env.pos.config.pos_partner_id && credit_note.partner_id != this.env.pos.config.pos_partner_id[0]) ||
+                        (current_partner && credit_note.partner_id != current_partner.id)){
+                        this.showPopup('ErrorPopup', {
+                            title: _t('Error'),
+                            body: _t('The customer of the credit note is not the same as the current order, please select the correct customer.'),
+                        });
+                        return false;
+                    }
+
+                    const amount_due_before_payment = this.currentOrder.get_due()
+                    var newPaymentline = this.currentOrder.add_paymentline(paymentMethod);
+                    
+                    if(newPaymentline){
+                        newPaymentline.set_fiscal_data(ncf, credit_note.partner_id);
+                        
+                        if(credit_note.residual_amount < amount_due_before_payment){
+                            newPaymentline.set_amount(credit_note.residual_amount);
                         }
 
-                    },
-                    cancel: function () {
-                        self.keyboard_off();
-                        if (!current_order.get_client()) {
-                            current_order.set_fiscal_type(
-                                this.pos.get_fiscal_type_by_prefix('B02')
-                            );
-                        }
-                    },
-                });
+                        NumberBuffer.reset();
+                        return true;
+                    
+                    } else {
+                    
+                        return false;
+                    
+                    }
+
+                }
+                
+
+                return super.addNewPaymentLine(...arguments);
+
             }
-            // keyboard_off () {
-            //     // That one comes from BarcodeEvents
-            //     $(body).keypress(this.keyboard_handler);
-            //     // That one comes from the pos, but we prefer to cover
-            //     // all the basis
-            //     $(body).keydown(this.keyboard_keydown_handler);
-            // }
-            // keyboard_on () {
-            //     $(body).off('keypress', this.keyboard_handler);
-            //     $(body).off('keydown', this.keyboard_keydown_handler);
-            // }
+            _updateSelectedPaymentline(){
+                if (this.selectedPaymentLine && 
+                    this.selectedPaymentLine.payment_method.is_credit_note && 
+                    this.env.pos.config.l10n_do_fiscal_journal){
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Error'), 
+                        body: _t('You cannot edit a credit note payment line'),
+                    });
+                    return;
+                }
+                super._updateSelectedPaymentline();
+            }
         };
 
 

@@ -241,154 +241,6 @@ class PosOrder(models.Model):
                 to_reconcile_lines += tmpline
         to_reconcile_lines.filtered(lambda l: not l.reconciled).reconcile()
 
-    
-    def return_from_ui(self, orders):
-        super(PosOrder, self).return_from_ui(orders)
-        for tmp_order in orders:
-            # eliminates the return of the order several times at the same time
-            returned_order = self.search([
-                ('pos_ref', '=', tmp_order['data']['name']),
-                ('date_order', '=', tmp_order['data']['creation_date']),
-                ('returned_order', '=', True)
-            ])
-
-            if returned_order.state == 'draft' and returned_order.config_id.\
-                    invoice_journal_id.l10n_do_fiscal_journal:
-
-                returned_order.create_pos_order_refund_invoice()
-                returned_order.invoice_id.sudo().action_invoice_open()
-                returned_order.account_move = returned_order.invoice_id.move_id
-                if not returned_order.picking_id:
-                    returned_order.create_picking()
-
-    def create_pos_order_refund_invoice(self):
-
-        origin_order = self.search([('ncf', '=', self.ncf_origin_out)])
-
-        if origin_order:
-
-            origin_invoice = origin_order.invoice_id
-
-            if origin_invoice.state in ['draft', 'proforma2', 'cancel']:
-                raise UserError(
-                    _('Cannot refund draft/proforma/cancelled invoice.')
-                )
-
-            refund_invoice = origin_invoice.refund(
-                fields.Date.to_date(self.date_order),
-                fields.Date.to_date(self.date_order),
-                self.name,
-                self.session_id.config_id.invoice_journal_id.id
-            )
-
-            refund_invoice.write({
-                'ref': self.ncf,
-                'origin_out': self.ncf_origin_out,
-                'ncf_expiration_date': self.ncf_expiration_date,
-                'fiscal_type_id': self.fiscal_type_id.id,
-                'fiscal_sequence_id': self.fiscal_sequence_id.id,
-            })
-
-            # TODO: es probable que las lineas tengan el mismo producto
-            # pero con diferentes precios, queda pendeiente buscar una
-            # solucion futura para este problema
-
-            products_ids = []
-
-            for refund_invoice_line in refund_invoice.invoice_line_ids:
-                if refund_invoice_line.product_id.id in products_ids:
-                    refund_invoice_line.sudo().unlink()
-                else:
-                    products_ids.append(refund_invoice_line.product_id.id)
-
-            for refund_invoice_line in refund_invoice.invoice_line_ids:
-
-                product = refund_invoice_line.product_id
-                refund_order_lines = self.lines.filtered(
-                    lambda line: line.product_id.id == product.id
-                )
-
-                if refund_order_lines:
-
-                    total_quantity = 0
-
-                    for refund_order_line in refund_order_lines:
-                        total_quantity = total_quantity + refund_order_line.qty
-
-                    refund_invoice_line.write({
-                        'quantity': abs(total_quantity),
-                        'invoice_line_tax_ids':
-                            [(6, 0, refund_order_line.tax_ids.ids)]
-                    })
-
-                else:
-
-                    refund_invoice_line.sudo().unlink()
-
-            refund_invoice.write({'is_from_pos': True})
-            refund_invoice.compute_taxes()
-
-            if round(refund_invoice.amount_total, -2) != \
-                    round(abs(self.amount_total), -2):
-                raise UserError(_(
-                    'Credit note has error please contact your manager '
-                    + str(refund_invoice.amount_total) + ' '
-                    + str(self.amount_total)))
-
-            # TODO: this part is used for cancel invoice with credit note
-            # movelines = origin_invoice.move_id.line_ids
-            # to_reconcile_ids = {}
-            # to_reconcile_lines = self.env['account.move.line']
-            # to_reconcile_lines_from_payments = self.env['account.move.line']
-            # to_reconcile_lines_from_credit_notes =\
-            #     self.env['account.move.line']
-            #
-            # for line in movelines:
-            #     if line.account_id.id == origin_invoice.account_id.id:
-            #         to_reconcile_lines += line
-            #         to_reconcile_lines_from_payments += line
-            #         to_reconcile_lines_from_credit_notes += line
-            #         to_reconcile_ids.setdefault(line.account_id.id, [])\
-            #             .append(line.id)
-            #     if line.reconciled:
-            #         for matched_credit in line.matched_credit_ids:
-            #             if matched_credit.credit_move_id.payment_id:
-            #                 to_reconcile_lines_from_payments \
-            #                     += matched_credit.credit_move_id
-            #             if matched_credit.credit_move_id.invoice_id:
-            #                 to_reconcile_lines_from_credit_notes \
-            #                     += matched_credit.credit_move_id
-            #
-            #         line.remove_move_reconcile()
-
-            refund_invoice.write({'is_from_pos': True})
-
-            # TODO: this part is used for cancel invoice with credit note
-            # for tmpline in refund_invoice.move_id.line_ids:
-            #     if tmpline.account_id.id == origin_invoice.account_id.id:
-            #         to_reconcile_lines += tmpline
-            #
-            # to_reconcile_lines\
-            #     .filtered(lambda l: l.reconciled == False).reconcile()
-            #
-            # if len(to_reconcile_lines_from_credit_notes) > 1:
-            #     to_reconcile_lines_from_credit_notes\
-            #         .filtered(lambda l: l.reconciled == False).reconcile()
-            #
-            # if len(to_reconcile_lines_from_payments) > 1:
-            #     to_reconcile_lines_from_payments\
-            #         .filtered(lambda l: l.reconciled == False).reconcile()
-
-            self.sudo().write({
-                'invoice_id': refund_invoice.id,
-                'state': 'invoiced',
-            })
-
-        else:
-
-            raise UserError(
-                _('Order not found, pleas contact your manager')
-            )
 
     def get_next_fiscal_sequence(
             self, 
@@ -440,3 +292,22 @@ class PosOrder(models.Model):
             'ncf_expiration_date': fiscal_sequence.expiration_date
         }
 
+    def get_credit_note(self, ncf):
+        """
+        Get credit note
+        :param ncf:
+        :return:
+        """
+        credit_note = self.env['account.move'].search([
+            ('ref', '=', ncf),
+            ('move_type', '=', 'out_refund'),
+            ('is_l10n_do_fiscal_invoice', '=', True),
+        ], limit=1)
+
+        if not credit_note:
+            raise UserError(_('Credit note not found'))
+
+        return {
+            'partner_id': credit_note.partner_id.id,
+            'residual_amount': credit_note.amount_residual,
+        }
