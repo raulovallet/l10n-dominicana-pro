@@ -70,102 +70,17 @@ class PosOrder(models.Model):
 
         return invoice_vals
 
-    # @api.model
-    # def _payment_fields(self, ui_paymentline):
-    #     """
-    #     This part is for credit note.
-    #     """
-    #     fields = super(PosOrder, self)._payment_fields(ui_paymentline)
-    #     fields.update({'note': ui_paymentline.get('returned_ncf')})
-    #     return fields
+    @api.model
+    def _payment_fields(self, order, ui_paymentline):
 
-    # def _prepare_bank_statement_line_payment_values(self, data):
-    #     """
-    #     This part is for credit note.
-    #     """
-    #     args = super(PosOrder, self)._prepare_bank_statement_line_payment_values(data)
-    #     if 'note' in data:
-    #         args.update({'note': data['note']})
-    #     return args
+        fields = super(PosOrder, self)._payment_fields(order, ui_paymentline)
 
-    
-    def _create_order_payments(self):
-        """
-        Create all orders payment from statements
-        :return:
-        """
-        for order in self:
-            if order.config_id.invoice_journal_id.l10n_do_fiscal_journal:
-                pass
-                # for statement in order.statement_ids:
-                #     # This part is for return order (credits notes)
-                #     if statement.journal_id.is_for_credit_notes:
-                #         # Note in statement line is equals to returned_ncf
-                #         # (NCF credit note)
-                #         credit_note_order = self.env['pos.order']\
-                #             .search([('ncf', '=', statement.note)])
-                #         if not credit_note_order:
-                #             raise UserError(_('Credit note not exist'))
+        fields.update({
+            'name': ui_paymentline.get('credit_note_ncf'),
+        })
 
-                #         if credit_note_order.invoice_id.state == 'paid':
-                #             raise UserError(
-                #                 _('The credit note used in another invoice,'
-                #                   ' please unlink that invoice.')
-                #             )
-                #         credit_note_order.update({
-                #             'is_used_in_order': True
-                #         })
-                #         lines = credit_note_order.invoice_id.move_id.line_ids
-                #         statement.write({
-                #             'move_name': credit_note_order.invoice_id.move_name,
-                #             'journal_entry_ids': [(4, x) for x in lines.ids]
-                #         })
-                #         order._reconcile_refund_invoice(
-                #             credit_note_order.invoice_id
-                #         )
-                #     else:
-                #         statement.sudo().fast_counterpart_creation()
-
-                #     if not statement.journal_entry_ids.ids:
-                #         raise UserError(
-                #             _('All the account entries lines must be processed'
-                #               ' in order to close the statement.')
-                #         )
-
-    def action_pos_order_invoice_no_return_pdf(self):
-        """
-        Create invoice on background
-        :return:
-        """
-        invoice = self.env['account.move']
-
-        for order in self:
-            # Force company for all SUPERUSER_ID action
-            local_context = dict(
-                self.env.context,
-                force_company=order.company_id.id,
-                company_id=order.company_id.id)
-
-            if order.account_move:
-                invoice += order.account_move
-                continue
-
-            if not order.partner_id:
-                
-                if not order.config_id.pos_partner_id:
-                    raise UserError(_('This point of sale not have default customer, please set default customer in config POS'))
-                
-                order.write({
-                    'partner_id': order.config_id.pos_partner_id.id
-                })
-
-            move_vals = order._prepare_invoice_vals()
-            new_move = order._create_invoice(move_vals)
-
-            order.write({'account_move': new_move.id, 'state': 'invoiced'})
-            new_move.sudo().with_company(order.company_id).with_context(skip_invoice_sync=True)._post()
-            payment_moves = order._apply_invoice_payments()
-
+        return fields
+        
     # @api.model
     # def _process_order(self, order, draft, existing_order):
     #     """
@@ -214,32 +129,18 @@ class PosOrder(models.Model):
                     and order.state != 'invoiced' \
                     and order.amount_total != 0 \
                     and order.ncf:
-                order.action_pos_order_invoice_no_return_pdf()
-                # if order._should_create_picking_real_time():
-                #     self._create_order_picking()
+                
+                if not order.partner_id:
+                    if not order.config_id.pos_partner_id:
+                        raise UserError(_('This point of sale not have default customer, please set default customer in config POS'))
+                    
+                    order.write({
+                        'partner_id': order.config_id.pos_partner_id.id
+                    })
+
+                order.action_pos_order_invoice()
 
         return order_ids
-
-    def _reconcile_refund_invoice(self, refund_invoice):
-        """
-        For returns orders (nota de credito)
-        :param refund_invoice:
-        """
-        invoice = self.invoice_id
-        movelines = invoice.move_id.line_ids
-        to_reconcile_ids = {}
-        to_reconcile_lines = self.env['account.move.line']
-        for line in movelines:
-            if line.account_id.id == invoice.account_id.id:
-                to_reconcile_lines += line
-                to_reconcile_ids.setdefault(line.account_id.id, []).append(
-                    line.id)
-            if line.reconciled:
-                line.remove_move_reconcile()
-        for tmpline in refund_invoice.move_id.line_ids:
-            if tmpline.account_id.id == invoice.account_id.id:
-                to_reconcile_lines += tmpline
-        to_reconcile_lines.filtered(lambda l: not l.reconciled).reconcile()
 
 
     def get_next_fiscal_sequence(
@@ -279,11 +180,10 @@ class PosOrder(models.Model):
         ], limit=1)
 
         if not fiscal_sequence:
-            raise UserError(_(u"There is no current active NCF of {}"
-                              u", please create a new fiscal sequence "
-                              u"of type {}.").format(
-                fiscal_type.name,
-                fiscal_type.name,
+            raise UserError(
+                _(u"There is no current active NCF of {}, please create a new fiscal sequence of type {}.").format(
+                    fiscal_type.name,
+                    fiscal_type.name,
             ))
 
         return {
@@ -311,3 +211,30 @@ class PosOrder(models.Model):
             'partner_id': credit_note.partner_id.id,
             'residual_amount': credit_note.amount_residual,
         }
+    
+    def _apply_invoice_payments(self):
+
+
+        res = super(PosOrder, self)._apply_invoice_payments()
+        
+        if self.config_id.invoice_journal_id.l10n_do_fiscal_journal:
+            # Reconcile credit notes as a payment to the invoice
+
+            receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).with_company(self.company_id).property_account_receivable_id
+            
+            credit_notes = self.payment_ids.filtered(lambda payment: payment.payment_method_id.is_credit_note and payment.name).mapped('name')
+            
+            payment_moves = self.env['account.move'].search([
+                    ('ref', 'in', credit_notes),
+                    ('move_type', '=', 'out_refund'),
+                    ('is_l10n_do_fiscal_invoice', '=', True),
+                ],
+            )
+            
+            if receivable_account.reconcile and payment_moves:
+                invoice_receivables = self.account_move.line_ids.filtered(lambda line: line.account_id == receivable_account and not line.reconciled)
+                if invoice_receivables:
+                    payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account and line.partner_id)
+                    (invoice_receivables | payment_receivables).sudo().with_company(self.company_id).reconcile()
+
+        return res

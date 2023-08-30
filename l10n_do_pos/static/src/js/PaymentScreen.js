@@ -32,9 +32,19 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
     
                 if (this.env.pos.config.l10n_do_fiscal_journal) {
     
-                    // if (!this.analyze_payment_methods()) {
-                    //     return false;
-                    // }
+                    if (!await this.analyze_payment_methods()) {
+                        return false;
+                    }
+
+                    if (!current_order.fiscal_type){
+                            
+                        this.showPopup('ErrorPopup', {
+                            title: _t('Required fiscal type'),
+                            body: _t('Please select a fiscal type'),
+                        });
+
+                        return false;
+                    }
     
                     if (current_order.fiscal_type.requires_document && !client) {
     
@@ -98,6 +108,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     }
     
                 }
+
                 await super.validateOrder(...arguments);
             }
 
@@ -161,6 +172,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     try {
 
                         var credit_note = await this.env.pos.get_credit_note(ncf);
+                        var credit_note_partner = this.env.pos.db.get_partner_by_id(credit_note.partner_id)
 
                     } catch (error) {
 
@@ -190,8 +202,13 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     var newPaymentline = this.currentOrder.add_paymentline(paymentMethod);
                     
                     if(newPaymentline){
+                        
                         newPaymentline.set_fiscal_data(ncf, credit_note.partner_id);
                         
+                        if (!current_partner){
+                            this.currentOrder.set_partner(credit_note_partner);
+                        }
+
                         if(credit_note.residual_amount < amount_due_before_payment){
                             newPaymentline.set_amount(credit_note.residual_amount);
                         }
@@ -223,6 +240,123 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                 }
                 super._updateSelectedPaymentline();
             }
+
+            async analyze_payment_methods() {
+
+                var current_order = this.env.pos.get_order();
+                var total_in_bank = 0;
+                var has_cash = false;
+                var payment_lines = current_order.get_paymentlines();
+                var total = current_order.get_total_with_tax();
+                var has_return_ncf = true;
+                // var payment_and_return_mount_equals = true;
+
+
+                for (let payment_line of payment_lines) {
+                    if (payment_line.payment_method.type === 'bank') {
+                        total_in_bank = +Number(payment_line.amount);
+                    }
+
+                    if (payment_line.payment_method.type === 'cash') {
+                        has_cash = true;
+                    }
+
+                    if (payment_line.payment_method.is_credit_note && !current_order._isRefundAndSaleOrder()) {
+
+                        if (!payment_line.credit_note_ncf) {
+                            this.showPopup('ErrorPopup', {
+                                title: _t('Error in credit note'),
+                                body: _t('There is an error with the payment of ' +
+                                    'credit note, please delete the payment of the ' +
+                                    'credit note and enter it again.'),
+                            });
+
+                            return false;
+                        }
+
+                        
+                        try {
+
+                            var credit_note = await this.env.pos.get_credit_note(payment_line.credit_note_ncf);
+    
+                        } catch (error) {
+    
+                            throw error;
+                        } 
+
+                        if (credit_note.residual_amount <= 0) {
+                            this.showPopup('ErrorPopup', {
+                                title: _t('Error in credit note'),
+                                body: _t('The credit note has no residual amount, please delete the payment of the credit note and enter it again.'),
+                            });
+                        }
+
+                        if (credit_note.residual_amount < payment_line.amount) {
+                            this.showPopup('ErrorPopup', {
+                                title: _t('Error in credit note'),
+                                body: _t(
+                                    'The amount of the credit note is less than the amount entered, please delete the payment of the credit note and enter it again.'),
+                            });
+                        }
+
+                        // TODO: Check if this is necessary
+                        // var amount_in_payment_line =
+                        //     Math.round(payment_line.amount * 100) / 100;
+                        // var amount_in_return_order =
+                        //     Math.abs(
+                        //         payment_line.get_returned_order_amount() * 100
+                        //     ) / 100;
+
+                        // if (amount_in_return_order !== amount_in_payment_line) {
+                        //     payment_and_return_mount_equals = false;
+                        // }
+                    }
+                }
+
+                if (Math.abs(Math.round(Math.abs(total) * 100) / 100) <
+                    Math.round(Math.abs(total_in_bank) * 100) / 100) {
+
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Card payment'),
+                        body: _t('Card payments cannot exceed the total order'),
+                    });
+
+                    return false;
+                }
+
+                if (Math.round(Math.abs(total_in_bank) * 100) / 100 ===
+                    Math.round(Math.abs(total) * 100) / 100 && has_cash) {
+
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Card and cash payment'),
+                        body: _t('The total payment with the card is ' +
+                            'sufficient to pay the order, please eliminate the ' +
+                            'payment in cash or reduce the amount to be paid by ' +
+                            'card'),
+                    });
+
+                    return false;
+                }
+
+                
+                // TODO: Check if this is necessary
+                // if (!payment_and_return_mount_equals) {
+
+                //     this.showPopup('ErrorPopup', {
+                //         title: _t('Error in credit note'),
+                //         body: _t('The amount of the credit note does not ' +
+                //             'correspond, delete the credit note and enter it' +
+                //             ' again.'),
+                //     });
+
+                //     return false;
+                // }
+
+                return true;
+
+
+            }
+
         };
 
 
@@ -315,99 +449,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
 
 
-    //     analyze_payment_methods: function () {
-
-    //         var current_order = this.pos.get_order();
-    //         var total_in_bank = 0;
-    //         var has_cash = false;
-    //         var all_payment_lines = current_order.get_paymentlines();
-    //         var total = current_order.get_total_with_tax();
-    //         var has_return_ncf = true;
-    //         var payment_and_return_mount_equals = true;
-
-
-    //         for (var line in all_payment_lines) {
-    //             var payment_line = all_payment_lines[line];
-
-    //             if (payment_line.cashregister.journal.type === 'bank') {
-    //                 total_in_bank = +Number(payment_line.amount);
-    //             }
-    //             if (payment_line.cashregister.journal.type === 'cash') {
-    //                 has_cash = true;
-    //             }
-    //             if (payment_line.cashregister.journal.is_for_credit_notes) {
-
-    //                 if (payment_line.get_returned_ncf() === null) {
-    //                     has_return_ncf = false;
-    //                 }
-
-    //                 var amount_in_payment_line =
-    //                     Math.round(payment_line.amount * 100) / 100;
-    //                 var amount_in_return_order =
-    //                     Math.abs(
-    //                         payment_line.get_returned_order_amount() * 100
-    //                     ) / 100;
-
-    //                 if (amount_in_return_order !== amount_in_payment_line) {
-    //                     payment_and_return_mount_equals = false;
-    //                 }
-    //             }
-    //         }
-
-    //         if (Math.abs(Math.round(Math.abs(total) * 100) / 100) <
-    //             Math.round(Math.abs(total_in_bank) * 100) / 100) {
-
-    //             this.showPopup('ErrorPopup', {
-    //                 title: _t('Card payment'),
-    //                 body: _t('Card payments cannot exceed the total order'),
-    //             });
-
-    //             return false;
-    //         }
-
-    //         if (Math.round(Math.abs(total_in_bank) * 100) / 100 ===
-    //             Math.round(Math.abs(total) * 100) / 100 && has_cash) {
-
-    //             this.showPopup('ErrorPopup', {
-    //                 title: _t('Card and cash payment'),
-    //                 body: _t('The total payment with the card is ' +
-    //                     'sufficient to pay the order, please eliminate the ' +
-    //                     'payment in cash or reduce the amount to be paid by ' +
-    //                     'card'),
-    //             });
-
-    //             return false;
-    //         }
-
-    //         if (!has_return_ncf) {
-
-    //             this.showPopup('ErrorPopup', {
-    //                 title: _t('Error in credit note'),
-    //                 body: _t('There is an error with the payment of ' +
-    //                     'credit note, please delete the payment of the ' +
-    //                     'credit note and enter it again.'),
-    //             });
-
-    //             return false;
-
-    //         }
-
-    //         if (!payment_and_return_mount_equals) {
-
-    //             this.showPopup('ErrorPopup', {
-    //                 title: _t('Error in credit note'),
-    //                 body: _t('The amount of the credit note does not ' +
-    //                     'correspond, delete the credit note and enter it' +
-    //                     ' again.'),
-    //             });
-
-    //             return false;
-    //         }
-
-    //         return true;
-
-
-    //     },
 
 
     //     click_paymentmethods: function (id) {
@@ -422,7 +463,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
     //             }
     //         }
 
-    //         if (cashregister.journal.is_for_credit_notes &&
+    //         if (payment_method.is_for_credit_notes &&
     //             self.pos.config.l10n_do_fiscal_journal) {
     //             this.keyboard_on();
     //             self.gui.show_popup('textinput', {
