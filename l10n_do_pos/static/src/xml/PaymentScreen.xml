@@ -17,7 +17,7 @@
         </t>
         
         <xpath expr="//div[hasclass('js_invoice')]" position="attributes">
-            <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+            <attribute name="t-if">!env.pos.config.l10n_do_fiscal_journal</attribute>
         </t>
     </t>
 
