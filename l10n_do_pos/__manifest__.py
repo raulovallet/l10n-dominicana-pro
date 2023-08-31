@@ -30,6 +30,7 @@
             '/l10n_do_pos/static/src/xml/PaymentScreen.xml',
             '/l10n_do_pos/static/src/xml/SetFiscalTypeButton.xml',
             '/l10n_do_pos/static/src/xml/TicketScreen.xml',
+            '/l10n_do_pos/static/src/xml/OrderReceipt.xml',
         ],
     },
     'installable': True,
