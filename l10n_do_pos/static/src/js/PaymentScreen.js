@@ -121,7 +121,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                         var fiscal_data = await this.env.pos.get_fiscal_data(current_order);
                         
-                        
                         console.log('NCF Generated', fiscal_data);
                         current_order.ncf = fiscal_data.ncf;
                         current_order.fiscal_type_id = current_order.fiscal_type.id;

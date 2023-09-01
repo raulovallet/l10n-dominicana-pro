@@ -6,25 +6,25 @@
             <t t-if="env.pos.config.l10n_do_fiscal_journal">
                 <SetFiscalTypeButton/>
             </t>
-        </t>
+        </xpath>
         
         <xpath expr="//div[hasclass('paymentmethods-container')]" position="attributes">
             <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
-        </t>
+        </xpath>
 
         <xpath expr="//div[hasclass('right-content')]" position="attributes">
             <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
-        </t>
+        </xpath>
         
         <xpath expr="//div[hasclass('js_invoice')]" position="attributes">
             <attribute name="t-if">!env.pos.config.l10n_do_fiscal_journal</attribute>
-        </t>
+        </xpath>
     </t>
 
     <t t-name="PaymentScreenNumpad" t-inherit="point_of_sale.PaymentScreenNumpad" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('numpad')]" position="attributes">
             <attribute name="t-att-class">env.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
-        </t>
+        </xpath>
     </t>
 
 </templates>
