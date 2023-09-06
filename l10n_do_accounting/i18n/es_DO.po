@@ -4,18 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0+e\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-30 16:56+0000\n"
-"PO-Revision-Date: 2023-03-30 12:58-0400\n"
+"POT-Creation-Date: 2023-09-04 14:19+0000\n"
+"PO-Revision-Date: 2023-09-04 13:01-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: es\n"
+"Language: es_DO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: \n"
-"X-Generator: Poedit 3.2.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -27,242 +27,242 @@ msgstr "%s %s Secuencia"
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__01
 msgid "01 - Deterioration of Pre-printed Invoice"
-msgstr ""
+msgstr "01 - Deterioro de Factura Pre-impresa"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__01
 msgid "01 - Deterioro de Factura Pre-impresa"
-msgstr ""
+msgstr "01 - Deterioro de Factura Pre-impresa"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__01
 msgid "01 - Gastos de Personal"
-msgstr ""
+msgstr "01 - Gastos de Personal"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__01
 msgid "01 - Operating Revenues (Non-Financial)"
-msgstr ""
+msgstr "01 - Ingresos Operativos (No Financieros)"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__01
 msgid "01 - Personnel Expenses"
-msgstr ""
+msgstr "01 - Gastos del Personal"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__02
 msgid "02 - Errores de Impresión (Factura Pre-impresa)"
-msgstr ""
+msgstr "02 - Errores de Impresión (Factura Pre-impresa)"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__02
 msgid "02 - Expenses for Labor, Supplies, and Services"
-msgstr ""
+msgstr "02 - Gastos por Trabajo, Suministros y Servicios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__02
 msgid "02 - Financial Revenues"
-msgstr ""
+msgstr "02 - Ingresos Financieros"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__02
 msgid "02 - Gastos por Trabajo, Suministros y Servicios"
-msgstr ""
+msgstr "02 - Gastos por Trabajo, Suministros y Servicios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__02
 msgid "02 - Printing Errors (Pre-printed Invoice)"
-msgstr ""
+msgstr "02 - Errores de Impresión (Factura Pre-impresa)"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__03
 msgid "03 - Arrendamientos"
-msgstr ""
+msgstr "03 - Arrendamiento"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__03
 msgid "03 - Defective Printing"
-msgstr ""
+msgstr "03 - Impresión defectuosa"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__03
 msgid "03 - Extraordinary Revenues"
-msgstr ""
+msgstr "03 - Ingresos Extraordinarios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__03
 msgid "03 - Impresión Defectuosa"
-msgstr ""
+msgstr "03 - Impresión defectuosa"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__03
 msgid "03 - Leases"
-msgstr ""
+msgstr "03 - Arrendamientos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__04
 msgid "04 - Corrección de la Información"
-msgstr ""
+msgstr "04 - Corrección de la Información"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__04
 msgid "04 - Correction of Information"
-msgstr ""
+msgstr "04 - Corrección de la Información"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__04
 msgid "04 - Fixed Asset Expenses"
-msgstr ""
+msgstr "04 - Gastos de Activos Fijos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__04
 msgid "04 - Gastos de Activos Fijos"
-msgstr ""
+msgstr "04 - Gastos de Activos Fijos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__04
 msgid "04 - Rental Revenues"
-msgstr ""
+msgstr "04 - Ingresos por alquiler"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__05
 msgid "05 - Cambio de Productos"
-msgstr ""
+msgstr "05 - Cambio de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__05
 msgid "05 - Change of Products"
-msgstr ""
+msgstr "05 - Cambio de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__05
 msgid "05 - Gastos de Representación"
-msgstr ""
+msgstr "05 - Gastos de Representación"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__05
 msgid "05 - Representation Expenses"
-msgstr ""
+msgstr "05 - Gastos de Representación"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__05
 msgid "05 - Revenues from Sale of Depreciable Assets"
-msgstr ""
+msgstr "05 - Ingresos por Venta o Depreciación de Activos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__06
 msgid "06 - Devolución de Productos"
-msgstr ""
+msgstr "06 - Devolución de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__06
 msgid "06 - Other Allowable Deductions"
-msgstr ""
+msgstr "06 - Otras Deducciones Admitidas"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__income_type__06
 msgid "06 - Other Revenues"
-msgstr ""
+msgstr "06 - Otros Ingresos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__06
 msgid "06 - Otras Deducciones Admitidas"
-msgstr ""
+msgstr "06 - Otras Deducciones Admitidas"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__06
 msgid "06 - Product Returns"
-msgstr ""
+msgstr "06 - Devolución de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__07
 msgid "07 - Financial Expenses"
-msgstr ""
+msgstr "07 - Gastos Financieros"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__07
 msgid "07 - Gastos Financieros"
-msgstr ""
+msgstr "07 - Gastos Financieros"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__07
 msgid "07 - Omisión de Productos"
-msgstr ""
+msgstr "07 - Omisión de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__07
 msgid "07 - Omission of Products"
-msgstr ""
+msgstr "07 - Omisión de Productos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__08
 msgid "08 - Errores en Secuencia de NCF"
-msgstr ""
+msgstr "08 - Errores en Secuencia de NCF"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__08
 msgid "08 - Errors in Sequence of NCF"
-msgstr ""
+msgstr "08 - Errores en Secuencia de NCF"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__08
 msgid "08 - Extraordinary Expenses"
-msgstr ""
+msgstr "08 - Gastos Extraordinarios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__08
 msgid "08 - Gastos Extraordinarios"
-msgstr ""
+msgstr "08 - Gastos Extraordinarios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__09
 msgid "09 - Compras y Gastos que forman parte del Costo de Venta"
-msgstr ""
+msgstr "09 - Compras y Gastos que forman parte del Costo de Venta"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__09
 msgid "09 - Due to Cessation of Operations"
-msgstr ""
+msgstr "09 - Por Cese de Operaciones"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__09
 msgid "09 - Por Cese de Operaciones"
-msgstr ""
+msgstr "09 - Por Cese de Operaciones"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__09
 msgid "09 - Purchases and Expenses that form part of the Cost of Sales"
-msgstr ""
+msgstr "09 - Compras y Gastos que forman parte del Costo de Venta"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__10
 msgid "10 - Acquisitions of Assets"
-msgstr ""
+msgstr "10 - Adquisiciones de Activos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__10
 msgid "10 - Adquisiciones de Activos"
-msgstr ""
+msgstr "10 - Adquisiciones de Activos"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__annulation_type__10
 msgid "10 - Loss or Theft of Invoice Books"
-msgstr ""
+msgstr "10 - Pérdida o Hurto de libro de facturas"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__10
 msgid "10 - Pérdida o Hurto de Talonarios"
-msgstr ""
+msgstr "10 - Pérdida o Hurto de Talonarios"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__11
 msgid "11 - Gastos de Seguro"
-msgstr ""
+msgstr "11 - Gastos de Seguro"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__expense_type__11
 msgid "11 - Insurance Expenses"
-msgstr ""
+msgstr "11 - Gastos de Seguro"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
@@ -270,6 +270,8 @@ msgid ""
 "<br/>\n"
 "                        <strong>Código Modificación:</strong>"
 msgstr ""
+"<br/>\n"
+"                        <strong>Código Modificación:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
@@ -277,6 +279,8 @@ msgid ""
 "<br/>\n"
 "                    <strong>Contacto:</strong>"
 msgstr ""
+"<br/>\n"
+"                    <strong>Contacto:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_validate_wizard_form
@@ -284,6 +288,8 @@ msgid ""
 "<span class=\"fa fa-warning fa-lg\" title=\"Warning\" aria-label=\"Warning\"/>\n"
 "                    <br/>"
 msgstr ""
+"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-label=\"Warning\"/>\n"
+"                    <br/>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form
@@ -303,61 +309,64 @@ msgid ""
 "                    <strong>E</strong>\n"
 "                </span>"
 msgstr ""
+"<span>\n"
+"                    <strong>E</strong>\n"
+"                </span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 msgid "<span>%</span>"
-msgstr ""
+msgstr "<span>%</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<span>/</span>"
-msgstr ""
+msgstr "<span>/</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.report_invoice_document_inherited
 msgid "<span>Monto descuento</span>"
-msgstr ""
+msgstr "<span>Monto descuento</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>Cel.:</strong>"
-msgstr ""
+msgstr "<strong>Cel.:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>Fecha Emisión:</strong>"
-msgstr ""
+msgstr "<strong>Fecha Emisión:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>NCF modificado:</strong>"
-msgstr ""
+msgstr "<strong>NCF modificado:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>Origen:</strong>"
-msgstr ""
+msgstr "<strong>Origen:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>RNC:</strong>"
-msgstr ""
+msgstr "<strong>RNC:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>Tel.:</strong>"
-msgstr ""
+msgstr "<strong>Tel.:</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.document_tax_totals
 msgid "<strong>Total</strong>"
-msgstr ""
+msgstr "<strong>Total</strong>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "<strong>Vence:</strong>"
-msgstr ""
+msgstr "<strong>Vence:</strong>"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -582,20 +591,6 @@ msgid "Check / Transfer"
 msgstr "Cheque / Transferencia"
 
 #. module: l10n_do_accounting
-#. odoo-python
-#: code:addons/l10n_do_accounting/models/res_partner.py:0
-#, python-format
-msgid "Check Vat Format or should not have any Caracter like '-'"
-msgstr "Verifique el formato de IVA o no debe tener ningún carácter como '-'"
-
-#. module: l10n_do_accounting
-#. odoo-python
-#: code:addons/l10n_do_accounting/models/res_partner.py:0
-#, python-format
-msgid "Check Vat, Seems like it's not correct"
-msgstr "Compruebe el RNC, parece que no es correcto"
-
-#. module: l10n_do_accounting
 #: model:ir.model.fields,help:l10n_do_accounting.field_account_move_reversal__refund_method
 msgid "Choose how you want to credit this invoice. You cannot \"modify\" nor \"cancel\" if the invoice is already reconciled."
 msgstr "Elige cómo quieres acreditar esta factura. No puedes modificar ni cancelar la factura una vez conciliada."
@@ -683,12 +678,12 @@ msgstr "Nota de débito del cliente"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
 msgid "Cédula"
-msgstr ""
+msgstr "Cédula"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Cédula:"
-msgstr ""
+msgstr "Cédula:"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_search
@@ -753,12 +748,12 @@ msgstr "Caducada"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Factura de"
-msgstr ""
+msgstr "Factura de"
 
 #. module: l10n_do_accounting
 #: model:ir.ui.menu,name:l10n_do_accounting.account_fiscal_sequence_menu_parent
 msgid "Fiscal"
-msgstr ""
+msgstr "Fiscal"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_journal__l10n_do_fiscal_journal
@@ -875,12 +870,12 @@ msgstr "Tiene mensaje"
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_type__id
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_invoice_cancel__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "ID Cliente:"
-msgstr ""
+msgstr "ID Cliente:"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__activity_exception_icon
@@ -919,7 +914,7 @@ msgstr "Secuencia Interna"
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_res_partner__is_fiscal_info_required
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_res_users__is_fiscal_info_required
 msgid "Is Fiscal Info Required"
-msgstr ""
+msgstr "¿Se requiere información fiscal?"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_bank_statement_line__is_l10n_do_fiscal_invoice
@@ -983,7 +978,7 @@ msgstr "Ultima actualización en"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.custom_header
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__message_main_attachment_id
@@ -1003,12 +998,12 @@ msgstr "Mensajes"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.document_tax_totals
 msgid "Monto Exento"
-msgstr ""
+msgstr "Monto Exento"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.document_tax_totals
 msgid "Monto Gravado"
-msgstr ""
+msgstr "Monto Gravado"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__my_activity_date_deadline
@@ -1016,10 +1011,7 @@ msgid "My Activity Deadline"
 msgstr "Fecha límite de mi actividad"
 
 #. module: l10n_do_accounting
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_bank_statement_line__ref
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move__ref
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move_reversal__refund_ref
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_payment__ref
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_invoice_tree
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_invoice_form
 msgid "NCF"
@@ -1120,12 +1112,12 @@ msgstr "No hay Secuencia Fiscal disponible para este tipo de documento!"
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__fiscal_sequence_status__no_fiscal
 msgid "No fiscal"
-msgstr ""
+msgstr "No fiscal"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Nombre:"
-msgstr ""
+msgstr "Nombre:"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.actions.act_window,help:l10n_do_accounting.action_invoice_out_debit_note
@@ -1148,7 +1140,7 @@ msgstr "Número de errores"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,help:l10n_do_accounting.field_account_fiscal_sequence__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr "Número de mensajes que requieren una acción"
 
 #. module: l10n_do_accounting
@@ -1159,7 +1151,7 @@ msgstr "Número de mensajes con error de entrega"
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_move__fiscal_sequence_status__fiscal_ok
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_journal__payment_form__others
@@ -1212,17 +1204,17 @@ msgstr "Cola"
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_view_company_form
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
 msgid "RNC"
-msgstr ""
+msgstr "RNC"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "RNC:"
-msgstr ""
+msgstr "RNC:"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Razón Social:"
-msgstr ""
+msgstr "Razón Social:"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.actions.act_window,help:l10n_do_accounting.action_vendor_in_debit_note
@@ -1452,7 +1444,7 @@ msgstr "Válido hasta"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Vencimiento e-NCF:"
-msgstr ""
+msgstr "Vencimiento e-NCF:"
 
 #. module: l10n_do_accounting
 #: model:ir.actions.act_window,name:l10n_do_accounting.action_vendor_in_debit_note
@@ -1462,12 +1454,12 @@ msgstr "Notas de débito del proveedor"
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_move_reversal__is_vendor_refund
 msgid "Vendor refund"
-msgstr "Es reembolso del proveedor"
+msgstr "Reembolso del proveedor"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "Válida hasta:"
-msgstr ""
+msgstr "Válido hasta:"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__warning_gap
@@ -1533,22 +1525,22 @@ msgstr "[FISCAL] Caducar secuencias"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.informations
 msgid "e-NCF:"
-msgstr ""
-
-#. module: l10n_do_accounting
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
-msgid "ej. MMMMMMMMMMM"
-msgstr ""
+msgstr "e-NCF:"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_view_company_form
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
 msgid "ej. NNNNNNNNN"
-msgstr ""
+msgstr "ej. NNNNNNNNN"
+
+#. module: l10n_do_accounting
+#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
+msgid "ej. NNNNNNNNNNN"
+msgstr "ej. NNNNNNNNNNN"
 
 #. module: l10n_do_accounting
 #. odoo-python
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "if the invoice amount is greater than RD$250,000.00 the customer should have RNC or Cédfor make invoice"
-msgstr "si el monto de la factura es mayor a RD$250,000.00 el cliente deberá hacer facturar con RNC o Cédfor"
+msgstr "Si el monto de la factura es mayor a RD$250,000.00 el cliente debe indicar un RNC o Cédula"
