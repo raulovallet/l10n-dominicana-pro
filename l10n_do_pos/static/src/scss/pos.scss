@@ -149,3 +149,29 @@
         opacity: 0;
     }
 }
+.no-clickeable {
+    pointer-events: none;
+}
+.total-hidden {
+    display: none;
+}
+.pos-receipt-font-75{
+    font-size: 75%;
+}
+.pos-receipt-fiscal-type-name{
+    font-weight: bold;
+    border-style:dashed;
+    border-width:2px;
+    border-right:0px;
+    border-left:0px;
+    border-bottom: 0px;
+    padding:10px 10px;
+    text-align: center;
+}
+.pos-receipt-titles{
+    border-style:dashed;
+    border-width:2px;
+    border-right:0px;
+    border-left:0px;
+    padding:10px 10px;
+}

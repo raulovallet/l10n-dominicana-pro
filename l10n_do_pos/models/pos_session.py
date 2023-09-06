@@ -7,9 +7,9 @@ class PosSession(models.Model):
     def _loader_params_account_fiscal_type(self):
         return {
             'search_params': {
-                'domain': [('active', '=', True), ('type', '=', 'out_invoice')],
+                'domain': [('active', '=', True), ('type', 'in', ('out_invoice', 'out_refund'))],
                 'fields': [
-                    'name', 'requires_document', 'fiscal_position_id', 'prefix'
+                    'name', 'requires_document', 'fiscal_position_id', 'prefix', 'type'
                 ],
             },
         }
@@ -27,4 +27,9 @@ class PosSession(models.Model):
         
         result['search_params']['fields'].append('sale_fiscal_type_id')
 
+        return result
+
+    def _loader_params_pos_payment_method(self):
+        result = super()._loader_params_pos_payment_method()
+        result['search_params']['fields'].append('is_credit_note')
         return result
