@@ -45,7 +45,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                         return false;
                     }
-    
+                  
                     if (current_order.fiscal_type.requires_document && !client) {
     
                         this.showPopup('ErrorPopup', {
@@ -119,8 +119,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                     try {
 
-                        var fiscal_data = await this.env.pos.get_fiscal_data(current_order);
-                        
+                        var fiscal_data = await this.env.pos.get_fiscal_data(current_order);        
                         console.log('NCF Generated', fiscal_data);
                         current_order.ncf = fiscal_data.ncf;
                         current_order.fiscal_type_id = current_order.fiscal_type.id;
@@ -353,7 +352,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                 return true;
 
-
             }
 
         };
@@ -361,185 +359,4 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
     Registries.Component.extend(PaymentScreen, L10nDoPosPaymentScreen);
     
-
-    // var screens = require('point_of_sale.screens');
-    // var rpc = require('web.rpc');
-    // var screens_return = require('pos_orders_history_return.screens');
-    // var core = require('web.core');
-    // var _t = core._t;
-
-    // screens.ActionpadWidget.include({
-    //     renderElement: function () {
-    //         this._super();
-    //         var current_order = this.pos.get_order();
-    //         if (current_order) {
-    //             if (current_order.get_mode() === 'return' &&
-    //                 this.pos.invoice_journal.l10n_do_fiscal_journal) {
-    //                 this.$('.set-customer').addClass('disable');
-    //             } else {
-    //                 this.$('.set-customer').removeClass('disable');
-    //             }
-    //         }
-    //     },
-    // });
-
-    // screens.OrdersHistoryButton.include({
-    //     button_click: function () {
-    //         if (this.pos.invoice_journal.l10n_do_fiscal_journal &&
-    //             !this.pos.config.load_barcode_order_only) {
-
-    //             this.showPopup('ErrorPopup', {
-    //                 title: _t('Config'),
-    //                 body: _t('Please active Load Specific Orders only it ' +
-    //                     'on point of sale config'),
-    //             });
-
-    //         } else {
-    //             this.pos.db.pos_orders_history = [];
-    //             this.pos.db.pos_orders_history_lines = [];
-    //             this.pos.db.sorted_orders = [];
-    //             this.pos.db.line_by_id = [];
-    //             this.pos.db.lines_by_id = [];
-    //             this.pos.db.orders_history_by_id = [];
-    //             this._super();
-    //         }
-
-    //     },
-    // });
-
-    // screens.PaymentScreenWidget.include({
-
-
-
-    //     renderElement: function () {
-    //         this._super();
-    //         var self = this;
-    //         var current_order = self.pos.get_order();
-    //         this.$('.js_set_fiscal_type').click(function () {
-    //             self.click_set_fiscal_type();
-    //         });
-    //         if (current_order) {
-    //             if (current_order.get_mode() === 'return' &&
-    //                 this.pos.invoice_journal.l10n_do_fiscal_journal) {
-
-    //                 this.$('.js_set_fiscal_type').addClass('disable');
-    //                 this.$('.js_set_customer').addClass('disable');
-    //                 this.$('.input-button').addClass('disable');
-    //                 this.$('.mode-button').addClass('disable');
-    //                 this.$('.paymentmethod').addClass('disable');
-
-    //             } else {
-
-    //                 this.$('.js_set_fiscal_type').removeClass('disable');
-    //                 this.$('.js_set_customer').removeClass('disable');
-    //                 this.$('.input-button').removeClass('disable');
-    //                 this.$('.mode-button').removeClass('disable');
-    //                 this.$('.paymentmethod').removeClass('disable');
-
-    //             }
-    //             if (this.pos.invoice_journal.l10n_do_fiscal_journal) {
-
-    //                 this.$('.js_invoice').hide();
-
-    //             }
-    //         }
-
-    //     },
-
-
-
-
-
-    //     click_paymentmethods: function (id) {
-    //         var self = this;
-    //         var cashregister = null;
-    //         var current_order = self.pos.get_order();
-
-    //         for (var i = 0; i < this.pos.cashregisters.length; i++) {
-    //             if (this.pos.cashregisters[i].journal_id[0] === id) {
-    //                 cashregister = this.pos.cashregisters[i];
-    //                 break;
-    //             }
-    //         }
-
-    //         if (payment_method.is_for_credit_notes &&
-    //             self.pos.config.l10n_do_fiscal_journal) {
-    //             this.keyboard_on();
-    //             self.gui.show_popup('textinput', {
-    //                 title: _t("Enter credit note number"),
-    //                 confirm: function (input) {
-    //                     current_order.add_payment_credit_note(
-    //                         input,
-    //                         cashregister
-    //                     );
-    //                     self.keyboard_off();
-    //                 },
-    //                 cancel: function () {
-    //                     self.keyboard_off();
-    //                 },
-    //             });
-    //         } else {
-    //             this._super(id);
-    //         }
-    //     },
-    // });
-
-    // screens_return.OrdersHistoryScreenWidget.include({
-    //     load_order_by_barcode: function (barcode) {
-    //         var self = this;
-    //         var _super = this._super.bind(this);
-    //         if (self.pos.config.return_orders &&
-    //             self.pos.config.l10n_do_fiscal_journal) {
-    //             var order_custom = false;
-    //             var domain = [
-    //                 ['ncf', '=', barcode],
-    //                 ['returned_order', '=', false],
-    //             ];
-    //             var fields = [
-    //                 'pos_history_ref_uid',
-    //             ];
-    //             self.pos.loading_screen_on();
-    //             rpc.query({
-    //                 model: 'pos.order',
-    //                 method: 'search_read',
-    //                 args: [domain, fields],
-    //                 limit: 1,
-    //             }, {
-    //                 timeout: 3000,
-    //                 shadow: true,
-    //             }).then(function (order) {
-    //                 order_custom = order;
-    //                 self.pos.loading_screen_off();
-    //             }, function (err, ev) {
-    //                 self.pos.loading_screen_off();
-    //                 console.log(err);
-    //                 console.log(ev);
-    //                 ev.preventDefault();
-    //                 var error_body =
-    //                     _t('Your Internet connection is probably down.');
-    //                 if (err.data) {
-    //                     var except = err.data;
-    //                     error_body = except.arguments ||
-    //                         except.message || error_body;
-    //                 }
-    //                 self.gui.show_popup('error', {
-    //                     title: _t('Error: Could not Save Changes'),
-    //                     body: error_body,
-    //                 });
-    //             }).done(function () {
-    //                 self.pos.loading_screen_off();
-    //                 if (order_custom && order_custom.length) {
-    //                     _super(order_custom[0].pos_history_ref_uid);
-    //                 } else {
-    //                     self.gui.show_popup('error', {
-    //                         title: _t('Error: Could not find the Order'),
-    //                         body: _t('There is no order with this barcode.'),
-    //                     });
-    //                 }
-    //             });
-    //         } else {
-    //             this._super(barcode);
-    //         }
-    //     },
-    // });
 });

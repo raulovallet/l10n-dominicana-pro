@@ -41,8 +41,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                 'body': _t('This fiscal type not exist.'),
             });
             return false;
-        }
-        
+        }        
         async get_fiscal_data(order) {
             return this.env.services.rpc({
                 model: 'pos.order',
@@ -82,6 +81,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                 ],
             });
         }
+
     }
 
     const L10nDoPosOrder = Order => class extends Order {
@@ -147,6 +147,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
+          
             if (this.pos.config.l10n_do_fiscal_journal){
                 json.ncf = this.ncf;
                 json.ncf_origin_out = this.ncf_origin_out;

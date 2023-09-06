@@ -24,7 +24,7 @@ odoo.define('l10n_do_pos.SetFiscalTypeButton', function(require) {
         async onClick() {
             const currentFiscalType = this.currentOrder.fiscal_type;
             const fiscalPosList = [];
-
+          
             for (let fiscalPos of this.env.pos.fiscal_types) {
                 if (fiscalPos.type !== 'out_invoice') continue;
                 fiscalPosList.push({
@@ -54,7 +54,7 @@ odoo.define('l10n_do_pos.SetFiscalTypeButton', function(require) {
                 this.currentOrder.set_fiscal_type(selectedFiscalType);
             }
         }
-        
+
         async open_vat_popup() {
             var self = this;
 

@@ -80,7 +80,7 @@ class PosOrder(models.Model):
         })
 
         return fields
-        
+
     # @api.model
     # def _process_order(self, order, draft, existing_order):
     #     """
