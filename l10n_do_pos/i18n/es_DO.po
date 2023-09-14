@@ -513,3 +513,17 @@ msgid "You need to select a customer with RNC or Cedula for this fiscal type."
 msgstr ""
 "Necesitas seleccionar un cliente con RNC o Cédula para este tipo de "
 "comprobante fiscal."
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/xml/Popups/ProductInfoPopup.xml:0
+#, python-format
+msgid "Price excl. VAT:"
+msgstr "Precio sin incluir Impuestos:"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/xml/Popups/ProductInfoPopup.xml:0
+#, python-format
+msgid "Total Price excl. VAT:"
+msgstr "Precio total sin incluir Impuestos:"

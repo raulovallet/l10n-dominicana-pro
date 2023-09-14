@@ -245,7 +245,7 @@ class AccountFiscalSequence(models.Model):
             "Are you sure want to confirm this Fiscal Sequence? "
             "Once you confirm this Fiscal Sequence cannot be edited."
         )
-        action = self.env.ref(
+        action = self.sudo().env.ref(
             "l10n_do_accounting.account_fiscal_sequence_validate_wizard_action"
         ).read()[0]
         action["context"] = {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     
-    <record id="view_account_invoice_refund_inherited" model="ir.ui.view">
+    <record id="view_account_move_reversal_inherited" model="ir.ui.view">
         <field name="name">view.account.move.reversal.inherited</field>
         <field name="model">account.move.reversal</field>
         <field name="inherit_id" ref="account.view_account_move_reversal"/>
