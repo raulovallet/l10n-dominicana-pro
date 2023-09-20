@@ -8,7 +8,13 @@
                 <div class="pos-receipt-font-75" t-if="receipt.partner">
                     <br/>
                     <div>
-                        <t t-esc="receipt.partner.name"/>
+                        Customer: <t t-esc="receipt.partner.name"/>
+                        <br/><t t-if="receipt.partner.street" t-esc="receipt.partner.street"/><t t-if="receipt.partner.street2" t-esc="', ' + receipt.partner.street2"/>
+                        <br/><t t-if="receipt.partner.city" t-esc="receipt.partner.city"/>
+                            <t t-if="receipt.partner.state_id" t-esc="', ' + receipt.partner.state_id[1]"/>
+                        <br/><t t-if="receipt.partner.country_id and receipt.partner.street" t-esc="receipt.partner.country_id[1]"/>
+                            <t t-if="receipt.partner.zip" t-esc="', ' + receipt.partner.zip"/>
+
                     </div>
                     <div t-if="receipt.partner.vat">
                         RNC / Cedula: <t t-esc="receipt.partner.vat"/>
