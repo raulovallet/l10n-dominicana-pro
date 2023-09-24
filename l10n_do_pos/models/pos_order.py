@@ -1,6 +1,7 @@
 import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.osv.expression import AND
 _logger = logging.getLogger(__name__)
 
 
@@ -238,3 +239,19 @@ class PosOrder(models.Model):
                     (invoice_receivables | payment_receivables).sudo().with_company(self.company_id).reconcile()
 
         return res
+
+    @api.model
+    def search_paid_order_ids(self, config_id, domain, limit, offset):
+        """Search for 'paid' orders that satisfy the given domain, limit and offset."""
+        
+        if self.env['pos.config'].browse(config_id).invoice_journal_id.l10n_do_fiscal_journal:
+            config_ids = self.env['pos.config'].search([
+                ('invoice_journal_id.l10n_do_fiscal_journal', '=', True)
+            ]).ids
+            default_domain = ['&', ('config_id', '=', config_ids), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
+            real_domain = AND([domain, default_domain])
+            ids = self.search(AND([domain, default_domain]), limit=limit, offset=offset).ids
+            totalCount = self.search_count(real_domain)
+            return {'ids': ids, 'totalCount': totalCount}
+
+        return super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
