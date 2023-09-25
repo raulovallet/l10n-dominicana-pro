@@ -4,9 +4,29 @@ from odoo.exceptions import UserError
 from odoo.osv.expression import AND
 _logger = logging.getLogger(__name__)
 
+###### delete for migration
+
+class AccountMove(models.Model):
+    _name = 'account.move'
+
+    l10n_do_pos_order_id = fields.Many2one(
+        string='POS Order',
+        comodel_name='pos.order',
+        copy=False,
+    )
+##### delete for migration
 
 class PosOrder(models.Model):
     _inherit = 'pos.order'
+
+    ###### delete for migration
+    l10n_do_payment_credit_note_ids = fields.One2many(
+        string='Credit Notes',
+        comodel_name='account.move',
+        inverse_name='l10n_do_pos_order_id',
+        readonly=True,
+    )
+    ##### delete for migration
 
     ncf = fields.Char(
         string='NCF',
