@@ -9,10 +9,20 @@ _logger = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _name = 'pos.order.payment.credit.note'
 
+    name = fields.Char()
+    amount = fields.Monetary()
+    account_move_id = fields.Many2one(
+        comodel_name="account.move",
+        string="Credit note",
+        required=False,
+    )
+    currency_id = fields.Many2one(
+        related="account_move_id.currency_id",
+    )
     pos_order_id = fields.Many2one(
-        string='POS Order',
-        comodel_name='pos.order',
-        copy=False,
+        comodel_name="pos.order",
+        string="order",
+        required=False,
     )
 ##### delete for migration
 
