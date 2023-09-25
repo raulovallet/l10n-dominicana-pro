@@ -100,7 +100,7 @@ class Partner(models.Model):
                 partner.l10n_do_dgii_tax_payer_type = (
                     partner.l10n_do_dgii_tax_payer_type
                 )
-                
+
     l10n_do_dgii_tax_payer_type = fields.Selection(
         selection="_get_l10n_do_dgii_payer_types_selection",
         compute="_compute_l10n_do_dgii_payer_type",
@@ -109,6 +109,28 @@ class Partner(models.Model):
         index=True,
         store=True,
     )
+    l10n_do_expense_type = fields.Selection(
+        selection="_get_l10n_do_expense_type",
+        string="Expense Type",
+        index=True,
+        store=True,
+    )
+    def _get_l10n_do_expense_type(self):
+        """Return the list of expenses needed in invoices to clasify accordingly to
+        DGII requirements."""
+        return [
+            ("01", _("01 - Personal")),
+            ("02", _("02 - Work, Supplies and Services")),
+            ("03", _("03 - Leasing")),
+            ("04", _("04 - Fixed Assets")),
+            ("05", _("05 - Representation")),
+            ("06", _("06 - Admitted Deductions")),
+            ("07", _("07 - Financial Expenses")),
+            ("08", _("08 - Extraordinary Expenses")),
+            ("09", _("09 - Cost & Expenses part of Sales")),
+            ("10", _("10 - Assets Acquisitions")),
+            ("11", _("11 - Insurance Expenses")),
+        ]        
     #################
 
     @api.depends('sale_fiscal_type_id')
