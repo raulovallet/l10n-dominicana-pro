@@ -40,10 +40,10 @@ class PosOrder(models.Model):
         copy=False,
         default=False,
     )
-    l10n_latam_document_type_id = fields.Many2one(
-        "l10n_latam.document.type",
-        "Document Type",
-    )
+    # l10n_latam_document_type_id = fields.Many2one(
+    #     "l10n_latam.document.type",
+    #     "Document Type",
+    # )
     l10n_latam_use_documents = fields.Boolean(
         depends=["config_id", "config_id.invoice_journal_id"],
     )
