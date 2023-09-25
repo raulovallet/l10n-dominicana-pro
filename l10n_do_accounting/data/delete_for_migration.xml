@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <!-- ============== -->
+        <!-- Agrega los NCF -->
+        <!-- ============== -->
+
+        <!-- P. Física de Servicios -->
+        <record id="l10n_do.position_person" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_fiscal_client'), 0)]"/>
+        </record>
+        <!-- P. Jurídica de Servicios -->
+        <record id="l10n_do.position_service_moral" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_fiscal_client'), 0)]"/>
+        </record>
+        <!-- P. Jurídica de Vigilancia -->
+        <record id="l10n_do.position_security_moral" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_fiscal_client'), 0)]"/>
+        </record>
+        <!-- Proveedor Informal de Bienes -->
+        <record id="l10n_do.position_nonformal" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_informal_supplier'), 0)]"/>
+        </record>
+        <!-- Servicios del Exterior -->
+        <record id="l10n_do.position_exterior" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_export_client'), 0), (4, ref('l10n_do_e_accounting.ecf_exterior_supplier'), 0)]"/>
+        </record>
+        <!-- Gubernamental -->
+        <record id="l10n_do.position_gov" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_gov_client'), 0)]"/>
+        </record>
+        <!-- No Lucrativa de Servicios -->
+        <!-- <record id="l10n_do.position_nonprofit" model="account.fiscal.position.template"> -->
+        <!--     <field name="l10n_do_ncf_ids" eval="[(5,0)]"/> -->
+        <!-- </record> -->
+        <!-- Regímenes Especiales -->
+        <record id="l10n_do.position_especial" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_special_client'), 0)]"/>
+        </record>
+        <!-- Restaurantes -->
+        <record id="l10n_do.position_restaurant" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_fiscal_client'), 0), (4, ref('l10n_do_e_accounting.ecf_consumer_supplier'), 0)]"/>
+        </record>
+        <!-- Para Llevar -->
+        <record id="l10n_do.position_restaurant_takeout" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_fiscal_client'), 0), (4, ref('l10n_do_e_accounting.ecf_consumer_supplier'), 0)]"/>
+        </record>
+        <!-- Consumir Final -->
+        <record id="l10n_do_accounting.final_consumer" model="account.fiscal.position.template">
+            <field name="l10n_do_ncf_ids" eval="[(4, ref('l10n_do_e_accounting.ecf_consumer_supplier'), 0)]"/>
+        </record>
+    </data>
+</odoo>

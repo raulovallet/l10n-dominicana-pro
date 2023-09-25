@@ -21,6 +21,10 @@
     ],
     # always loaded
     "data": [
+        #### delete for migration
+
+        "data/delete_for_migration.xml",
+
         "data/ir_config_parameters.xml",
         "data/ir_cron_data.xml",
         "data/account_fiscal_type_data.xml",
