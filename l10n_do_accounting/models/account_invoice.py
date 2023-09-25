@@ -86,6 +86,7 @@ class AccountInvoice(models.Model):
         ],
         copy=False,
         default=lambda self: self._context.get("income_type", "01"),
+        oldname='l10n_do_income_type'
     )
     expense_type = fields.Selection(
         copy=False,
