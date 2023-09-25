@@ -1,6 +1,31 @@
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 
+####### remove this for migration
+
+
+class NcfControlManager(models.Model):
+    _name = "ncf.control.manager"
+    _description = "NCF Control Manager"
+
+    journal_id = fields.Many2one(
+        comodel_name="account.journal", 
+        string="Journal"
+    )
+    l10n_latam_document_type_id = fields.Many2one(
+        comodel_name="l10n_latam.document.type", 
+        string="Document Type"
+    )
+    l10n_do_ncf_expiration_date = fields.Date(
+        string="Expiration Date"
+    )
+    l10n_do_ncf_max_number = fields.Integer(
+        string="Max Number"
+    )
+
+
+    ####################
+
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"
@@ -19,12 +44,10 @@ class AccountJournal(models.Model):
         ],
     )
     l10n_do_ncf_control_manager_ids = fields.Many2many(
-        "res.users", string="NCF Control Managers"
+        "ncf.control.manager",
+        string="NCF Control Managers"
     )
-    journal_id = fields.Many2one(
-        comodel_name="account.journal", 
-        string="Journal"
-    )
+
     ####################
     l10n_do_fiscal_journal = fields.Boolean(
         string="Fiscal Journal"
