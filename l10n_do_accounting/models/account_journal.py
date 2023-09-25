@@ -18,12 +18,10 @@ class AccountJournal(models.Model):
             ("others", "Other Sale Type"),
         ],
     )
-    l10n_do_ncf_control_manager_ids = fields.Many2many(
-        "res.users", string="NCF Control Managers"
-    )
-    journal_id = fields.Char(
-    )
-
+    # l10n_do_ncf_control_manager_ids = fields.Many2many(
+    #     "res.users", string="NCF Control Managers"
+    # )
+    
     ####################
     l10n_do_fiscal_journal = fields.Boolean(
         string="Fiscal Journal"
