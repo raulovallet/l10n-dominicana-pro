@@ -24,7 +24,7 @@ class AccountJournal(models.Model):
     journal_id = fields.Many2one(
         "account.journal", string="Journal", ondelete="cascade"
     )
-    
+
     ####################
     l10n_do_fiscal_journal = fields.Boolean(
         string="Fiscal Journal"
