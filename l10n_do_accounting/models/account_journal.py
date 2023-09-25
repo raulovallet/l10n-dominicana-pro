@@ -21,6 +21,9 @@ class AccountJournal(models.Model):
     l10n_do_ncf_control_manager_ids = fields.Many2many(
         "res.users", string="NCF Control Managers"
     )
+    journal_id = fields.Many2one(
+        "account.journal", string="Journal", ondelete="cascade"
+    )
     
     ####################
     l10n_do_fiscal_journal = fields.Boolean(
