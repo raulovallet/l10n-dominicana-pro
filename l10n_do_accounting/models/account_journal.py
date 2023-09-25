@@ -22,7 +22,6 @@ class AccountJournal(models.Model):
         "res.users", string="NCF Control Managers"
     )
     journal_id = fields.Char(
-        "account.journal", string="Journal", ondelete="cascade"
     )
 
     ####################
