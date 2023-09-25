@@ -52,6 +52,10 @@ class AccountInvoice(models.Model):
         ],
         copy=False,
     )
+    l10n_do_origin_ncf = fields.Char(
+        string="Origin NCF",
+        copy=False,
+    )
     #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
