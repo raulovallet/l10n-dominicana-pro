@@ -21,4 +21,4 @@ def post_init_hook(cr, registry):
     
     if to_delete:
         to_delete.unlink()
-        _logger.info('View 3408')
+    _logger.info('View 3408')
