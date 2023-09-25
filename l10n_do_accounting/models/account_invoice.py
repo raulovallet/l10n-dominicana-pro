@@ -33,6 +33,9 @@ class AccountInvoice(models.Model):
     l10n_do_ncf_is_required = fields.Boolean(
         string="NCF is required",
     )
+    l10n_do_ncf_expiration_date = fields.Date(
+        string="NCF Expiration Date",
+    )
     #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
