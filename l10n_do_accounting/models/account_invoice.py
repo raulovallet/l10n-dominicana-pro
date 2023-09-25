@@ -29,7 +29,11 @@ ncf_dict = {
 
 class AccountInvoice(models.Model):
     _inherit = "account.move"
-
+    #### remove this for migration
+    l10n_do_ncf_is_required = fields.Boolean(
+        string="NCF is required",
+    )
+    #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
         comodel_name="account.fiscal.type",
