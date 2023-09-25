@@ -20,12 +20,12 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     ###### delete for migration
-    # l10n_do_payment_credit_note_ids = fields.One2many(
-    #     string='Credit Notes',
-    #     comodel_name='account.move',
-    #     inverse_name='l10n_do_pos_order_id',
-    #     readonly=True,
-    # )
+    l10n_do_payment_credit_note_ids = fields.One2many(
+        string='Credit Notes',
+        comodel_name='account.move',
+        # inverse_name='l10n_do_pos_order_id',
+        readonly=True,
+    )
     ##### delete for migration
 
     ncf = fields.Char(
