@@ -203,6 +203,7 @@ class PosOrder(models.Model):
             ('ref', '=', ncf),
             ('move_type', '=', 'out_refund'),
             ('is_l10n_do_fiscal_invoice', '=', True),
+            ('company_id', '=', self.env.company.id)
         ], limit=1)
 
         if not credit_note:
@@ -211,8 +212,35 @@ class PosOrder(models.Model):
         return {
             'partner_id': credit_note.partner_id.id,
             'residual_amount': credit_note.amount_residual,
+            'ncf': credit_note.ref,
         }
-    
+
+    def get_credit_notes(self, partner_id):
+        """
+        Get credit note
+        :param partner_id:
+        :return: credit notes from partner
+        """
+        credit_notes = self.env['account.move'].search([
+            ('partner_id', '=', partner_id),
+            ('move_type', '=', 'out_refund'),
+            ('is_l10n_do_fiscal_invoice', '=', True),
+            ('amount_residual', '>', 0),
+            ('company_id', '=', self.env.company.id)
+        ])
+
+        if not credit_notes:
+            raise UserError(_('This customer does not have credit notes'))
+
+        return[{
+            'id': credit_note.id,
+            'label': credit_note.ref + ' - RD$' + str(credit_note.amount_residual),
+            'item':{
+                'partner_id': credit_note.partner_id.id,
+                'ncf': credit_note.ref,
+                'residual_amount': credit_note.amount_residual
+            }} for credit_note in credit_notes]
+        
     def _apply_invoice_payments(self):
 
 
@@ -246,9 +274,10 @@ class PosOrder(models.Model):
         
         if self.env['pos.config'].browse(config_id).invoice_journal_id.l10n_do_fiscal_journal:
             config_ids = self.env['pos.config'].search([
-                ('invoice_journal_id.l10n_do_fiscal_journal', '=', True)
+                ('invoice_journal_id.l10n_do_fiscal_journal', '=', True),
             ]).ids
-            default_domain = ['&', ('config_id', '=', config_ids), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
+
+            default_domain = ['&', '&', ('config_id', '=', config_ids), ('ncf', 'not like', '%B04%'), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
             real_domain = AND([domain, default_domain])
             ids = self.search(AND([domain, default_domain]), limit=limit, offset=offset).ids
             totalCount = self.search_count(real_domain)

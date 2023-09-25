@@ -65,7 +65,6 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
         async _onCloseScreen() {
             var new_order = this.env.pos.get_order();
             const order = this.getSelectedSyncedOrder();
-
             if (new_order && this.env.pos.config.l10n_do_fiscal_journal && new_order._isRefundAndSaleOrder() && order.ncf){
                 
                 try {

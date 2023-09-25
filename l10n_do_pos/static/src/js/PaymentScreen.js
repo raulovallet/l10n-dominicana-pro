@@ -146,17 +146,52 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
              */
             async addNewPaymentLine({ detail: paymentMethod }) {
                 if(this.env.pos.config.l10n_do_fiscal_journal && paymentMethod && paymentMethod.is_credit_note){
+                    const current_partner = this.currentOrder.get_partner();
                     
-                    const { confirmed, payload: ncf } = await this.showPopup('TextInputPopup', {
-                        startingValue: '',
-                        title: this.env._t('Please enter the NCF'),
-                        placeholder: this.env._t('NCF'),
-                    });
-                    
-                    if(!confirmed || !ncf)  return;
+                    if (current_partner && current_partner.id !== this.env.pos.config.pos_partner_id[0]) {
+                        try {
+    
+                            const credit_notes = await this.env.pos.get_credit_notes(current_partner.id);
+                            
+                            var { confirmed: confirmedPickingCreditNote, payload: credit_note} = await this.showPopup(
+                                'SelectionPopup',
+                                {
+                                    title: this.env._t('Select Credit Note'),
+                                    list: credit_notes,
+                                }
+                            );
+
+                            if (!confirmedPickingCreditNote) return;
+                            var ncf = credit_note.ncf;
+
+    
+                        } catch (error) {
+    
+                            throw error;
+                        } 
+                        
+                    }else{
+                        const { confirmed, payload: ncf } = await this.showPopup('TextInputPopup', {
+                            startingValue: '',
+                            title: this.env._t('Please enter the NCF'),
+                            placeholder: this.env._t('NCF'),
+                        });
+                        if(!confirmed || !ncf)  return;
+                        
+                        try {
+    
+                            var credit_note = await this.env.pos.get_credit_note(ncf);
+    
+                        } catch (error) {
+    
+                            throw error;
+                        } 
+                    }
+
+                    var credit_note_partner = this.env.pos.db.get_partner_by_id(credit_note.partner_id)
+
                     
                     const payment_lines = this.currentOrder.get_paymentlines();
-                    
                     for (let line of payment_lines) {
                         if (line.payment_method.is_credit_note && line.credit_note_ncf === ncf) {
                             this.showPopup('ErrorPopup', {
@@ -167,16 +202,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         }
                     }
 
-                    try {
-
-                        var credit_note = await this.env.pos.get_credit_note(ncf);
-                        var credit_note_partner = this.env.pos.db.get_partner_by_id(credit_note.partner_id)
-
-                    } catch (error) {
-
-                        throw error;
-                    } 
-
                     if(credit_note.residual_amount <= 0){
                         this.showPopup('ErrorPopup', {
                             title: _t('Error'),
@@ -184,11 +209,9 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         });
                         return false;
                     }
-
-                    const current_partner = this.currentOrder.get_partner();
-
-                    if((!current_partner && this.env.pos.config.pos_partner_id && credit_note.partner_id != this.env.pos.config.pos_partner_id[0]) ||
-                        (current_partner && credit_note.partner_id != current_partner.id)){
+                    
+                    if (!credit_note_partner) {
+                        // TODO: Check this message
                         this.showPopup('ErrorPopup', {
                             title: _t('Error'),
                             body: _t('The customer of the credit note is not the same as the current order, please select the correct customer.'),
@@ -201,17 +224,17 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     
                     if(newPaymentline){
                         
-                        newPaymentline.set_fiscal_data(ncf, credit_note.partner_id);
-                        
                         if (!current_partner){
                             this.currentOrder.set_partner(credit_note_partner);
                         }
+                        
+                        newPaymentline.set_fiscal_data(ncf, credit_note.partner_id);
 
                         if(credit_note.residual_amount < amount_due_before_payment){
                             newPaymentline.set_amount(credit_note.residual_amount);
                         }
-
                         NumberBuffer.reset();
+                        
                         return true;
                     
                     } else {
