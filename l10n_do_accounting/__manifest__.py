@@ -22,8 +22,9 @@
     # always loaded
     "data": [
         #### delete for migration
-
         "data/delete_for_migration.xml",
+        "data/l10n_latam.document.type.csv",
+        #######################
 
         "data/ir_config_parameters.xml",
         "data/ir_cron_data.xml",
