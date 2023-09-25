@@ -17,8 +17,11 @@
         "l10n_do",
         #### delete for migration
         "l10n_latam_invoice_document",
-        #######################
     ],
+
+    'post_init_hook': 'delete_views',
+    #######################
+
     # always loaded
     "data": [
         #### delete for migration

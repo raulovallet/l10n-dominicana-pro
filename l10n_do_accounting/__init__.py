@@ -1,12 +1,13 @@
 from . import models
 from . import wizard
 from . import controllers
+
 import logging
 from odoo import api, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 
-def post_init_hook(cr, registry):
+def delete_views(cr, registry):
     """
     This script maps and migrate data from v12 ncf_manager module to their
     homologue fields present in this module.
