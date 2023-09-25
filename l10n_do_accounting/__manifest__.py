@@ -14,7 +14,10 @@
     "depends": [
         "base",
         "account",
-        "l10n_do"
+        "l10n_do",
+        #### delete for migration
+        "l10n_latam_invoice_document",
+        #######################
     ],
     # always loaded
     "data": [
