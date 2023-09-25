@@ -30,29 +30,15 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     ###### delete for migration
-    payment_include_credit_note = fields.Boolean(
-    )
-    l10n_latam_document_number = fields.Char("Fiscal Number", copy=False)
-    l10n_do_ncf_expiration_date = fields.Date("NCF expiration date", copy=False)
-    l10n_do_origin_ncf = fields.Char("Modified NCF", copy=False)
-    l10n_do_is_return_order = fields.Boolean(
-        string="Return order",
-        copy=False,
-        default=False,
-    )
-    l10n_latam_document_type_id = fields.Many2one(
-        "l10n_latam.document.type",
-        "Document Type",
-    )
-    l10n_latam_use_documents = fields.Boolean(
-        related="config_id.invoice_journal_id.l10n_latam_use_documents",
-        depends=["config_id", "config_id.invoice_journal_id"],
-    )
-
     l10n_do_payment_credit_note_ids = fields.One2many(
-        "pos.order.payment.credit.note",
-        "pos_order_id",
-        string="Credit Note payments",
+        string='Credit Notes',
+        comodel_name='pos.order.payment.credit.note',
+        inverse_name='pos_order_id',
+        readonly=True,
+    )
+    l10n_latam_document_number = fields.Char(
+        string='Document Number',
+        copy=False,
     )
     ##### delete for migration
 
