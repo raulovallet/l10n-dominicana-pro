@@ -36,6 +36,22 @@ class AccountInvoice(models.Model):
     l10n_do_ncf_expiration_date = fields.Date(
         string="NCF Expiration Date",
     )
+    l10n_do_cancellation_type = fields.Selection(
+        string="Cancellation Type",
+        selection=[
+            ("01", "01 - Deterioration of Pre-printed Invoice"),
+            ("02", "02 - Printing Errors (Pre-printed Invoice)"),
+            ("03", "03 - Defective Printing"),
+            ("04", "04 - Correction of Information"),
+            ("05", "05 - Change of Products"),
+            ("06", "06 - Product Returns"),
+            ("07", "07 - Omission of Products"),
+            ("08", "08 - Errors in Sequence of NCF"),
+            ("09", "09 - Due to Cessation of Operations"),
+            ("10", "10 - Loss or Theft of Invoice Books"),
+        ],
+        copy=False,
+    )
     #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
