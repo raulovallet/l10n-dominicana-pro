@@ -56,6 +56,18 @@ class AccountInvoice(models.Model):
         string="Origin NCF",
         copy=False,
     )
+    l10n_do_income_type = fields.Selection(
+        string="Income Type",
+        selection=[
+            ("01", "01 - Operating Revenues (Non-Financial)"),
+            ("02", "02 - Financial Revenues"),
+            ("03", "03 - Extraordinary Revenues"),
+            ("04", "04 - Rental Revenues"),
+            ("05", "05 - Revenues from Sale of Depreciable Assets"),
+            ("06", "06 - Other Revenues"),
+        ], 
+        copy=False,
+    )
     #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
@@ -86,7 +98,6 @@ class AccountInvoice(models.Model):
         ],
         copy=False,
         default=lambda self: self._context.get("income_type", "01"),
-        oldname='l10n_do_income_type'
     )
     expense_type = fields.Selection(
         copy=False,
