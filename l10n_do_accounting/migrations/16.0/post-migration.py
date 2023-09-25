@@ -1,5 +1,3 @@
-from odoo import models, fields, api
-
 def migrate(cr, version):
 
         cr.execute("""
