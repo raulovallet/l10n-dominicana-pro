@@ -104,7 +104,6 @@ class Partner(models.Model):
     l10n_do_dgii_tax_payer_type = fields.Selection(
         selection="_get_l10n_do_dgii_payer_types_selection",
         compute="_compute_l10n_do_dgii_payer_type",
-        inverse="_inverse_l10n_do_dgii_tax_payer_type",
         string="Taxpayer Type",
         index=True,
         store=True,
