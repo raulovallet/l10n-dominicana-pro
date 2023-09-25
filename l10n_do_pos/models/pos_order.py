@@ -36,6 +36,10 @@ class PosOrder(models.Model):
         inverse_name='pos_order_id',
         readonly=True,
     )
+    l10n_latam_document_number = fields.Char(
+        string='Document Number',
+        copy=False,
+    )
     ##### delete for migration
 
     ncf = fields.Char(
