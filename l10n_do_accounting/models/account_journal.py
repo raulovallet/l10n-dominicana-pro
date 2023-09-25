@@ -5,6 +5,20 @@ from odoo.exceptions import ValidationError
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
+    ####### remove this for migration
+    l10n_do_payment_form = fields.Selection(
+        string="Payment Form",
+        selection=[
+            ("cash", "Cash"),
+            ("bank", "Check / Transfer"),
+            ("card", "Credit Card"),
+            ("credit", "Credit"),
+            ("swap", "Swap"),
+            ("bond", "Bonds or Gift Certificate"),
+            ("others", "Other Sale Type"),
+        ],
+    )
+    ####################
     l10n_do_fiscal_journal = fields.Boolean(
         string="Fiscal Journal"
     )
