@@ -40,7 +40,7 @@ class PosOrder(models.Model):
         copy=False,
         default=False,
     )
-    l10n_latam_document_type_id = fields.Integer(
+    l10n_latam_document_type_id = fields.Many2one(
         "l10n_latam.document.type",
         "Document Type",
     )
