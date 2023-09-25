@@ -22,7 +22,7 @@ class AccountJournal(models.Model):
         "res.users", string="NCF Control Managers"
     )
     journal_id = fields.Many2one(
-        "account.journal", 
+        comodel_name="account.journal", 
         string="Journal"
     )
     ####################
