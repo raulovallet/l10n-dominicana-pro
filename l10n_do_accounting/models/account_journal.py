@@ -21,7 +21,7 @@ class AccountJournal(models.Model):
     l10n_do_ncf_control_manager_ids = fields.Many2many(
         "res.users", string="NCF Control Managers"
     )
-    journal_id = fields.Many2one(
+    journal_id = fields.Char(
         "account.journal", string="Journal", ondelete="cascade"
     )
 
