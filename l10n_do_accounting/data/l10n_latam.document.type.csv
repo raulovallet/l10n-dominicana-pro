@@ -1,13 +1,13 @@
-id,sequence,code,name,report_name,internal_type,doc_code_prefix,country_id/id,active,l10n_do_use_in,l10n_do_auto_sequence
-ncf_fiscal_client,10,B,Crédito Fiscal,Factura de Crédito Fiscal,invoice,B01,base.do,TRUE,both,
-ncf_consumer_supplier,30,B,Consumo,Factura de Consumo,invoice,B02,base.do,TRUE,sale,
-ncf_debit_note_client,40,B,Nota de Débito,Nota de Débito,debit_note,B03,base.do,TRUE,both,
-ncf_credit_note_client,60,B,Nota de Crédito,Nota de Crédito,credit_note,B04,base.do,TRUE,both,
-ncf_informal_supplier,80,B,Comprobante de Compra,Factura de Compra,invoice,B11,base.do,TRUE,purchase,TRUE
-ncf_unique_client,90,B,Único Ingreso,Factura de Único Ingreso,invoice,B12,base.do,TRUE,sale,
-ncf_minor_supplier,100,B,Gasto Menor,Gasto Menor,invoice,B13,base.do,TRUE,purchase,TRUE
-ncf_special_client,110,B,Régimen Especial,Factura de Régimen Especial,invoice,B14,base.do,TRUE,sale,
-ncf_gov_client,120,B,Factura Gubernamental,Factura Gubernamental,invoice,B15,base.do,TRUE,sale,
-ncf_export_client,130,B,Exportación,Factura de Exportación,invoice,B16,base.do,TRUE,sale,
-ncf_exterior_supplier,140,B,Pago al Exterior,Factura de Pago al Exterior,invoice,B17,base.do,TRUE,purchase,TRUE
-non_fiscal_import_supplier,150,N,Importación,Factura de Importación,invoice,IMP,base.do,FALSE,,
+id,sequence,code,name,report_name,internal_type,doc_code_prefix,country_id/id,active
+ncf_fiscal_client,10,B,Crédito Fiscal,Factura de Crédito Fiscal,invoice,B01,base.do,TRUE,
+ncf_consumer_supplier,30,B,Consumo,Factura de Consumo,invoice,B02,base.do,TRUE
+ncf_debit_note_client,40,B,Nota de Débito,Nota de Débito,debit_note,B03,base.do,TRUE
+ncf_credit_note_client,60,B,Nota de Crédito,Nota de Crédito,credit_note,B04,base.do,TRUE
+ncf_informal_supplier,80,B,Comprobante de Compra,Factura de Compra,invoice,B11,base.do,TRUE
+ncf_unique_client,90,B,Único Ingreso,Factura de Único Ingreso,invoice,B12,base.do,TRUE
+ncf_minor_supplier,100,B,Gasto Menor,Gasto Menor,invoice,B13,base.do,TRUE
+ncf_special_client,110,B,Régimen Especial,Factura de Régimen Especial,invoice,B14,base.do
+ncf_gov_client,120,B,Factura Gubernamental,Factura Gubernamental,invoice,B15,base.do
+ncf_export_client,130,B,Exportación,Factura de Exportación,invoice,B16,base.do
+ncf_exterior_supplier,140,B,Pago al Exterior,Factura de Pago al Exterior,invoice,B17,base.do,TRUE
+non_fiscal_import_supplier,150,N,Importación,Factura de Importación,invoice,IMP,base.do
