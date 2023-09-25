@@ -6,14 +6,14 @@ _logger = logging.getLogger(__name__)
 
 ###### delete for migration
 
-# class AccountMove(models.Model):
-#     _name = 'account.move'
+class AccountMove(models.Model):
+    _name = 'pos.order.payment.credit.note'
 
-#     l10n_do_pos_order_id = fields.Many2one(
-#         string='POS Order',
-#         comodel_name='pos.order',
-#         copy=False,
-#     )
+    pos_order_id = fields.Many2one(
+        string='POS Order',
+        comodel_name='pos.order',
+        copy=False,
+    )
 ##### delete for migration
 
 class PosOrder(models.Model):
@@ -22,8 +22,8 @@ class PosOrder(models.Model):
     ###### delete for migration
     l10n_do_payment_credit_note_ids = fields.One2many(
         string='Credit Notes',
-        comodel_name='account.move',
-        # inverse_name='l10n_do_pos_order_id',
+        comodel_name='pos.order.payment.credit.note',
+        inverse_name='pos_order_id',
         readonly=True,
     )
     ##### delete for migration
