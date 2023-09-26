@@ -27,8 +27,7 @@ def migrate(cr, version):
         SELECT ir_ui_view.id
         FROM ir_ui_view
         JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
-        WHERE ir_ui_view.inherit_id IS NOT NULL
-        AND ir_model_data.module = 'l10n_do_pos'
+        WHERE ir_model_data.module = 'l10n_do_pos'
         );
     """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
