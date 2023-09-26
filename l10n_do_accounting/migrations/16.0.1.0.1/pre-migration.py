@@ -40,18 +40,28 @@ DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
 
 
     cr.execute("""
-        DELETE FROM ir_ui_view WHERE id IN (SELECT res_id FROM ir_model_data WHERE module in (
-            'pos_auto_ship_later', 
-            'l10n_do_e_accounting', 
-            'generic_discount_limit',
-            'account_margin',
-            'mass_editing',
-            'theme_prime',
-            'droggol_theme_common',
-            'invoice_payment_to',
-            'l10n_do_rnc_search',
-            'pos_discount_limit'
-        ));""")
+-- Obtener todas las vistas con claves que contienen los valores de la lista
+WITH recursive dependent_views AS (
+    SELECT v.id AS view_id, v.name AS view_name, v.model AS model_name
+    FROM ir_ui_view v
+    WHERE v.key LIKE ANY (ARRAY['%pos_auto_ship_later%', 
+                                '%l10n_do_e_accounting%', 
+                                '%generic_discount_limit%',
+                                '%account_margin%',
+                                '%mass_editing%',
+                                '%theme_prime%',
+                                '%droggol_theme_common%',
+                                '%invoice_payment_to%',
+                                '%l10n_do_rnc_search%',
+                                '%pos_discount_limit%'])
+    UNION ALL
+    SELECT v2.id AS view_id, v2.name AS view_name, v2.model AS model_name
+    FROM ir_ui_view v1
+    JOIN ir_ui_view v2 ON v2.inherit_id = v1.id
+)
+-- Eliminar las vistas y las relaciones de herencia
+DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
+""")
     
     env['ir.model.data'].search([('module', '=', 'dgii_reports')]).button_immediate_install()
 
