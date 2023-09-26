@@ -14,7 +14,7 @@ def migrate(cr, version):
     """
 
     cr.execute("""
-    -- Obtener todas las vistas con la clave que contiene 'l10n_do_accounting'
+-- Obtener todas las vistas con la clave que contiene 'l10n_do_accounting'
 WITH recursive dependent_views AS (
     SELECT v.id AS view_id, v.name AS view_name, v.model AS model_name
     FROM ir_ui_view v
