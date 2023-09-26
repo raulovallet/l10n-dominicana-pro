@@ -16,7 +16,7 @@ def migrate(cr, version):
     views_count = 1
     while views_count > 0:
         views = env['ir.ui.view'].search([
-            ('inherit_id', '=', False),
+            ('inherit_children_ids', '=', False),
             ('id', 'in', env['ir.model.data'].search([
                 ('model', '=', 'ir.ui.view'),
                 ('module', 'in', [
