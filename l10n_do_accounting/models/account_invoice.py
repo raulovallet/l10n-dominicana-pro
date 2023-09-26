@@ -30,61 +30,61 @@ ncf_dict = {
 class AccountInvoice(models.Model):
     _inherit = "account.move"
     #### remove this for migration
-    l10n_do_ncf_is_required = fields.Boolean(
-        string="NCF is required",
-    )
-    l10n_do_ncf_expiration_date = fields.Date(
-        string="NCF Expiration Date",
-    )
-    l10n_do_cancellation_type = fields.Selection(
-        string="Cancellation Type",
-        selection=[
-            ("01", "01 - Deterioration of Pre-printed Invoice"),
-            ("02", "02 - Printing Errors (Pre-printed Invoice)"),
-            ("03", "03 - Defective Printing"),
-            ("04", "04 - Correction of Information"),
-            ("05", "05 - Change of Products"),
-            ("06", "06 - Product Returns"),
-            ("07", "07 - Omission of Products"),
-            ("08", "08 - Errors in Sequence of NCF"),
-            ("09", "09 - Due to Cessation of Operations"),
-            ("10", "10 - Loss or Theft of Invoice Books"),
-        ],
-        copy=False,
-    )
-    l10n_do_origin_ncf = fields.Char(
-        string="Origin NCF",
-        copy=False,
-    )
-    l10n_do_income_type = fields.Selection(
-        string="Income Type",
-        selection=[
-            ("01", "01 - Operating Revenues (Non-Financial)"),
-            ("02", "02 - Financial Revenues"),
-            ("03", "03 - Extraordinary Revenues"),
-            ("04", "04 - Rental Revenues"),
-            ("05", "05 - Revenues from Sale of Depreciable Assets"),
-            ("06", "06 - Other Revenues"),
-        ], 
-        copy=False,
-    )
-    l10n_do_expense_type = fields.Selection(
-        copy=False,
-        selection=[
-            ("01", "01 - Personnel Expenses"),
-            ("02", "02 - Expenses for Labor, Supplies, and Services"),
-            ("03", "03 - Leases"),
-            ("04", "04 - Fixed Asset Expenses"),
-            ("05", "05 - Representation Expenses"),
-            ("06", "06 - Other Allowable Deductions"),
-            ("07", "07 - Financial Expenses"),
-            ("08", "08 - Extraordinary Expenses"),
-            ("09", "09 - Purchases and Expenses that form part of the Cost of Sales"),
-            ("10", "10 - Acquisitions of Assets"),
-            ("11", "11 - Insurance Expenses"),
-        ],
-        string="Cost & Expense Type",
-    )
+    # l10n_do_ncf_is_required = fields.Boolean(
+    #     string="NCF is required",
+    # )
+    # l10n_do_ncf_expiration_date = fields.Date(
+    #     string="NCF Expiration Date",
+    # )
+    # l10n_do_cancellation_type = fields.Selection(
+    #     string="Cancellation Type",
+    #     selection=[
+    #         ("01", "01 - Deterioration of Pre-printed Invoice"),
+    #         ("02", "02 - Printing Errors (Pre-printed Invoice)"),
+    #         ("03", "03 - Defective Printing"),
+    #         ("04", "04 - Correction of Information"),
+    #         ("05", "05 - Change of Products"),
+    #         ("06", "06 - Product Returns"),
+    #         ("07", "07 - Omission of Products"),
+    #         ("08", "08 - Errors in Sequence of NCF"),
+    #         ("09", "09 - Due to Cessation of Operations"),
+    #         ("10", "10 - Loss or Theft of Invoice Books"),
+    #     ],
+    #     copy=False,
+    # )
+    # l10n_do_origin_ncf = fields.Char(
+    #     string="Origin NCF",
+    #     copy=False,
+    # )
+    # l10n_do_income_type = fields.Selection(
+    #     string="Income Type",
+    #     selection=[
+    #         ("01", "01 - Operating Revenues (Non-Financial)"),
+    #         ("02", "02 - Financial Revenues"),
+    #         ("03", "03 - Extraordinary Revenues"),
+    #         ("04", "04 - Rental Revenues"),
+    #         ("05", "05 - Revenues from Sale of Depreciable Assets"),
+    #         ("06", "06 - Other Revenues"),
+    #     ], 
+    #     copy=False,
+    # )
+    # l10n_do_expense_type = fields.Selection(
+    #     copy=False,
+    #     selection=[
+    #         ("01", "01 - Personnel Expenses"),
+    #         ("02", "02 - Expenses for Labor, Supplies, and Services"),
+    #         ("03", "03 - Leases"),
+    #         ("04", "04 - Fixed Asset Expenses"),
+    #         ("05", "05 - Representation Expenses"),
+    #         ("06", "06 - Other Allowable Deductions"),
+    #         ("07", "07 - Financial Expenses"),
+    #         ("08", "08 - Extraordinary Expenses"),
+    #         ("09", "09 - Purchases and Expenses that form part of the Cost of Sales"),
+    #         ("10", "10 - Acquisitions of Assets"),
+    #         ("11", "11 - Insurance Expenses"),
+    #     ],
+    #     string="Cost & Expense Type",
+    # )
     #################################
     fiscal_type_id = fields.Many2one(
         string='Fiscal type',
