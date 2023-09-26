@@ -28,6 +28,7 @@ WITH recursive dependent_views AS (
 DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
 
     """)
+    cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
     cr.execute("ALTER TABLE pos_order RENAME COLUMN ncf_expiration_date TO ncf;")
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_do_origin_ncf TO ncf_origin_out;")
