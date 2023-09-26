@@ -35,7 +35,9 @@ def migrate(cr, version):
             ('inherit_id', '=', False)
         ])
         views_count = len(views)
-        views.unlink()
+        for view in views:
+            _logger.info('Deleting view: %s', view.name)
+            view.unlink()
 
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")    
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
