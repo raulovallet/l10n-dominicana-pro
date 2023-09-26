@@ -63,7 +63,7 @@ WITH recursive dependent_views AS (
 DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
 """)
     
-    env['ir.model.data'].search([('module', '=', 'dgii_reports')]).button_immediate_install()
+    env['ir.module.module'].search([('module', '=', 'dgii_reports')]).button_immediate_install()
 
     modules = env['ir.module.module'].search([
         ('state', '=', 'installed'), 
