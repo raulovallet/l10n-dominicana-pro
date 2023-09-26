@@ -14,19 +14,22 @@ def migrate(cr, version):
     """
 
     cr.execute("""
--- Obtener todas las vistas con la clave que contiene 'l10n_do_accounting'
-WITH recursive dependent_views AS (
-    SELECT v.id AS view_id, v.name AS view_name, v.model AS model_name
-    FROM ir_ui_view v
-    WHERE v.key LIKE '%l10n_do_pos%'
-    UNION ALL
-    SELECT v2.id AS view_id, v2.name AS view_name, v2.model AS model_name
-    FROM ir_ui_view v1
-    JOIN ir_ui_view v2 ON v2.inherit_id = v1.id
-)
--- Eliminar las vistas y las relaciones de herencia
-DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
-
+        DELETE FROM ir_ui_view
+        WHERE id IN (
+        SELECT ir_ui_view.id
+        FROM ir_ui_view
+        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
+        WHERE ir_ui_view.inherit_id IS NOT NULL
+        AND ir_model_data.module = 'l10n_do_pos'
+        );
+        DELETE FROM ir_ui_view
+        WHERE id IN (
+        SELECT ir_ui_view.id
+        FROM ir_ui_view
+        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
+        WHERE ir_ui_view.inherit_id IS NOT NULL
+        AND ir_model_data.module = 'l10n_do_pos'
+        );
     """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
