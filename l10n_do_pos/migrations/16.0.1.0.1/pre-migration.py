@@ -24,6 +24,7 @@ def migrate(cr, version):
                 ])]).mapped('res_id')
             )        
         ])
+        _logger.info(views)
         views_count = len(views)
         views.unlink()
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
