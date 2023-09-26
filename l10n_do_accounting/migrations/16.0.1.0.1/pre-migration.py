@@ -14,7 +14,7 @@ def migrate(cr, version):
     """
     env = api.Environment(cr, SUPERUSER_ID, {})
 
-    cr.execute("DELETE FROM ir_ui_view WHERE id = 3408;")
+    # cr.execute("DELETE FROM ir_ui_view WHERE id = 3408;")
     views_count = 1
     while views_count > 0:
         views = env['ir.ui.view'].search([
@@ -36,7 +36,7 @@ def migrate(cr, version):
         ])
         views_count = len(views)
         for view in views:
-            _logger.info('Deleting view: %s', view.name)
+            _logger.info('##############Deleting view: %s', view.name)
             view.unlink()
 
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")    
