@@ -67,8 +67,9 @@ def migrate(cr, version):
     for module in modules:
         try:
             module.button_immediate_uninstall()
+            _logger.info('############## Module %s uninstalled successfully. ##############', module.name)
         except Exception as e:
-            print(e)
+            _logger.info('############## Module %s uninstallation failed. ##############', module.name)
 
     second_modules = env['ir.module.module'].search([
         ('state', '=', 'installed'), 
