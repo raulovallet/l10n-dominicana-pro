@@ -11,7 +11,7 @@
         'point_of_sale',
         'l10n_do_accounting',
         ### delete for migration
-        'l10n_latam_invoice_document'
+        # 'l10n_latam_invoice_document'
         #######################
     ],
     'data': [

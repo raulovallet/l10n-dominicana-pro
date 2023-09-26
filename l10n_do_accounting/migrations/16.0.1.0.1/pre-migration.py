@@ -15,8 +15,22 @@ def migrate(cr, version):
     env = api.Environment(cr, SUPERUSER_ID, {})
 
     cr.execute("DELETE FROM ir_ui_view WHERE id = 3408;")
-    cr.execute("DELETE FROM ir_ui_view WHERE id IN (SELECT res_id FROM ir_model_data WHERE module = 'l10n_do_accounting');")
-    cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")
+    cr.execute("""
+        -- Eliminar vistas y relaciones de herencia del módulo 'l10n_do_accounting'
+        WITH recursive dependent_views AS (
+            SELECT v2.id AS view_id, v2.name AS view_name, v2.model AS model_name
+            FROM ir_ui_view v1
+            JOIN ir_ui_view v2 ON v2.inherit_id = v1.id
+            WHERE v1.module = 'l10n_do_accounting'
+            UNION ALL
+            SELECT v3.id AS view_id, v3.name AS view_name, v3.model AS model_name
+            FROM ir_ui_view v3
+            JOIN dependent_views dv ON dv.view_id = v3.inherit_id
+            WHERE v3.module = 'l10n_do_accounting'
+        )
+        -- Eliminar las vistas y las relaciones de herencia
+        DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
+    """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")
     
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_expense_type TO expense_type;")
