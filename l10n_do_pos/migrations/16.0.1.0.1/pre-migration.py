@@ -13,23 +13,6 @@ def migrate(cr, version):
     only works if your database have been migrated by Odoo
     """
 
-    cr.execute("""
-        DELETE FROM ir_ui_view
-        WHERE id IN (
-        SELECT ir_ui_view.id
-        FROM ir_ui_view
-        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
-        WHERE ir_ui_view.inherit_id IS NOT NULL
-        AND ir_model_data.module = 'l10n_do_pos'
-        );
-        DELETE FROM ir_ui_view
-        WHERE id IN (
-        SELECT ir_ui_view.id
-        FROM ir_ui_view
-        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
-        WHERE ir_model_data.module = 'l10n_do_pos'
-        );
-    """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_do_ncf_expiration_date TO ncf_expiration_date;")
