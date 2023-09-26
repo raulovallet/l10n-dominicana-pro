@@ -31,13 +31,13 @@ def migrate(cr, version):
                     'invoice_payment_to',
                     'l10n_do_rnc_search',
                     'pos_discount_limit'
-                ])]).mapped('res_id')),
+                ]),
+                ('model', '=', 'ir.ui.view')
+                ]).mapped('res_id')),
             ('inherit_id', '=', False)
         ])
         views_count = len(views)
-        for view in views:
-            _logger.info('##############Deleting view: %s', view.name)
-            view.unlink()
+        views.unlink()
 
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")    
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
