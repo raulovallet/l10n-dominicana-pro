@@ -32,9 +32,8 @@ def migrate(cr, version):
     """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
-    cr.execute("ALTER TABLE pos_order RENAME COLUMN ncf_expiration_date TO ncf;")
+    cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_do_ncf_expiration_date TO ncf_expiration_date;")
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_do_origin_ncf TO ncf_origin_out;")
-    cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
 
     
     _logger.info('############## Pre script executed successfully l10n_do_accounting views deleted. ##############')
