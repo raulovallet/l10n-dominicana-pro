@@ -18,19 +18,12 @@ def migrate(cr, version):
     cr.execute("""
         DELETE FROM ir_ui_view
         WHERE id IN (
-        SELECT ir_ui_view.id
-        FROM ir_ui_view
-        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
-        WHERE ir_ui_view.inherit_id IS NOT NULL
-        AND ir_model_data.module = 'l10n_do_accounting'
+            SELECT ir_ui_view.id
+            FROM ir_ui_view
+            JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
+            WHERE ir_model_data.module = 'l10n_do_accounting'
         );
-        DELETE FROM ir_ui_view
-        WHERE id IN (
-        SELECT ir_ui_view.id
-        FROM ir_ui_view
-        JOIN ir_model_data ON ir_ui_view.id = ir_model_data.res_id
-        WHERE ir_model_data.module = 'l10n_do_accounting'
-        );
+
     """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")    
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
