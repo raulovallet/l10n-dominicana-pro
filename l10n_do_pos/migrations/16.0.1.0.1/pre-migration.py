@@ -12,7 +12,20 @@ def migrate(cr, version):
     Notice: this script won't convert your v12 database to a v13 one. This script
     only works if your database have been migrated by Odoo
     """
-
+    env = api.Environment(cr, SUPERUSER_ID, {})
+    views_count = 1
+    while views_count > 0:
+        views = env['ir.ui.view'].search([
+            ('inherit_id', '=', False),
+            ('id', 'in', env['ir.model.data'].search([
+                ('model', '=', 'ir.ui.view'),
+                ('module', 'in', [
+                    'l10n_do_pos'
+                ])]).mapped('res_id')
+            )        
+        ])
+        views_count = len(views)
+        views.unlink()
     cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_latam_document_number TO ncf;")
     cr.execute("ALTER TABLE pos_order RENAME COLUMN l10n_do_ncf_expiration_date TO ncf_expiration_date;")
