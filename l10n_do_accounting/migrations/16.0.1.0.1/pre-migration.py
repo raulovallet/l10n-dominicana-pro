@@ -19,6 +19,7 @@ def migrate(cr, version):
     while views_count > 0:
         views = env['ir.ui.view'].search([
             ('inherit_children_ids', '=', False),
+            '|',
             ('id', 'in', env['ir.model.data'].search([
                 ('model', '=', 'ir.ui.view'),
                 ('module', 'in', [
@@ -34,7 +35,8 @@ def migrate(cr, version):
                     'l10n_do_rnc_search',
                     'pos_discount_limit',
                     'l10n_do_accounting_report'
-                ])]).mapped('res_id')
+                ])]).mapped('res_id'),
+                ('key', 'like', '%theme_prime%')
             )        
         ])
         views_count = len(views)
@@ -50,7 +52,7 @@ def migrate(cr, version):
     cr.execute("UPDATE account_move SET ref = name where move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund');")
     
     modules = env['ir.module.module'].search([
-        ('state', '=', 'installed'), 
+        # ('state', '=', 'installed'), 
         ('name', 'in', (
             'account_margin', 
             'invoice_payment_to', 
