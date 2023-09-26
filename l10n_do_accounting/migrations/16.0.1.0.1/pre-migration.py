@@ -35,9 +35,9 @@ def migrate(cr, version):
                     'l10n_do_rnc_search',
                     'pos_discount_limit',
                     'l10n_do_accounting_report'
-                ])]).mapped('res_id'),
-                ('key', 'like', '%theme_prime%')
-            )        
+                ])]).mapped('res_id')
+            ),    
+            ('key', 'like', '%theme_prime%')
         ])
         views_count = len(views)
         views.unlink()
