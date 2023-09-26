@@ -31,6 +31,7 @@ DELETE FROM ir_ui_view WHERE id IN (SELECT view_id FROM dependent_views);
 
     """)
     cr.execute("DELETE FROM ir_model_data WHERE model = 'l10n_latam.document.type' AND module = 'l10n_do_accounting';")    
+    cr.execute("DELETE FROM ir_model_data WHERE model = 'ir.ui.view' AND module = 'l10n_do_accounting';")    
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_expense_type TO expense_type;")
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_ncf_expiration_date TO ncf_expiration_date;")
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_cancellation_type TO annulation_type;")
