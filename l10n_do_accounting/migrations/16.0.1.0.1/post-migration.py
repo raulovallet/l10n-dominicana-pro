@@ -19,7 +19,7 @@ def migrate(cr, version):
     
     for account_move in account_moves:
         fiscal_type_id = env['account.fiscal.type'].search([
-            ('prefix', '=', account_move.l10n_latam_document_type_id)
+            ('prefix', '=', account_move.l10n_latam_document_type_id.prefix),
             ('type', '=', account_move.move_type)
         ], limit=1)
         account_move.write({

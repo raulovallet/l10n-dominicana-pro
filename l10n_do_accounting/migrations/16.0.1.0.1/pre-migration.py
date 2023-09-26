@@ -18,7 +18,9 @@ def migrate(cr, version):
     views_count = 1
     while views_count > 0:
         views = env['ir.ui.view'].search([
+            ('inherit_id', '=', False),
             ('id', 'in', env['ir.model.data'].search([
+                ('model', '=', 'ir.ui.view'),
                 ('module', 'in', [
                     'l10n_do_accounting',
                     'pos_auto_ship_later', 
@@ -31,10 +33,8 @@ def migrate(cr, version):
                     'invoice_payment_to',
                     'l10n_do_rnc_search',
                     'pos_discount_limit'
-                ]),
-                ('model', '=', 'ir.ui.view')
-                ]).mapped('res_id')),
-            ('inherit_id', '=', False)
+                ])]).mapped('res_id')
+            )        
         ])
         views_count = len(views)
         views.unlink()
