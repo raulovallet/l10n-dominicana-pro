@@ -33,6 +33,7 @@ def migrate(cr, version):
                     'invoice_payment_to',
                     'l10n_do_rnc_search',
                     'pos_discount_limit',
+                    'l10n_do_accounting_report'
                 ])]).mapped('res_id')
             )        
         ])
