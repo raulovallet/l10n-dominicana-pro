@@ -52,43 +52,4 @@ def migrate(cr, version):
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_income_type TO income_type;")
     cr.execute("UPDATE account_move SET ref = name where move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund');")
     
-    modules = env['ir.module.module'].search([
-        # ('state', '=', 'installed'), 
-        ('name', 'in', (
-            'account_margin', 
-            'invoice_payment_to', 
-            'l10n_do_e_accounting', 
-            'l10n_do_rnc_search', 
-            'mass_editing', 
-            'pos_auto_ship_later', 
-            'pos_discount_limit', 
-            'theme_prime',
-            'l10n_do_accounting_report',
-        ))
-    ])
-
-    for module in modules:
-        try:
-            module.button_immediate_uninstall()
-            _logger.info('############## Module %s uninstalled successfully. ##############', module.name)
-        except Exception as e:
-            _logger.info('############## Module %s uninstallation failed. ##############', module.name)
-
-    second_modules = env['ir.module.module'].search([
-        ('state', '=', 'installed'), 
-        ('name', 'in', (
-                'droggol_theme_common',
-                'generic_discount_limit',
-                'l10n_do_accounting_report',
-                # 'l10n_do_accounting',
-            )
-        )
-    ]) 
-
-    for module in second_modules:
-        try:
-            module.button_immediate_uninstall()
-        except Exception as e:
-            print(e)
-    
     _logger.info('############## Pre script executed successfully l10n_do_accounting views deleted. ##############')

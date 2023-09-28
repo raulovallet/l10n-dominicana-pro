@@ -15,20 +15,10 @@
         "base",
         "account",
         "l10n_do",
-        #### delete for migration
-        # "l10n_latam_invoice_document",
+
     ],
-
-    'post_init_hook': 'delete_views',
-    #######################
-
     # always loaded
     "data": [
-        #### delete for migration
-        # "data/delete_for_migration.xml",
-        # "data/l10n_latam.document.type.csv",
-        #######################
-
         "data/ir_config_parameters.xml",
         "data/ir_cron_data.xml",
         "data/account_fiscal_type_data.xml",
