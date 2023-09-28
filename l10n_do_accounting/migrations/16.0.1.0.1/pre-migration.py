@@ -21,6 +21,7 @@ def migrate(cr, version):
             ('inherit_children_ids', '=', False),
             '|',
             ('id', 'in', env['ir.model.data'].search([
+                ('inherit_children_ids', '=', False),
                 ('model', '=', 'ir.ui.view'),
                 ('module', 'in', [
                     'l10n_do_accounting',
