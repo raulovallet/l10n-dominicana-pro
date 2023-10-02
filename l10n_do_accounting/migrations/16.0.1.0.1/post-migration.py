@@ -19,6 +19,7 @@ def migrate(cr, version):
         account_move.write({
             'fiscal_type_id': fiscal_type_id.id if fiscal_type_id else False
         })
-
+    
+    
     account_moves._compute_is_l10n_do_fiscal_invoice()
-    _logger.info('############## Pre script executed successfully l10n_do_accounting views deleted. ##############')
+    _logger.info('############## POS script executed successfully l10n_do_accounting ##############')

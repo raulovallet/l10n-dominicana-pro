@@ -50,6 +50,7 @@ def migrate(cr, version):
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_cancellation_type TO annulation_type;")
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_origin_ncf TO origin_out;")
     cr.execute("ALTER TABLE account_move RENAME COLUMN l10n_do_income_type TO income_type;")
+    cr.execute("ALTER TABLE res_partner RENAME COLUMN l10n_do_expense_type TO expense_type;")
     cr.execute("UPDATE account_move SET ref = name where move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund');")
     
     _logger.info('############## Pre script executed successfully l10n_do_accounting views deleted. ##############')
