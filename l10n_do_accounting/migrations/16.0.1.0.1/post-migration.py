@@ -11,6 +11,10 @@ def migrate(cr, version):
         ('move_type', 'in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))
     ])
     partners = env['res.partner'].search([])
+    fiscal_journals = env['account.journal'].search([('id', 'in', (1, 2))])
+    fiscal_journals.write({
+        'l10n_do_fiscal_journal': True
+    })
     
     for account_move in account_moves:
         fiscal_type_id = env['account.fiscal.type'].search([
