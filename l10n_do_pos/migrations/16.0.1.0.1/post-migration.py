@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 def migrate(cr, version):
     
     env = api.Environment(cr, SUPERUSER_ID, {})
+
     # Maybe not necessary
     # pos_orders = env['pos.order'].search([])
     

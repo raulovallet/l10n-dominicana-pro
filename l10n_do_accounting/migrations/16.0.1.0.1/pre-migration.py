@@ -13,7 +13,9 @@ def migrate(cr, version):
     only works if your database have been migrated by Odoo
     """
     env = api.Environment(cr, SUPERUSER_ID, {})
-
+    automation_to_delete = env['base.automation'].search([('id', '=', 2)])
+    if automation_to_delete:
+        automation_to_delete.unlink()
     # cr.execute("DELETE FROM ir_ui_view WHERE id = 3408;")
     views_count = 1
     while views_count > 0:
