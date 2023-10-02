@@ -7,9 +7,7 @@ _logger = logging.getLogger(__name__)
 def migrate(cr, version):
     
     env = api.Environment(cr, SUPERUSER_ID, {})
-    pos_orders = env['pos.order'].search([
-        ('move_type', 'in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))
-    ])
+    pos_orders = env['pos.order'].search([])
     
     for pos_order in pos_orders:
         fiscal_type_id = env['account.fiscal.type'].search([
