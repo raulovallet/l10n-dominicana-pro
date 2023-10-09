@@ -28,7 +28,16 @@
                     <br/>
                     <div class="pos-receipt-font-75">
                         <div>
-                            <t t-esc="receipt.date.validation_date"/>
+                            <t t-if="receipt.date.localestring">
+                                <div>
+                                    <t t-esc="receipt.date.localestring" />
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div>
+                                    <t t-esc="receipt.date.validation_date" />
+                                </div>
+                            </t>
                         </div>
                         <div>
                             NCF: <t t-esc="_receiptEnv.order.ncf"/>

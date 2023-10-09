@@ -65,7 +65,6 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
         async _onCloseScreen() {
             var new_order = this.env.pos.get_order();
             const order = this.getSelectedSyncedOrder();
-
             if (new_order && this.env.pos.config.l10n_do_fiscal_journal && new_order._isRefundAndSaleOrder() && order.ncf){
                 
                 try {
@@ -73,10 +72,26 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
                     const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
                     new_order.set_ncf_origin_out(order.ncf);
                     new_order.set_fiscal_type(refund_fiscal_type);
+                    // Convert the date string to a Date object
+                    const orderDate = new Date(order.validation_date);
+                    // Get the current date
+                    const currentDate = new Date();
+                    // Calculate the time difference in milliseconds
+                    const timeDifferenceMilliseconds = currentDate - orderDate;
+                    // Calculate the time difference in days
+                    const timeDifferenceDays = timeDifferenceMilliseconds / (1000 * 60 * 60 * 24);
+                    // Check if the difference is greater than 30 days and clear the tax_ids if so
+                    if (timeDifferenceDays > 30) {
+                        // Iterate through each orderline in new_order and clear the tax_ids
+                        
+                        // TODO: only remove ITBIS tax
+                        new_order.orderlines.forEach(orderline => {
+                            orderline.tax_ids = [];
+                        });
+                    }
                     new_order.add_paymentline(credit_note_payment_method);
                     this.showScreen('PaymentScreen');
-
-                    // T3ODO: maybe do not need this validation
+                    // TODO: maybe do not need this validation
                     // var fiscal_data = await this.env.pos.get_fiscal_data(new_order);
                     // console.log('NCF Generated', fiscal_data);
                     // new_order.ncf = fiscal_data.ncf;
@@ -84,13 +99,17 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
                     // new_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
                     // new_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
                     // console.log('GO TO VALIDATE ORDER', this)
+
                 } catch (error) {
+
                     // TODO: when error show ticket screen
                     this.env.pos.add_new_order();
                     this.env.pos.removeOrder(new_order);
                     throw error;
                 } 
+
             } else {
+
                 super._onCloseScreen();
 
             }
@@ -105,6 +124,14 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
                 };
             }
             return fields;
+        }
+        _prepareRefundOrderlineOptions(orderline) {
+            var new_order_line = super._prepareRefundOrderlineOptions(orderline);
+            console.log('new_order_line', new_order_line)
+            console.log('orderline', orderline)
+            console.log('this', this)
+            console.log('test', Object.values(this.env.pos.toRefundLines))
+            return new_order_line;
         }
 
     }

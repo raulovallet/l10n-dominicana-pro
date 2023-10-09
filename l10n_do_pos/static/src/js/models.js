@@ -81,6 +81,16 @@ odoo.define('l10n_do_pos.models', function (require) {
                 ],
             });
         }
+        async get_credit_notes(partner_id) {
+            return this.env.services.rpc({
+                model: 'pos.order',
+                method: 'get_credit_notes',
+                args: [
+                    false,
+                    partner_id
+                ],
+            });
+        }
 
     }
 
@@ -147,7 +157,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
-          
+
             if (this.pos.config.l10n_do_fiscal_journal){
                 json.ncf = this.ncf;
                 json.ncf_origin_out = this.ncf_origin_out;
