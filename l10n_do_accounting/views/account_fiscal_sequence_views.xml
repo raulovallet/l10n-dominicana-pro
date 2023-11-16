@@ -151,23 +151,25 @@
         <field name="model">account.fiscal.type</field>
         <field name="arch" type="xml">
             <form>
-                <group>
+                <sheet>
                     <group>
-                        <field name="name"/>
-                        <field name="prefix"/>
-                        <field name="type"/>
-                        <field name="journal_type" invisible="1"/>
-                        <field name="padding">8</field>
-                        <field name="assigned_sequence"/>
-                        <field name="requires_document"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="prefix"/>
+                            <field name="type"/>
+                            <field name="journal_type" invisible="1"/>
+                            <field name="padding">8</field>
+                            <field name="assigned_sequence"/>
+                            <field name="requires_document"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="journal_id" options="{'no_create': True}"
+                                domain="[('type', '=', journal_type), ('l10n_do_fiscal_journal', '=', True)]"/>
+                            <field name="fiscal_position_id"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="active"/>
-                        <field name="journal_id" options="{'no_create': True}"
-                               domain="[('type', '=', journal_type), ('l10n_do_fiscal_journal', '=', True)]"/>
-                        <field name="fiscal_position_id"/>
-                    </group>
-                </group>
+                </sheet>
             </form>
         </field>
     </record>
