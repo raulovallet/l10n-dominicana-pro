@@ -14,25 +14,6 @@ except (ImportError, IOError) as err:
 class Partner(models.Model):
     _inherit = 'res.partner'
 
-    @api.model
-    def create(self, vals):
-        rnc = vals.get('name').replace('-', '') if vals.get('name', False) else vals.get('vat', False)
-
-        if vals.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
-            name = self.get_name_from_dgii(rnc)
-
-            if name:
-                vals.update({
-                    'name': name,
-                    'vat': rnc
-                })
-
-            else:
-
-                raise UserError(_('This RNC or Cedula is not valid or not exist, please check it.'))
-
-        return super(Partner, self).create(vals)
-
     @api.model_create_multi
     def create(self, vals_list):
         for val in vals_list:
@@ -49,8 +30,11 @@ class Partner(models.Model):
 
                 elif not name and val.get('vat', False):
 
-                    raise UserError(
-                        _('This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number. If it is a system search error, enter manually the full company name and the RNC / Cedula in the field labeled RNC for companies and Cedula for individuals for force create the contact.') % (rnc))
+                    raise UserError(_(
+                        'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
+                        If it is a system search error, enter manually the full company name and the RNC / Cedula \
+                        in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
+                    ) % (rnc))
 
         return super(Partner, self).create(vals_list)
 
