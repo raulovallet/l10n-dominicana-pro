@@ -367,13 +367,30 @@ class AccountFiscalType(models.Model):
     _description = "Account Fiscal Type"
     _order = "sequence"
 
-    name = fields.Char(required=True, copy=False,)
-    active = fields.Boolean(default=True)
-    sequence = fields.Integer()
-    prefix = fields.Char(copy=False,)
-    padding = fields.Integer()
+    name = fields.Char(
+        string="Name",
+        required=True, 
+        copy=False,
+    )
+    active = fields.Boolean(
+        string="Active",
+        default=True
+    )
+    sequence = fields.Integer(
+        string="Sequence",
+        default=10,
+    )
+    prefix = fields.Char(
+        string="Prefix",
+        copy=False,
+    )
+    padding = fields.Integer(
+        string="Padding",
+        default=8,
+    )
     type = fields.Selection(
-        [
+        string="Type",
+        selection=[
             ("out_invoice", "Sale"),
             ("in_invoice", "Purchase"),
             ("out_refund", "Customer Credit Note"),
@@ -382,16 +399,33 @@ class AccountFiscalType(models.Model):
             ("in_debit", "Supplier Debit Note"),
         ],
         required=True,
+        default="in_invoice",
     )
     journal_type = fields.Selection(
-        [("sale", "Sale"), ("purchase", "Purchase")], compute="_compute_journal_type"
+        string="Journal Type",
+        selection=[
+            ("sale", "Sale"), 
+            ("purchase", "Purchase")
+        ], 
+        compute="_compute_journal_type"
     )
     fiscal_position_id = fields.Many2one(
-        "account.fiscal.position", string="Fiscal Position",
+        comodel_name="account.fiscal.position",
+        string="Fiscal Position"
     )
-    journal_id = fields.Many2one("account.journal", string="Journal",)
-    assigned_sequence = fields.Boolean(default=True,)
-    requires_document = fields.Boolean(string="Requires a document?",)
+    journal_id = fields.Many2one(
+        comodel_name="account.journal", 
+        string="Journal"
+    )
+    assigned_sequence = fields.Boolean(
+        string="Assigned Sequence",
+        help="If checked, this Fiscal Type will use a Fiscal Sequence to generate Fiscal Numbers.",
+        default=True,
+    )
+    requires_document = fields.Boolean(
+        string="Requires a document?",
+        help="If checked, this Fiscal Type will require a document to be generated.",
+    )
 
     _sql_constraints = [
         (
