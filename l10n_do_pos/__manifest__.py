@@ -5,7 +5,7 @@
     'license': 'LGPL-3',
     'website': "https://github.com/odoo-dominicana",
     'category': 'Localization',
-    'version': '16.0.2.0.5',
+    'version': '16.0.2.0.6',
     'depends': [
         'base',
         'point_of_sale',
@@ -20,18 +20,9 @@
     ],
     'assets': {
         'point_of_sale.assets': [
-            '/l10n_do_pos/static/src/scss/*',
-            
-            '/l10n_do_pos/static/src/js/models.js',
-            '/l10n_do_pos/static/src/js/PaymentScreen.js',
-            '/l10n_do_pos/static/src/js/TicketScreen.js',
-            '/l10n_do_pos/static/src/js/OrderReceipt.js',
-            '/l10n_do_pos/static/src/js/buttons/SetFiscalTypeButton.js',
-
-            '/l10n_do_pos/static/src/xml/PaymentScreen.xml',
-            '/l10n_do_pos/static/src/xml/SetFiscalTypeButton.xml',
-            '/l10n_do_pos/static/src/xml/TicketScreen.xml',
-            '/l10n_do_pos/static/src/xml/OrderReceipt.xml',
+            'l10n_do_pos/static/src/scss/*',
+            'l10n_do_pos/static/src/js/**/*.js',
+            'l10n_do_pos/static/src/xml/**/*.xml',
         ],
     },
     'installable': True,
