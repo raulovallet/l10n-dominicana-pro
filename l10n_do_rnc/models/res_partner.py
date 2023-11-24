@@ -38,15 +38,13 @@ class Partner(models.Model):
 
         return super(Partner, self).create(vals_list)
 
-    @api.onchange("vat")
-    def _check_rnc(self):
-        for partner in self:
-            if partner.country_id and partner.country_id.code == 'DO' and partner.vat:
-                name = self.get_name_from_dgii(partner.vat)
-                
-                if name:
-                    partner.name = self.get_name_from_dgii(partner.vat)
-                
+    def write(self, vals):
+        if vals.get('vat', False) and self.country_id and self.country_id.code == 'DO':
+            name = self.get_name_from_dgii(vals['vat'])
+            if name:
+                vals['name'] = name
+        
+        return super(Partner, self).write(vals)
 
     def get_name_from_dgii(self, vat):
         if (len(vat) not in [9, 11]):
