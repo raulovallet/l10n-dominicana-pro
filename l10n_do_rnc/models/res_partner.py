@@ -1,5 +1,5 @@
 from odoo import models, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 import logging
 import json
@@ -20,30 +20,40 @@ class Partner(models.Model):
             rnc = val.get('name').replace('-', '') if val.get('name', False) else val.get('vat', False)
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
-                name = self.get_name_from_dgii(rnc)
+                try:
+                    name = self.get_name_from_dgii(rnc)
 
-                if name:
-                    val.update({
-                        'name': name,
-                        'vat': rnc
-                    })
+                    if name:
+                        val.update({
+                            'name': name,
+                            'vat': rnc
+                        })
 
-                elif not name and val.get('vat', False):
+                    elif not name and val.get('vat', False):
 
-                    raise UserError(_(
-                        'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
-                        If it is a system search error, enter manually the full company name and the RNC / Cedula \
-                        in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
-                    ) % (rnc))
+                        raise UserError(_(
+                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
+                            If it is a system search error, enter manually the full company name and the RNC / Cedula \
+                            in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
+                        ) % (rnc))
+                        
+                except Exception as e:
+
+                    raise ValidationError(e)
 
         return super(Partner, self).create(vals_list)
 
     def write(self, vals):
         if vals.get('vat', False) and self.country_id and self.country_id.code == 'DO':
-            name = self.get_name_from_dgii(vals['vat'])
-            if name:
-                vals['name'] = name
-        
+            try:
+                name = self.get_name_from_dgii(vals['vat'])
+                
+                if name:
+                    vals['name'] = name
+
+            except Exception as e:
+                _logger.error(e)
+
         return super(Partner, self).write(vals)
 
     def get_name_from_dgii(self, vat):
