@@ -17,7 +17,8 @@ class Partner(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for val in vals_list:
-            rnc = val.get('name').replace('-', '') if val.get('name', False) else val.get('vat', False)
+            is_from_vat = val.get('vat', False)
+            rnc = val.get('vat').replace('-', '') if is_from_vat else val.get('name', False).replace('-', '')
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
                 contact_exist = self.env['res.partner'].search([('vat', '=', rnc)], limit=1)
