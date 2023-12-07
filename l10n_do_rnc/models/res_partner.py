@@ -20,9 +20,14 @@ class Partner(models.Model):
             rnc = val.get('name').replace('-', '') if val.get('name', False) else val.get('vat', False)
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
+                contact_exist = self.env['res.partner'].search([('vat', '=', rnc)], limit=1)
+                
+                if contact_exist:
+                    raise UserError(_('The contact %s already exists with the %s: %s.') % (contact_exist.name, _('ID') if len(rnc) == 11 else _('RNC'), rnc))
+                
                 try:
                     name = self.get_name_from_dgii(rnc)
-
+                    
                     if name:
                         val.update({
                             'name': name,
