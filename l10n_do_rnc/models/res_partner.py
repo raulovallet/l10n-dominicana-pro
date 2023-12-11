@@ -44,8 +44,11 @@ class Partner(models.Model):
                         ) % (rnc))
                         
                 except Exception as e:
-
-                    raise ValidationError(e)
+                    
+                    if not is_from_vat:
+                        raise ValidationError(e)
+                    
+                    _logger.error(e)
 
         return super(Partner, self).create(vals_list)
 
