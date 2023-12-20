@@ -225,7 +225,8 @@ class PosOrder(models.Model):
             ('partner_id', '=', partner_id),
             ('move_type', '=', 'out_refund'),
             ('is_l10n_do_fiscal_invoice', '=', True),
-            ('amount_residual', '>', 0),
+            ('amount_residual', 
+            '>', 0),
             ('company_id', '=', self.env.company.id)
         ])
 
