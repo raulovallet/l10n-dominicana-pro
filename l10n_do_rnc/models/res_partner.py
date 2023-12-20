@@ -56,7 +56,7 @@ class Partner(models.Model):
         if vals.get('vat', False) and self.country_id and self.country_id.code == 'DO':
             try:
                 name = self.get_name_from_dgii(vals['vat'])
-                
+
                 if name:
                     vals['name'] = name
 
