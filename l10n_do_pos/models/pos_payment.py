@@ -1,5 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.tools import float_is_zero
+from odoo.exceptions import ValidationError
+
 
 class PosPayment(models.Model):
     _inherit = 'pos.payment'
@@ -42,7 +44,9 @@ class PosPayment(models.Model):
             })
             result |= account_payment.move_id
 
+        
         pos_payment_cash = self.filtered(lambda p: p.payment_method_id.is_cash_count and not not p.payment_method_id.is_credit_note)
+        
         if pos_payment_cash:
             account_payment_cash = self.env['account.payment'].create(
                 self._get_payment_values(pos_payment_cash)
@@ -55,20 +59,28 @@ class PosPayment(models.Model):
                 'account_move_id': account_payment_cash.move_id.id
             })
             result |= account_payment_cash.move_id
-        
-        # credit_notes = self.filtered(lambda p: p.payment_method_id.is_credit_note)
-        # if credit_notes:
-        #     account_payment_credit_note = self.env['account.payment'].create(
-        #         self._get_payment_values(credit_notes)
-        #     )
-        #     account_payment_credit_note.action_post()
-        #     account_payment_credit_note.move_id.write({
-        #         'pos_payment_ids': credit_notes.ids,
-        #     })
-        #     credit_notes.write({
-        #         'account_move_id': account_payment_credit_note.move_id.id
-        #     })
-        #     result |= account_payment_credit_note.move_id
+                
+        for credit_note in self.filtered(lambda p: p.payment_method_id.is_credit_note and p.name):
+            account_move_credit_note = self.env['account.move'].search([
+                    ('ref', '=', credit_note.name),
+                    ('move_type', '=', 'out_refund'),
+                    ('is_l10n_do_fiscal_invoice', '=', True),
+                    ('partner_id', '=', credit_note.partner_id.id),
+                ], limit=1
+            )
+
+            if not account_move_credit_note:
+                raise ValidationError(
+                    _('Credit note not found for payment %s') % credit_note.name
+                )
+
+            account_move_credit_note.write({
+                'pos_payment_ids': credit_note.ids,
+            })
+            credit_note.write({
+                'account_move_id': account_move_credit_note.id
+            })
+            result |= account_move_credit_note
 
         return result
 

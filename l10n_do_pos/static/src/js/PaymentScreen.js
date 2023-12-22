@@ -161,7 +161,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 }
                             );
 
-                            if (!confirmedPickingCreditNote) return;
+                            if (!confirmedPickingCreditNote || !credit_note) return;
                             var ncf = credit_note.ncf;
 
     
@@ -176,6 +176,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                             title: this.env._t('Please enter the NCF'),
                             placeholder: this.env._t('NCF'),
                         });
+
                         if(!confirmed || !ncf)  return;
                         
                         try {
@@ -283,7 +284,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     }
 
                     if (payment_line.payment_method.is_credit_note && !current_order._isRefundAndSaleOrder()) {
-
                         if (!payment_line.credit_note_ncf) {
                             this.showPopup('ErrorPopup', {
                                 title: _t('Error in credit note'),
