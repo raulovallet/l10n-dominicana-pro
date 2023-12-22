@@ -7,7 +7,11 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='split_transactions']" position="after">
-                <field name="is_credit_note" attrs="{'invisible': [('journal_id', '=', False), ('split_transactions', '=', False)]}"/>
+                <field name="is_credit_note" attrs="{'invisible': ['|', ('journal_id', '!=', False), ('split_transactions', '=', False)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='journal_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_credit_note', '=', True)]}</attribute>
             </xpath>
 
         </field>
