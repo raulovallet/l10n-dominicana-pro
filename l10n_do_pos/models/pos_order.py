@@ -238,8 +238,8 @@ class PosOrder(models.Model):
             'label': credit_note.ref + ' - RD$' + str(credit_note.amount_residual),
             'item':{
                 'partner_id': credit_note.partner_id.id,
+                'residual_amount': credit_note.amount_residual,
                 'ncf': credit_note.ref,
-                'residual_amount': credit_note.amount_residual
             }} for credit_note in credit_notes]
         
     # def _apply_invoice_payments(self):
