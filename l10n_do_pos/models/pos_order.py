@@ -225,8 +225,7 @@ class PosOrder(models.Model):
             ('partner_id', '=', partner_id),
             ('move_type', '=', 'out_refund'),
             ('is_l10n_do_fiscal_invoice', '=', True),
-            ('amount_residual', 
-            '>', 0),
+            ('amount_residual', '>', 0.0),
             ('company_id', '=', self.env.company.id)
         ])
 
@@ -241,33 +240,6 @@ class PosOrder(models.Model):
                 'residual_amount': credit_note.amount_residual,
                 'ncf': credit_note.ref,
             }} for credit_note in credit_notes]
-        
-    # def _apply_invoice_payments(self):
-
-
-    #     res = super(PosOrder, self)._apply_invoice_payments()
-        
-    #     if self.config_id.invoice_journal_id.l10n_do_fiscal_journal:
-    #         # Reconcile credit notes as a payment to the invoice
-
-    #         receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).with_company(self.company_id).property_account_receivable_id
-            
-    #         credit_notes = self.payment_ids.filtered(lambda payment: payment.payment_method_id.is_credit_note and payment.name).mapped('name')
-            
-    #         payment_moves = self.env['account.move'].search([
-    #                 ('ref', 'in', credit_notes),
-    #                 ('move_type', '=', 'out_refund'),
-    #                 ('is_l10n_do_fiscal_invoice', '=', True),
-    #             ],
-    #         )
-            
-    #         if receivable_account.reconcile and payment_moves:
-    #             invoice_receivables = self.account_move.line_ids.filtered(lambda line: line.account_id == receivable_account and not line.reconciled)
-    #             if invoice_receivables:
-    #                 payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account and line.partner_id)
-    #                 (invoice_receivables | payment_receivables).sudo().with_company(self.company_id).reconcile()
-
-    #     return res
 
     @api.model
     def search_paid_order_ids(self, config_id, domain, limit, offset):

@@ -203,7 +203,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     if(credit_note.residual_amount <= 0){
                         this.showPopup('ErrorPopup', {
                             title: _t('Error'),
-                            body: _t('The credit note has no residual amount'),
+                            body: _.str.sprintf(_t('Credit note %s has no available amount.'), credit_note.ncf)
                         });
                         return false;
                     }
