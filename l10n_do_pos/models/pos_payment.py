@@ -61,26 +61,23 @@ class PosPayment(models.Model):
             result |= account_payment_cash.move_id
                 
         for credit_note in self.filtered(lambda p: p.payment_method_id.is_credit_note and p.name):
-            account_move_credit_note = self.env['account.move'].search([
+            account_move_credit_note = self.env['account.move'].search([                    
+                    ('partner_id', '=', credit_note.partner_id.id),
                     ('ref', '=', credit_note.name),
                     ('move_type', '=', 'out_refund'),
                     ('is_l10n_do_fiscal_invoice', '=', True),
-                    ('partner_id', '=', credit_note.partner_id.id),
+                    ('company_id', '=', self.env.company.id)
                 ], limit=1
             )
-
-            if not account_move_credit_note:
-                raise ValidationError(
-                    _('Credit note not found for payment %s') % credit_note.name
-                )
-
-            account_move_credit_note.write({
-                'pos_payment_ids': credit_note.ids,
-            })
-            credit_note.write({
-                'account_move_id': account_move_credit_note.id
-            })
-            result |= account_move_credit_note
+            
+            if account_move_credit_note and credit_note.amount > 0:
+                account_move_credit_note.write({
+                    'pos_payment_ids': credit_note.ids,
+                })
+                credit_note.write({
+                    'account_move_id': account_move_credit_note.id
+                })
+                result |= account_move_credit_note
 
         return result
 
