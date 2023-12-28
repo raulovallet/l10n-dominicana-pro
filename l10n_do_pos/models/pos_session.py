@@ -4,6 +4,28 @@ from odoo import models, fields, api, _
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
+    # def _create_account_move(self, record):
+    #     if record.config_id.l10n_do_fiscal_journal:
+    #           self._create_account_move_fiscal(record)
+    #     return super(PosSession, self)._create_account_move(record)
+
+    def _create_bank_payment_moves(self, data):
+        if self.config_id.l10n_do_fiscal_journal:
+            return data
+        return super(PosSession, self)._create_bank_payment_moves(data)
+
+    def _create_cash_statement_lines_and_cash_move_lines(self, data):
+        if self.config_id.l10n_do_fiscal_journal:
+            AccountMoveLine = self.env['account.move.line']
+            data.update({
+                'split_cash_receivable_lines': AccountMoveLine,
+                'split_cash_statement_lines': [],
+                'combine_cash_receivable_lines': AccountMoveLine,
+                'combine_cash_statement_lines': [],
+            })
+            return data
+        return super(PosSession, self)._create_cash_statement_lines_and_cash_move_lines(data)
+
     def _loader_params_account_fiscal_type(self):
         return {
             'search_params': {
@@ -24,9 +46,7 @@ class PosSession(models.Model):
 
     def _loader_params_res_partner(self):
         result = super()._loader_params_res_partner()
-        
         result['search_params']['fields'].append('sale_fiscal_type_id')
-
         return result
 
     def _loader_params_pos_payment_method(self):
