@@ -45,7 +45,7 @@ class PosPayment(models.Model):
             result |= account_payment.move_id
 
         
-        pos_payment_cash = self.filtered(lambda p: p.payment_method_id.is_cash_count and not not p.payment_method_id.is_credit_note)
+        pos_payment_cash = self.filtered(lambda p: p.payment_method_id.is_cash_count and not p.payment_method_id.is_credit_note)
         
         if pos_payment_cash:
             account_payment_cash = self.env['account.payment'].create(
@@ -66,7 +66,8 @@ class PosPayment(models.Model):
                     ('ref', '=', credit_note.name),
                     ('move_type', '=', 'out_refund'),
                     ('is_l10n_do_fiscal_invoice', '=', True),
-                    ('company_id', '=', self.env.company.id)
+                    ('company_id', '=', self.env.company.id),
+                    ('state', '=', 'posted')
                 ], limit=1
             )
             
