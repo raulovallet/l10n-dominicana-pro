@@ -203,7 +203,8 @@ class PosOrder(models.Model):
             ('ref', '=', ncf),
             ('move_type', '=', 'out_refund'),
             ('is_l10n_do_fiscal_invoice', '=', True),
-            ('company_id', '=', self.env.company.id)
+            ('company_id', '=', self.env.company.id),
+            ('state', '=', 'posted')
         ], limit=1)
 
         if not credit_note:
@@ -226,7 +227,8 @@ class PosOrder(models.Model):
             ('move_type', '=', 'out_refund'),
             ('is_l10n_do_fiscal_invoice', '=', True),
             ('amount_residual', '>', 0.0),
-            ('company_id', '=', self.env.company.id)
+            ('company_id', '=', self.env.company.id),
+            ('state', '=', 'posted')
         ])
 
         if not credit_notes:
@@ -234,7 +236,7 @@ class PosOrder(models.Model):
 
         return[{
             'id': credit_note.id,
-            'label': credit_note.ref + ' - RD$' + str(credit_note.amount_residual),
+            'label': "%s - %s %s" % (credit_note.ref, credit_note.currency_id.name, credit_note.amount_residual),
             'item':{
                 'partner_id': credit_note.partner_id.id,
                 'residual_amount': credit_note.amount_residual,
