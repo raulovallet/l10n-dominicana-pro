@@ -4,13 +4,21 @@ from odoo import models, fields, api, _
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
-    # def _create_account_move(self, record):
-    #     if record.config_id.l10n_do_fiscal_journal:
-    #           self._create_account_move_fiscal(record)
-    #     return super(PosSession, self)._create_account_move(record)
+    def _create_invoice_receivable_lines(self, data):
+        if self.config_id.l10n_do_fiscal_journal:
+            data.update({
+                'combine_invoice_receivable_lines': {},
+                'split_invoice_receivable_lines': {},
+            })
+            return data
+        return data
 
     def _create_bank_payment_moves(self, data):
         if self.config_id.l10n_do_fiscal_journal:
+            data.update({
+                'payment_method_to_receivable_lines': {},
+                'payment_to_receivable_lines': {},
+            })
             return data
         return super(PosSession, self)._create_bank_payment_moves(data)
 
@@ -19,9 +27,9 @@ class PosSession(models.Model):
             AccountMoveLine = self.env['account.move.line']
             data.update({
                 'split_cash_receivable_lines': AccountMoveLine,
-                'split_cash_statement_lines': [],
+                'split_cash_statement_lines': AccountMoveLine,
                 'combine_cash_receivable_lines': AccountMoveLine,
-                'combine_cash_statement_lines': [],
+                'combine_cash_statement_lines': AccountMoveLine
             })
             return data
         return super(PosSession, self)._create_cash_statement_lines_and_cash_move_lines(data)
