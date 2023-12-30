@@ -9,14 +9,19 @@ class PosPayment(models.Model):
     def _get_payment_values(self, payment):
         amount = sum(payment.mapped('amount'))  if len(payment) > 1 else payment.amount
         payment = payment[0] if len(payment) > 1 else payment
-
+        payment_method = payment.payment_method_id
+        payment_session = payment.session_id
+        
         return {
-            'journal_id': payment.payment_method_id.journal_id.id,
-            'partner_id': payment.partner_id.id if payment.partner_id else False,
             'amount': amount,
             'payment_type': 'inbound' if amount >= 0 else 'outbound',
             'date': payment.payment_date,
+            'partner_id': payment.partner_id.id if payment.partner_id else False,
             'currency_id': payment.currency_id.id,
+            'pos_session_id': payment_session.id,
+            'ref': _('%s POS payments from %s') % (payment_method.name, payment_session.name),
+            'pos_payment_method_id': payment_method.id,
+            'journal_id': payment_method.journal_id.id,
         }
 
     def _create_payment_moves(self):
