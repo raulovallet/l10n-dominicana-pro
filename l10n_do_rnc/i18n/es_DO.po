@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-04 04:51+0000\n"
-"PO-Revision-Date: 2023-08-04 00:56-0400\n"
+"POT-Creation-Date: 2023-12-07 00:20+0000\n"
+"PO-Revision-Date: 2023-12-06 19:22-0500\n"
 "Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
-"Language: es_DO\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. module: l10n_do_rnc
 #. odoo-python
@@ -28,6 +28,13 @@ msgstr "Verifique RNC / Cédula, parece que no es correcto"
 #: model:ir.model,name:l10n_do_rnc.model_res_partner
 msgid "Contact"
 msgstr "Contacto"
+
+#. module: l10n_do_rnc
+#. odoo-python
+#: code:addons/l10n_do_rnc/models/res_partner.py:0
+#, python-format
+msgid "ID"
+msgstr "Cédula"
 
 #. module: l10n_do_rnc
 #. odoo-python
@@ -46,10 +53,25 @@ msgstr ""
 #. odoo-python
 #: code:addons/l10n_do_rnc/models/res_partner.py:0
 #, python-format
+msgid "RNC"
+msgstr "RNC"
+
+#. module: l10n_do_rnc
+#. odoo-python
+#: code:addons/l10n_do_rnc/models/res_partner.py:0
+#, python-format
+msgid "The contact %s already exists with the %s: %s."
+msgstr "El contacto %s ya existe con el numero de %s: %s."
+
+#. module: l10n_do_rnc
+#. odoo-python
+#: code:addons/l10n_do_rnc/models/res_partner.py:0
+#, python-format
 msgid ""
 "This RNC or Cedula (%s) could not be found, please confirm the RNC or "
-"Cedula number. If it is a system search error, enter manually the full "
-"company name and the RNC / Cedula in the field labeled RNC for companies "
+"Cedula number.                            If it is a system search error, "
+"enter manually the full company name and the RNC / "
+"Cedula                             in the field labeled RNC for companies "
 "and Cedula for individuals for force create the contact."
 msgstr ""
 "Este RNC o Cédula (%s) no se pudo encontrar, confirme el número de RNC o "
@@ -59,19 +81,11 @@ msgstr ""
 "creación crear el contacto."
 
 #. module: l10n_do_rnc
-#. odoo-python
-#: code:addons/l10n_do_rnc/models/res_partner.py:0
-#, python-format
-msgid "This RNC or Cedula is not valid or not exist, please check it."
-msgstr "Este RNC o Cédula no es válido o no existe, por favor compruébalo."
-
-#. module: l10n_do_rnc
 #: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
 msgid "e.g. Brandom Freeman or Cedula e.g. NNNNNNNNNNN"
 msgstr "por ejemplo, Brandom Freeman o Cédula, por ejemplo, NNNNNNNNNNNN"
 
 #. module: l10n_do_rnc
 #: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-#, fuzzy
 msgid "e.g. Lumber Inc or RNC e.g. NNNNNNNNN"
 msgstr "por ejemplo, Lumber Inc o RNC, por ejemplo, NNNNNNNNN"

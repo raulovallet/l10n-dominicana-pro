@@ -161,9 +161,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 }
                             );
 
-                            if (!confirmedPickingCreditNote) return;
-                            var ncf = credit_note.ncf;
-
+                            if (!confirmedPickingCreditNote || !credit_note) return;
     
                         } catch (error) {
     
@@ -176,6 +174,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                             title: this.env._t('Please enter the NCF'),
                             placeholder: this.env._t('NCF'),
                         });
+
                         if(!confirmed || !ncf)  return;
                         
                         try {
@@ -189,11 +188,10 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     }
 
                     var credit_note_partner = this.env.pos.db.get_partner_by_id(credit_note.partner_id)
-
-                    
                     const payment_lines = this.currentOrder.get_paymentlines();
+                    
                     for (let line of payment_lines) {
-                        if (line.payment_method.is_credit_note && line.credit_note_ncf === ncf) {
+                        if (line.payment_method.is_credit_note && line.credit_note_ncf === credit_note.ncf) {
                             this.showPopup('ErrorPopup', {
                                 title: _t('Error'),
                                 body: _t('The credit note has already been used in this order'),
@@ -205,13 +203,12 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     if(credit_note.residual_amount <= 0){
                         this.showPopup('ErrorPopup', {
                             title: _t('Error'),
-                            body: _t('The credit note has no residual amount'),
+                            body: _.str.sprintf(_t('Credit note %s has no available amount.'), credit_note.ncf)
                         });
                         return false;
                     }
                     
                     if (!credit_note_partner) {
-                        // TODO: Check this message
                         this.showPopup('ErrorPopup', {
                             title: _t('Error'),
                             body: _t('The customer of the credit note is not the same as the current order, please select the correct customer.'),
@@ -228,11 +225,12 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                             this.currentOrder.set_partner(credit_note_partner);
                         }
                         
-                        newPaymentline.set_fiscal_data(ncf, credit_note.partner_id);
+                        newPaymentline.set_fiscal_data(credit_note.ncf, credit_note.partner_id);
 
                         if(credit_note.residual_amount < amount_due_before_payment){
                             newPaymentline.set_amount(credit_note.residual_amount);
                         }
+                        
                         NumberBuffer.reset();
                         
                         return true;
@@ -283,7 +281,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     }
 
                     if (payment_line.payment_method.is_credit_note && !current_order._isRefundAndSaleOrder()) {
-
                         if (!payment_line.credit_note_ncf) {
                             this.showPopup('ErrorPopup', {
                                 title: _t('Error in credit note'),
