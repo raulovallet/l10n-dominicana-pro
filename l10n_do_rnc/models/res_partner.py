@@ -54,6 +54,7 @@ class Partner(models.Model):
 
     def write(self, vals):
         if vals.get('vat', False) and self.country_id and self.country_id.code == 'DO':
+
             try:
                 name = self.get_name_from_dgii(vals['vat'])
 
