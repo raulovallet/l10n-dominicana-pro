@@ -148,12 +148,6 @@ class AccountInvoice(models.Model):
         "is_debit_note",
     )
 
-    def _get_name_invoice_report(self):
-        self.ensure_one()
-        if self.is_l10n_do_fiscal_invoice and self.country_code == "DO":
-            return "l10n_do_accounting.report_invoice_document_inherited"
-        
-
     def _compute_fiscal_sequence(self):
         """ Compute the sequence and fiscal position to be used depending on
             the fiscal type that has been set on the invoice (or partner).
@@ -573,16 +567,6 @@ class AccountInvoice(models.Model):
                         ).format(ncf)
                     )
 
-    def invoice_print(self):
-        # Companies which has installed l10n_do localization use
-        # l10n_do fiscal invoice template
-        l10n_do_coa = self.env.ref("l10n_do.do_chart_template")
-        if self.journal_id.company_id.chart_template_id.id == l10n_do_coa.id:
-            report_id = self.env.ref("l10n_do_accounting.l10n_do_account_invoice")
-            return report_id.report_action(self)
-
-        return super(AccountInvoice, self).invoice_print()
-
     def action_invoice_cancel(self):
 
         # if self.journal_id.l10n_do_fiscal_journal:
@@ -700,3 +684,19 @@ class AccountInvoice(models.Model):
                 if any(True for tax in line.tax_ids if tax.amount == 0)
             ),
         }
+
+    # def _get_name_invoice_report(self):
+    #     self.ensure_one()
+    #     if self.is_l10n_do_fiscal_invoice and self.country_code == "DO":
+    #         return "l10n_do_accounting.report_invoice_document_inherited"
+        
+
+    # def invoice_print(self):
+    #     # Companies which has installed l10n_do localization use
+    #     # l10n_do fiscal invoice template
+    #     l10n_do_coa = self.env.ref("l10n_do.do_chart_template")
+    #     if self.journal_id.company_id.chart_template_id.id == l10n_do_coa.id:
+    #         report_id = self.env.ref("l10n_do_accounting.l10n_do_account_invoice")
+    #         return report_id.report_action(self)
+
+    #     return super(AccountInvoice, self).invoice_print()

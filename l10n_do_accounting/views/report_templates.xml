@@ -1,32 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <template id="web_address_layout_inherited" inherit_id="web.address_layout">
-        <!-- do not show company address on document header  -->
-        <xpath expr="//t[@t-if='address']/div" position="attributes">
-            <attribute name="t-if">doc_model != "account.move" or (doc_model == "account.move" and o.country_code != "DO")</attribute>
+    <template id="fiscal_info">
+        <div class="col-6">
+            <h2>
+                <t t-if="o.fiscal_type_id.prefix == 'B13'">
+                <span t-field="o.fiscal_type_id.name"/>
+                </t>
+                <t t-else="">
+                    Invoice of <span t-field="o.fiscal_type_id.name"/>
+                </t>
+            </h2>
+            <strong t-if="o.ref">
+                <t t-if="'E' in o.fiscal_type_id.prefix">e-NCF:</t>
+                <t t-else="">NCF:</t>
+            </strong>
+            <span t-field="o.ref"/>
+            <br/>
+            <span t-if="(o.move_type == 'out_refund' or o.move_type == 'in_refund') and (o.origin_out != False)">
+                <strong>NCF modified:</strong>
+                <span t-field="o.origin_out"/>
+                <!-- TODO: ADD l10n_do_ecf_modification_code FIELD <t t-if="ecf_representation">
+                    <br/>
+                    <strong>Modification Code::</strong>
+                    <span t-field="o.l10n_do_ecf_modification_code"/>
+                </t> -->
+                <br/>
+            </span>
+            <span id="fiscal_exp_date"
+                t-if="o.move_type in ['out_invoice', 'out_refund']
+                    and o.state == 'posted'
+                    and o.ref
+                    and o.fiscal_type_id
+                    and o.fiscal_type_id.prefix[1:] not in ('32', '34', '02')
+                    and o.ncf_expiration_date">
+                <strong>
+                    <t t-if="ecf_representation">Expiration e-NCF:</t>
+                    <t t-else="">Valid until:</t>
+                </strong>
+                <span t-field="o.ncf_expiration_date"/>
+            </span>
+        </div>
+    </template>
+
+    <template id="fiscal_external_layout_standard">
+        <div class="row">
+            <div class="col-3 mb4">
+                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 45px;" alt="Logo"/>
+            </div>
+            <div class="col-9 text-end" style="margin-top:22px;" t-field="company.report_header" name="moto"/>
+        </div>
+        <div t-if="company.logo or company.report_header" class="row zero_min_height">
+            <div class="col-12">
+                <div style="border-bottom: 1px solid black;"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6" name="company_address">
+                <ul class="list-unstyled">
+                    <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
+                    <li t-else=""><t t-esc="company.company_details"/></li>
+                    <li t-if="forced_vat">
+                        <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                        <span t-esc="forced_vat"/>
+                    </li>
+                </ul>
+            </div>
+            <t t-call="l10n_do_accounting.fiscal_info"/>
+        </div>
+    </template>
+
+    <template id="external_layout_standard_inherited" inherit_id="web.external_layout_standard">
+        <xpath expr="//div[@name='company_address']" position="after">
+            <t t-if="doc_model and doc_model == 'account.move' and o.is_l10n_do_fiscal_invoice">
+                <t t-call="l10n_do_accounting.fiscal_info"/>
+            </t>
         </xpath>
     </template>
 
-    <!-- do not show partner address on document header when l10n do invoice -->
-    <!--<template id="external_layout_clean_inherited" inherit_id="web.external_layout_clean">
-        <xpath expr="//div[hasclass('o_clean_header')]/div/div[@name='company_address']" position="attributes">
-            <attribute name="t-if">doc_model != "account.move" or (doc_model == "account.move" and o.country_code != "DO")</attribute>
-        </xpath>
-    </template>-->
-    <template id="external_layout_standard_inherited" inherit_id="web.external_layout_standard">
-        <xpath expr="//div[@name='company_address']" position="attributes">
-            <attribute name="t-if">doc_model != "account.move" or (doc_model == "account.move" and o.country_code != "DO")</attribute>
+    <template id="external_layout_boxed_inherited" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[hasclass('o_boxed_header')]" position="replace">
+            <t t-if="doc_model and doc_model == 'account.move' and o.is_l10n_do_fiscal_invoice">
+                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
+            </t>
+            <t t-else="">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-6">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                        </div>
+                        <div class="col-6 text-end mb4">
+                            <div class="mt0 h4" t-field="company.report_header"/>
+                            <div name="company_address" class="float-end mb4">
+                                <ul class="list-unstyled">
+                                    <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
+                                    <li t-else=""><t t-esc="company.company_details"/></li>
+                                    <li t-if="forced_vat">
+                                        <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                                        <span t-esc="forced_vat"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </xpath>
     </template>
-    <!--<template id="external_layout_background_inherited" inherit_id="web.external_layout_background">
-        <xpath expr="//div[hasclass('company_address')]" position="attributes">
-            <attribute name="t-if">doc_model != "account.move" or (doc_model == "account.move" and o.country_code != "DO")</attribute>
+
+    <template id="external_layout_bold_inherited" inherit_id="web.external_layout_bold">
+        <xpath expr="//div[hasclass('o_clean_header')]" position="replace">
+            <t t-if="doc_model and doc_model == 'account.move' and o.is_l10n_do_fiscal_invoice">
+                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
+            </t>
+            <t t-else="">
+                <div class="o_clean_header">
+                    <div class="row">
+                        <div class="col-6">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                        </div>
+                        <div class="col-5 offset-1" name="company_address">
+                            <ul class="list-unstyled">
+                                <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
+                                <li t-else=""><t t-esc="company.company_details"/></li>
+                                <li t-if="forced_vat">
+                                    <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                                    <span t-esc="forced_vat"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </xpath>
-    </template>-->
-    <template id="external_layout_boxed_inherited" inherit_id="web.external_layout_boxed">
-        <xpath expr="//div[@name='company_address']" position="attributes">
-            <attribute name="t-if">doc_model != "account.move" or (doc_model == "account.move" and o.country_code != "DO")</attribute>
+    </template>
+
+    <template id="external_layout_striped_inherited" inherit_id="web.external_layout_striped">
+        <xpath expr="//div[hasclass('o_background_header')]" position="replace">
+            <t t-if="doc_model and doc_model == 'account.move' and o.is_l10n_do_fiscal_invoice">
+                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
+            </t>
+            <t t-else="">
+                <div class="o_background_header">
+                    <div class="float-end">
+                        <div class="mt0 text-end h3" t-field="company.report_header"/>
+                    </div>
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-start" alt="Logo"/>
+                    <div class="float-start company_address">
+                        <ul class="list-unstyled">
+                            <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
+                            <li t-else=""><t t-esc="company.company_details"/></li>
+                            <li t-if="forced_vat">
+                                <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                                <span t-esc="forced_vat"/>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix mb8"/>
+                </div>
+            </t>
         </xpath>
     </template>
 
