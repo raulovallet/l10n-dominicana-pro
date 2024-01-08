@@ -41,7 +41,7 @@
         # "views/backend_js.xml",
 
         "views/report_templates.xml",
-        # "views/report_invoice.xml",
+        "views/report_invoice.xml",
     ],
     # only loaded in demonstration mode
     "demo": [
