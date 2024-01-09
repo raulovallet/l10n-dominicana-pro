@@ -2,7 +2,7 @@
 <odoo>
 
     <template id="receiver_fiscal_info">
-        <div t-if="o.partner_id.vat" id="partner_vat_address_not_same_as_shipping">
+        <div t-if="o.partner_id.vat">
             <strong>
                 <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
                 <t t-else="">Tax ID</t> Customer: </strong><span t-field="o.partner_id.vat"/>
@@ -14,28 +14,28 @@
     <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
 
         <xpath expr="//div[hasclass('row')][1]" position="attributes">
-            <attribute name="t-if">not o.is_l10n_do_fiscal_invoice</attribute>
+            <attribute name="t-if">not (o.is_l10n_do_fiscal_invoice and o.move_type in ('out_invoice', 'out_refund'))</attribute>
         </xpath>
         
         <xpath expr="//div[@name='invoice_date']" position="attributes">
-            <attribute name="t-if">not o.is_l10n_do_fiscal_invoice</attribute>
+            <attribute name="t-if">not l10n_do_fiscal_invoice</attribute>
         </xpath>
 
         <xpath expr="//div[@name='reference']" position="attributes">
-            <attribute name="t-if">not o.is_l10n_do_fiscal_invoice</attribute>
+            <attribute name="t-if">not l10n_do_fiscal_invoice</attribute>
         </xpath>
 
         <xpath expr="//div[hasclass('row')][1]" position="after">
-            <t t-set="l10n_do_fiscal_invoice" t-value="o.is_l10n_do_fiscal_invoice"/>
+            <t t-set="l10n_do_fiscal_invoice" t-value="o.is_l10n_do_fiscal_invoice and o.move_type in ('out_invoice', 'out_refund')"/>
 
             <div class="row" t-if="l10n_do_fiscal_invoice" style="margin-bottom: 20px;">
                 <div class="col-6">
-                    <div>
+                    <div t-if="o.company_id.vat">
                         <strong>
                         <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="company_inv_tax_id_label"/>
                         <t t-else="">Tax ID</t>: </strong><span t-field="o.company_id.vat"/>
                     </div>
-                    <div>
+                    <div t-if="o.invoice_date">
                         <strong>Date:</strong> <span t-field="o.invoice_date"/>
                     </div>
                 </div>
