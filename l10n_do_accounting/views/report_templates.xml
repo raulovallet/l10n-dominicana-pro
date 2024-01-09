@@ -3,21 +3,22 @@
 
     <template id="fiscal_info">
         <div class="col-6">
-            <h2>
+            <h2 t-if="o.fiscal_type_id">
                 <t t-if="o.fiscal_type_id.prefix == 'B13'">
-                <span t-field="o.fiscal_type_id.name"/>
+                    <span t-field="o.fiscal_type_id.name"/>
                 </t>
                 <t t-else="">
                     Invoice of <span t-field="o.fiscal_type_id.name"/>
                 </t>
             </h2>
-            <strong t-if="o.ref">
-                <t t-if="'E' in o.fiscal_type_id.prefix">e-NCF:</t>
-                <t t-else="">NCF:</t>
-            </strong>
-            <span t-field="o.ref"/>
-            <br/>
-            <span t-if="(o.move_type == 'out_refund' or o.move_type == 'in_refund') and (o.origin_out != False)">
+            <div t-if="o.ref">
+                <strong>
+                    <t t-if="'E' in o.fiscal_type_id.prefix">e-NCF:</t>
+                    <t t-else="">NCF:</t>
+                </strong>
+                <span t-field="o.ref"/>
+            </div>
+            <div t-if="o.move_type in ['in_refund', 'out_refund'] and o.origin_out">
                 <strong>NCF modified:</strong>
                 <span t-field="o.origin_out"/>
                 <!-- TODO: ADD l10n_do_ecf_modification_code FIELD <t t-if="ecf_representation">
@@ -25,10 +26,9 @@
                     <strong>Modification Code::</strong>
                     <span t-field="o.l10n_do_ecf_modification_code"/>
                 </t> -->
-                <br/>
-            </span>
-            <span id="fiscal_exp_date"
-                t-if="o.move_type in ['out_invoice', 'out_refund']
+            </div>
+            <div id="fiscal_exp_date" 
+                t-if="o.move_type in ['out_invoice', 'out_refund'] 
                     and o.state == 'posted'
                     and o.ref
                     and o.fiscal_type_id
@@ -39,7 +39,7 @@
                     <t t-else="">Valid until:</t>
                 </strong>
                 <span t-field="o.ncf_expiration_date"/>
-            </span>
+            </div>
         </div>
     </template>
 
