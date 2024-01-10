@@ -27,43 +27,43 @@
 
         <xpath expr="//div[hasclass('row')][1]" position="after">
             <t t-set="l10n_do_fiscal_invoice" t-value="o.is_l10n_do_fiscal_invoice and o.move_type in ('out_invoice', 'out_refund')"/>
-
-            <div class="row" t-if="l10n_do_fiscal_invoice" style="margin-bottom: 20px;">
-                <div class="col-6">
-                    <div t-if="o.company_id.vat">
-                        <strong>
-                        <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="company_inv_tax_id_label"/>
-                        <t t-else="">Tax ID</t>: </strong><span t-field="o.company_id.vat"/>
+            <t t-if="l10n_do_fiscal_invoice">
+                <div class="col-6" t-if="o.company_id.external_report_layout_id.xml_id != 'web.external_layout_standard'">
+                    <div t-if="not forced_vat">
+                        <t t-if="o.company_id.vat">
+                            <strong>
+                            <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="company_inv_tax_id_label"/>
+                            <t t-else="">Tax ID</t>: </strong><span t-field="o.company_id.vat"/>
+                        </t>
                     </div>
                     <div t-if="o.invoice_date">
                         <strong>Date:</strong> <span t-field="o.invoice_date"/>
                     </div>
                 </div>
-            </div>
-
-            <div class="row" t-if="l10n_do_fiscal_invoice">
-                <t t-if="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)">
-                    <div class="col-6" name="fiscal_address_not_same_as_shipping">
-                        <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
-                    </div>
-                    <div class="col-6">
-                        <div groups="account.group_delivery_invoice_address">
-                            <strong>Shipping Address:</strong>
-                            <div t-field="o.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                <div class="row pt-2">
+                    <t t-if="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)">
+                        <div class="col-6" name="fiscal_address_not_same_as_shipping">
+                            <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
                         </div>
-                    </div>
-                </t>
-                <t t-elif="o.partner_shipping_id and (o.partner_shipping_id == o.partner_id)">
-                    <div class="col-6" name="fiscal_address_same_as_shipping">
-                        <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-6" name="fiscal_no_shipping">
-                        <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
-                    </div>
-                </t>
-            </div>
+                        <div class="col-6">
+                            <div groups="account.group_delivery_invoice_address">
+                                <strong>Shipping Address:</strong>
+                                <div t-field="o.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-elif="o.partner_shipping_id and (o.partner_shipping_id == o.partner_id)">
+                        <div class="col-6" name="fiscal_address_same_as_shipping">
+                            <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-6" name="fiscal_no_shipping">
+                            <t t-call="l10n_do_accounting.receiver_fiscal_info"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
         </xpath>
 
     </template>

@@ -3,14 +3,14 @@
 
     <template id="fiscal_info">
         <div class="col-6">
-            <h2 t-if="o.fiscal_type_id">
+            <h3 t-if="o.fiscal_type_id">
                 <t t-if="o.fiscal_type_id.prefix == 'B13'">
                     <span t-field="o.fiscal_type_id.name"/>
                 </t>
                 <t t-else="">
                     Invoice of <span t-field="o.fiscal_type_id.name"/>
                 </t>
-            </h2>
+            </h3>
             <div t-if="o.ref">
                 <strong>
                     <t t-if="'E' in o.fiscal_type_id.prefix">e-NCF:</t>
@@ -43,28 +43,20 @@
         </div>
     </template>
 
-    <template id="fiscal_external_layout_standard">
-        <div class="row">
-            <div class="col-3 mb4">
-                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 45px;" alt="Logo"/>
-            </div>
-            <div class="col-9 text-end" style="margin-top:22px;" t-field="company.report_header" name="moto"/>
-        </div>
-        <div t-if="company.logo or company.report_header" class="row zero_min_height">
-            <div class="col-12">
-                <div style="border-bottom: 1px solid black;"/>
-            </div>
-        </div>
-        <div class="row">
+    <template id="complete_fiscal_info">
+        <div class="row pt-2 mb8">
             <div class="col-6" name="company_address">
-                <ul class="list-unstyled">
-                    <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
-                    <li t-else=""><t t-esc="company.company_details"/></li>
-                    <li t-if="forced_vat">
-                        <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                        <span t-esc="forced_vat"/>
-                    </li>
-                </ul>
+                <div t-if="company.is_company_details_empty">
+                    <strong><t t-esc="company.name"/></strong>
+                    <t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+                </div>
+                <div t-else="">
+                    <t t-esc="company.company_details"/>
+                </div>
+                <div t-if="forced_vat">
+                    <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                    <span t-esc="forced_vat"/>
+                </div>
             </div>
             <t t-call="l10n_do_accounting.fiscal_info"/>
         </div>
@@ -76,88 +68,71 @@
                 <t t-call="l10n_do_accounting.fiscal_info"/>
             </t>
         </xpath>
+        <xpath expr="//li[@t-if='forced_vat']" position="after">
+            <t t-if="l10n_do_fiscal_invoice">
+                <li t-if="not forced_vat and company.vat">
+                    <strong>
+                    <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="company_inv_tax_id_label"/>
+                    <t t-else="">Tax ID</t>: </strong><span t-field="o.company_id.vat"/>
+                </li>
+                <li t-if="o.invoice_date">
+                    <strong>Date:</strong> <span t-field="o.invoice_date"/>
+                </li>
+            </t>
+        </xpath>
     </template>
 
     <template id="external_layout_boxed_inherited" inherit_id="web.external_layout_boxed">
-        <xpath expr="//div[hasclass('o_boxed_header')]" position="replace">
+        <xpath expr="//div[@name='company_address']" position="attributes">
+            <attribute name="t-if">not l10n_do_fiscal_invoice</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_boxed_header')][1]" position="after">
             <t t-if="l10n_do_fiscal_invoice">
-                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
-            </t>
-            <t t-else="">
-                <div class="o_boxed_header">
-                    <div class="row mb8">
-                        <div class="col-6">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
-                        </div>
-                        <div class="col-6 text-end mb4">
-                            <div class="mt0 h4" t-field="company.report_header"/>
-                            <div name="company_address" class="float-end mb4">
-                                <ul class="list-unstyled">
-                                    <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
-                                    <li t-else=""><t t-esc="company.company_details"/></li>
-                                    <li t-if="forced_vat">
-                                        <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                                        <span t-esc="forced_vat"/>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <t t-call="l10n_do_accounting.complete_fiscal_info"/>
             </t>
         </xpath>
     </template>
 
     <template id="external_layout_bold_inherited" inherit_id="web.external_layout_bold">
-        <xpath expr="//div[hasclass('o_clean_header')]" position="replace">
+        <xpath expr="//div[@name='company_address']" position="attributes">
+            <attribute name="t-if">not l10n_do_fiscal_invoice</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_clean_header')]" position="after">
             <t t-if="l10n_do_fiscal_invoice">
-                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
+                <t t-call="l10n_do_accounting.complete_fiscal_info"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-call='web.address_layout']" position="replace">
+            <t t-if="l10n_do_fiscal_invoice">
+                <div class="pt-5">
+                    <!-- This div ensures that the address is not cropped by the header. -->
+                    <t t-call="web.address_layout"/>
+                </div>            
             </t>
             <t t-else="">
-                <div class="o_clean_header">
-                    <div class="row">
-                        <div class="col-6">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
-                        </div>
-                        <div class="col-5 offset-1" name="company_address">
-                            <ul class="list-unstyled">
-                                <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
-                                <li t-else=""><t t-esc="company.company_details"/></li>
-                                <li t-if="forced_vat">
-                                    <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                                    <span t-esc="forced_vat"/>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <t t-call="web.address_layout"/>
             </t>
         </xpath>
     </template>
 
     <template id="external_layout_striped_inherited" inherit_id="web.external_layout_striped">
-        <xpath expr="//div[hasclass('o_background_header')]" position="replace">
+        <xpath expr="//div[hasclass('company_address')]" position="attributes">
+            <attribute name="t-if">not l10n_do_fiscal_invoice</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_background_header')][1]" position="after">
             <t t-if="l10n_do_fiscal_invoice">
-                <t t-call="l10n_do_accounting.fiscal_external_layout_standard"/>
+                <t t-call="l10n_do_accounting.complete_fiscal_info"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-call='web.address_layout']" position="replace">
+            <t t-if="l10n_do_fiscal_invoice">
+                <div class="pt-5">
+                    <!-- This div ensures that the address is not cropped by the header. -->
+                    <t t-call="web.address_layout"/>
+                </div>            
             </t>
             <t t-else="">
-                <div class="o_background_header">
-                    <div class="float-end">
-                        <div class="mt0 text-end h3" t-field="company.report_header"/>
-                    </div>
-                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-start" alt="Logo"/>
-                    <div class="float-start company_address">
-                        <ul class="list-unstyled">
-                            <li t-if="company.is_company_details_empty"><t t-esc="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/></li>
-                            <li t-else=""><t t-esc="company.company_details"/></li>
-                            <li t-if="forced_vat">
-                                <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                                <span t-esc="forced_vat"/>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="clearfix mb8"/>
-                </div>
+                <t t-call="web.address_layout"/>
             </t>
         </xpath>
     </template>
