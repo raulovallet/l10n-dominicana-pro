@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-09 22:04+0000\n"
-"PO-Revision-Date: 2024-01-09 17:10-0500\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2024-01-10 05:20+0000\n"
+"PO-Revision-Date: 2024-01-10 00:22-0500\n"
+"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
-"Language: es\n"
+"Language: es_DO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -32,7 +32,7 @@ msgstr "01 - Deterioro de Factura Pre-impresa"
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_invoice_cancel__annulation_type__01
 msgid "01 - Deterioro de Factura Pre-impresa"
-msgstr ""
+msgstr "01 - Deterioro de Factura Pre-impresa"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__res_partner__expense_type__01
@@ -290,6 +290,7 @@ msgid "<span>%</span>"
 msgstr "<span>%</span>"
 
 #. module: l10n_do_accounting
+#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.external_layout_standard_inherited
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.report_invoice_document_inherit
 msgid "<strong>Date:</strong>"
 msgstr "<strong>Fecha:</strong>"
@@ -930,14 +931,6 @@ msgid "Last Updated on"
 msgstr "Ultima actualización en"
 
 #. module: l10n_do_accounting
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.external_layout_bold_inherited
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.external_layout_boxed_inherited
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.external_layout_striped_inherited
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.fiscal_external_layout_standard
-msgid "Logo"
-msgstr "Logo"
-
-#. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__message_main_attachment_id
 msgid "Main Attachment"
 msgstr "Archivo adjunto principal"
@@ -1274,6 +1267,7 @@ msgid "Swap"
 msgstr "Intercambio"
 
 #. module: l10n_do_accounting
+#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.external_layout_standard_inherited
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.receiver_fiscal_info
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.report_invoice_document_inherit
 msgid "Tax ID"
