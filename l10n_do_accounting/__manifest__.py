@@ -9,12 +9,13 @@
     "license": "LGPL-3",
     "website": "https://github.com/odoo-dominicana",
     "category": "Localization",
-    "version": "16.0.1.0.8",
+    "version": "16.0.2.0.0",
     # any module necessary for this one to work correctly
     "depends": [
         "base",
+        "web",
         "account",
-        "l10n_do"
+        "l10n_do",
     ],
     # always loaded
     "data": [
@@ -38,6 +39,7 @@
         'views/res_company_views.xml',
         'views/account_invoice_cancel_views.xml',
         # "views/backend_js.xml",
+
         "views/report_templates.xml",
         "views/report_invoice.xml",
     ],
