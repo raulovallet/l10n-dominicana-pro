@@ -29,19 +29,14 @@
                             <field name="previous_balance" readonly="1"/>
                         </group>
                     </group>
-                    <group>
-
+                    <div attrs="{'invisible': [('previous_report_pending', '=', False)]}">
                         <field name="previous_report_pending" invisible="1"/>
-                        <group attrs="{'invisible': [('previous_report_pending', '=', False)]}">
-                            <div class="alert alert-warning info_icon" role="alert">
-                                <span class="fa fa-lightbulb-o fa-lg" title="Info" aria-label="Info"/>
-                                <p>The previous report is still not marked as sent.</p>
-                                <p>Not setting a report as sent may throw inconsistencies
-                                    regarding invoices withholding dates.
-                                </p>
-                            </div>
-                        </group>
-                    </group>
+                        <div class="alert alert-warning info_icon" role="alert">
+                            <span class="fa fa-lightbulb-o fa-lg" title="Info" aria-label="Info"/>
+                            <p>The previous report is still not marked as sent.</p>
+                            <p>Not setting a report as sent may throw inconsistencies regarding invoices withholding dates.</p>
+                        </div>
+                    </div>
                     <notebook>
                         <page name="statements" string="Statements">
 
@@ -377,8 +372,7 @@
         <field name="name">dgii.reports.sale.line.tree</field>
         <field name="model">dgii.reports.sale.line</field>
         <field name="arch" type="xml">
-            <tree create="false" edit="false"
-                  decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
+            <tree create="false" edit="false" decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
                 <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
