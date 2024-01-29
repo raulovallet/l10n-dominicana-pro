@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-10 05:20+0000\n"
-"PO-Revision-Date: 2024-01-10 00:22-0500\n"
-"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
+"POT-Creation-Date: 2024-01-29 22:32+0000\n"
+"PO-Revision-Date: 2024-01-29 17:34-0500\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: es_DO\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1279,6 +1279,13 @@ msgstr "RNC"
 #, python-format
 msgid "The document type (%s) has (%s) digits. You are trying to input (%s) digits."
 msgstr "El tipo de documento (%s) tiene (%s) dígitos. Está intentando ingresar (%s) dígitos."
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
+#, python-format
+msgid "The document type (%s) must start with (%s)"
+msgstr "El tipo de documento (%s) debe empezar por (%s)"
 
 #. module: l10n_do_accounting
 #. odoo-python

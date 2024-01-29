@@ -452,6 +452,7 @@ class AccountFiscalType(models.Model):
         
         fiscal_type = self
         message = ''
+        
         if not self:
             fiscal_type = self.search([
                 ('prefix', '=', fiscal_number[0:3]), 
@@ -479,5 +480,8 @@ class AccountFiscalType(models.Model):
             raise ValidationError(
                 _('After the document type, all characters must be digits from 0 to 9.')
             )
-
         
+        if fiscal_type.prefix and fiscal_number[0:3] != fiscal_type.prefix:
+            raise ValidationError(
+                _('The document type (%s) must start with (%s)') % (fiscal_type.name, fiscal_type.prefix)
+            )
