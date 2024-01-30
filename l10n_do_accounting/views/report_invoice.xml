@@ -5,7 +5,7 @@
         <div t-if="o.partner_id.vat">
             <strong>
                 <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
-                <t t-else="">Tax ID</t> Customer: </strong><span t-field="o.partner_id.vat"/>
+                <t t-else="">Tax ID</t><span t-if="o.move_type in ('out_invoice', 'out_refund')"> Customer: </span><span t-else=""> Vendor: </span> </strong><span t-field="o.partner_id.vat"/>
         </div>                        
         <strong>Name or Corporate Name:</strong> <span t-field="o.partner_id.name"/>
         <address class="mb-0" t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
@@ -14,7 +14,7 @@
     <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
 
         <xpath expr="//div[hasclass('row')][1]" position="attributes">
-            <attribute name="t-if">not (o.is_l10n_do_fiscal_invoice and o.move_type in ('out_invoice', 'out_refund'))</attribute>
+            <attribute name="t-if">not (o.is_l10n_do_fiscal_invoice and o.is_invoice() and o.fiscal_type_id and o.fiscal_type_id.assigned_sequence)</attribute>
         </xpath>
         
         <xpath expr="//div[@name='invoice_date']" position="attributes">
@@ -26,9 +26,10 @@
         </xpath>
 
         <xpath expr="//div[hasclass('row')][1]" position="after">
-            <t t-set="l10n_do_fiscal_invoice" t-value="o.is_l10n_do_fiscal_invoice and o.move_type in ('out_invoice', 'out_refund')"/>
+            <t t-set="l10n_do_fiscal_invoice" t-value="o.is_l10n_do_fiscal_invoice and o.is_invoice() and o.fiscal_type_id and o.fiscal_type_id.assigned_sequence"/>
             <t t-if="l10n_do_fiscal_invoice">
-                <div class="col-6" t-if="o.company_id.external_report_layout_id.xml_id != 'web.external_layout_standard'">
+                <div class="col-6" t-if="o.company_id.external_report_layout_id and o.company_id.external_report_layout_id.xml_id != 'web.external_layout_standard'">
+                    <br/>
                     <div t-if="not forced_vat">
                         <t t-if="o.company_id.vat">
                             <strong>
