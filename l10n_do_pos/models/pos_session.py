@@ -11,7 +11,7 @@ class PosSession(models.Model):
                 'split_invoice_receivable_lines': {},
             })
             return data
-        return data
+        return super(PosSession, self)._create_invoice_receivable_lines(data)
 
     def _create_bank_payment_moves(self, data):
         if self.config_id.l10n_do_fiscal_journal:
