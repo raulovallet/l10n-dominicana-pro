@@ -394,15 +394,14 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
 
-            if inv.amount_untaxed == 0 and inv.is_invoice():
-                raise UserError(
-                    _(
-                        u"You cannot validate an invoice whose "
-                        u"total amount is equal to 0"
-                    )
-                )
-
             if inv.is_l10n_do_fiscal_invoice and inv.is_invoice():
+                if inv.amount_total == 0:
+                    raise UserError(
+                        _(
+                            u"You cannot validate an invoice whose "
+                            u"total amount is equal to 0"
+                        )
+                    )
 
                 if inv.fiscal_type_id and not inv.fiscal_type_id.assigned_sequence:
                     inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
