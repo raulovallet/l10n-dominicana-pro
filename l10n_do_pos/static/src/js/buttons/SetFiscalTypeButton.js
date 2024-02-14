@@ -75,13 +75,10 @@ odoo.define('l10n_do_pos.SetFiscalTypeButton', function(require) {
                     });
 
                 } else {
-                    // TODO: in future try optimize search partners
-                    // link get_partner_by_id
-                    var partner = this.env.pos.partners.find(
-                        function (partner_obj) {
-                            return partner_obj.vat === vat;
-                        }
-                    );
+                    // TODO: in future try optimize search partners like get_partner_by_id
+                    
+                    var partner = this.env.pos.db.get_partners_sorted().find(partner_obj => partner_obj.vat === vat);
+
                     if (partner) {
 
                         this.currentOrder.set_partner(partner);

@@ -4,18 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0+e\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-30 16:36+0000\n"
-"PO-Revision-Date: 2023-03-30 12:38-0400\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2024-01-19 04:12+0000\n"
+"PO-Revision-Date: 2024-01-18 23:13-0500\n"
+"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: \n"
-"X-Generator: Poedit 3.2.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. module: dgii_reports
 #: model:ir.model.fields,help:dgii_reports.field_account_bank_statement_line__fiscal_status
@@ -345,7 +345,7 @@ msgstr "Una factura no puede tener múltiples retenciones."
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_cancel_line__annulation_type
-msgid "Anulation Type"
+msgid "Annulation Type"
 msgstr "Tipo de anulación"
 
 #. module: dgii_reports
@@ -1296,7 +1296,7 @@ msgstr "Retención ISR"
 #: model:ir.model.fields,field_description:dgii_reports.field_account_account__box_it1
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "IT-1"
-msgstr ""
+msgstr "IT-1"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__it1_section_6_line_ids
@@ -1331,7 +1331,7 @@ msgstr "IT-1  íneas sección 5"
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_tax__l10n_do_tax_type__itbis
 msgid "ITBIS"
-msgstr ""
+msgstr "ITBIS"
 
 #. module: dgii_reports
 #. odoo-python
@@ -1838,11 +1838,11 @@ msgstr "No enviado"
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid ""
-"Not setting a report as sent may throw inconsistencies\n"
-"                                    regarding invoices withholding dates."
+"Not setting a report as sent may throw inconsistencies regarding invoices withholding "
+"dates."
 msgstr ""
-"No marcar el reporte como enviado puede arrojar inconsistencias\n"
-"relativas a las fechas de retención de las facturas."
+"No establecer un informe como enviado puede arrojar incoherencias en cuanto a las "
+"fechas de retención de las facturas."
 
 #. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__dgii_reports_it1_line__display_type__line_note
@@ -1861,7 +1861,7 @@ msgstr "Número de error"
 
 #. module: dgii_reports
 #: model:ir.model.fields,help:dgii_reports.field_dgii_reports__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr "Número de mensajes que requieren una acción"
 
 #. module: dgii_reports
@@ -2197,7 +2197,7 @@ msgstr "CANTIDAD"
 #. module: dgii_reports
 #: model:ir.actions.server,name:dgii_reports.action_run_norma_recompute
 msgid "Recalcular norma 07-2018"
-msgstr ""
+msgstr "Recalcular norma 07-2018"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
@@ -2558,7 +2558,7 @@ msgstr "A INCLUIR EN ACTIVOS (CATEGORÍA I)"
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "TOTAL"
-msgstr ""
+msgstr "TOTAL"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2814,7 +2814,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_purchase_line_tree
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_sale_line_tree
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #. module: dgii_reports
 #. odoo-python

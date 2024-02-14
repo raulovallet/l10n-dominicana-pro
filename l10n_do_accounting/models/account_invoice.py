@@ -216,14 +216,14 @@ class AccountInvoice(models.Model):
             else:
                 fs_id = inv.fiscal_sequence_id  # Fiscal Sequence
                 remaining = fs_id.sequence_remaining
-                remaining_percent = fs_id.remaining_percentage
+                warning_percentage = fs_id.remaining_percentage
                 seq_length = fs_id.sequence_end - fs_id.sequence_start + 1
 
-                consumed_percent = round(1 - (remaining / seq_length), 2) * 100
+                remaining_percentage = round((remaining / seq_length), 2) * 100
 
-                if consumed_percent < remaining_percent:
+                if remaining_percentage > warning_percentage:
                     inv.fiscal_sequence_status = "fiscal_ok"
-                elif remaining > 0 and consumed_percent >= remaining_percent:
+                elif remaining > 0 and remaining_percentage <= warning_percentage:
                     inv.fiscal_sequence_status = "almost_no_sequence"
                 else:
                     inv.fiscal_sequence_status = "no_sequence"
@@ -394,15 +394,14 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
 
-            if inv.amount_untaxed == 0 and inv.is_invoice():
-                raise UserError(
-                    _(
-                        u"You cannot validate an invoice whose "
-                        u"total amount is equal to 0"
-                    )
-                )
-
             if inv.is_l10n_do_fiscal_invoice and inv.is_invoice():
+                if inv.amount_total == 0:
+                    raise UserError(
+                        _(
+                            u"You cannot validate an invoice whose "
+                            u"total amount is equal to 0"
+                        )
+                    )
 
                 if inv.fiscal_type_id and not inv.fiscal_type_id.assigned_sequence:
                     inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
@@ -498,74 +497,6 @@ class AccountInvoice(models.Model):
                 })
 
         return res
-
-    def validate_fiscal_purchase(self):
-        for inv in self.filtered(
-            lambda i: i.move_type == "in_invoice" and i.state == "draft"
-        ):
-            ncf = inv.ref if inv.ref else None
-            if ncf and ncf_dict.get(inv.fiscal_type_id.prefix) == "fiscal":
-                if ncf[-10:-8] == "02" or ncf[1:3] == "32":
-                    raise ValidationError(
-                        _(
-                            "NCF *{}* does not correspond with the fiscal type\n\n"
-                            "You cannot register Consumo (02 or 32) for purchases"
-                        ).format(ncf)
-                    )
-
-                elif inv.fiscal_type_id.requires_document and not inv.partner_id.vat:
-                    raise ValidationError(
-                        _(
-                            "Partner [{}] {} doesn't have RNC/Céd, "
-                            "is required for NCF type {}"
-                        ).format(
-                            inv.partner_id.id,
-                            inv.partner_id.name,
-                            inv.fiscal_type_id.name,
-                        )
-                    )
-
-                elif not ncf_validation.is_valid(ncf):
-                    raise UserError(
-                        _(
-                            "NCF wrongly typed\n\n"
-                            "This NCF *{}* does not have the proper structure, "
-                            "please validate if you have typed it correctly."
-                        ).format(ncf)
-                    )
-
-                ncf_in_invoice = (
-                    inv.search_count(
-                        [
-                            ("id", "!=", inv.id),
-                            ("company_id", "=", inv.company_id.id),
-                            ("partner_id", "=", inv.partner_id.id),
-                            ("ref", "=", ncf),
-                            ("state", "in", ("draft", "open", "paid", "cancel")),
-                            ("move_type", "in", ("in_invoice", "in_refund")),
-                        ]
-                    )
-                    if inv.id
-                    else inv.search_count(
-                        [
-                            ("partner_id", "=", inv.partner_id.id),
-                            ("company_id", "=", inv.company_id.id),
-                            ("ref", "=", ncf),
-                            ("state", "in", ("draft", "open", "paid", "cancel")),
-                            ("move_type", "in", ("in_invoice", "in_refund")),
-                        ]
-                    )
-                )
-
-                if ncf_in_invoice:
-                    raise ValidationError(
-                        _(
-                            "NCF already used in another invoice\n\n"
-                            "The NCF *{}* has already been registered in another "
-                            "invoice with the same supplier. Look for it in "
-                            "invoices with canceled or draft states"
-                        ).format(ncf)
-                    )
 
     def action_invoice_cancel(self):
 
@@ -685,18 +616,16 @@ class AccountInvoice(models.Model):
             ),
         }
 
-    # def _get_name_invoice_report(self):
-    #     self.ensure_one()
-    #     if self.is_l10n_do_fiscal_invoice and self.country_code == "DO":
-    #         return "l10n_do_accounting.report_invoice_document_inherited"
+    @api.model_create_multi
+    def create(self, vals_list):
+        # Add default fiscal type from sales and purchase orders
         
+        res = super(AccountInvoice, self).create(vals_list)
+        
+        fiscal_invoices = res.filtered(
+            lambda i: i.is_l10n_do_fiscal_invoice and not i.fiscal_type_id and i.is_invoice()
+        )
+        for fiscal_invoice in fiscal_invoices:
+            fiscal_invoice._onchange_partner_id()
 
-    # def invoice_print(self):
-    #     # Companies which has installed l10n_do localization use
-    #     # l10n_do fiscal invoice template
-    #     l10n_do_coa = self.env.ref("l10n_do.do_chart_template")
-    #     if self.journal_id.company_id.chart_template_id.id == l10n_do_coa.id:
-    #         report_id = self.env.ref("l10n_do_accounting.l10n_do_account_invoice")
-    #         return report_id.report_action(self)
-
-    #     return super(AccountInvoice, self).invoice_print()
+        return res
