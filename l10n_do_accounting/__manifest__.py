@@ -9,7 +9,7 @@
     "license": "LGPL-3",
     "website": "https://github.com/odoo-dominicana",
     "category": "Localization",
-    "version": "16.0.2.0.6",
+    "version": "16.0.2.0.7",
     # any module necessary for this one to work correctly
     "depends": [
         "base",
