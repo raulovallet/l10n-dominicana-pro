@@ -5,7 +5,7 @@
     'license': 'LGPL-3',
     'website': "https://github.com/odoo-dominicana",
     'category': 'Localization',
-    'version': '16.0.2.1.1',
+    'version': '16.0.2.1.3',
     'depends': [
         'base',
         'point_of_sale',

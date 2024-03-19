@@ -88,15 +88,12 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         var has_taxes = false;
 
                         current_order.get_orderlines().forEach(function (orderline) {
-                            orderline.get_applicable_taxes().forEach(function (tax) {
-                                var line_tax = orderline._map_tax_fiscal_position(tax);
-                                if (line_tax &&
-                                    ((line_tax.tax_group_id[1] === 'ITBIS' && line_tax.amount !== 0) || line_tax.tax_group_id[1] === 'ISC')){
+                            orderline._getProductTaxesAfterFiscalPosition().forEach(function (tax) {
+                                if ((tax.tax_group_id[1] === 'ITBIS' && tax.amount !== 0) || tax.tax_group_id[1] === 'ISC'){
                                     has_taxes = true
                                 }
                             });
                         });
-
                         if(has_taxes){
                             this.showPopup('ErrorPopup', {
                                 title: _.str.sprintf(_t('Error with Fiscal Type %s'), fiscal_type.name),

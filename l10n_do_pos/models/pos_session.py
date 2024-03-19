@@ -61,3 +61,8 @@ class PosSession(models.Model):
         result = super()._loader_params_pos_payment_method()
         result['search_params']['fields'].append('is_credit_note')
         return result
+
+    def _loader_params_account_tax(self):
+        result = super()._loader_params_account_tax()
+        result['search_params']['fields'].append('tax_group_id')
+        return result

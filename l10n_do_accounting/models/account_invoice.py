@@ -629,3 +629,9 @@ class AccountInvoice(models.Model):
             fiscal_invoice._onchange_partner_id()
 
         return res
+    
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_fiscal_invoice(self):
+        for invoice in self:
+            if invoice.is_l10n_do_fiscal_invoice and invoice.is_invoice() and invoice.ref:
+                raise UserError(_("You cannot delete a fiscal invoice that has been validated."))
