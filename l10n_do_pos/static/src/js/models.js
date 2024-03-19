@@ -110,17 +110,13 @@ odoo.define('l10n_do_pos.models', function (require) {
 
                 var partner = this.get_partner();
 
-                if (false) {
+                if (partner && partner.sale_fiscal_type_id) {
     
-                    this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B04');
-    
-                } else if (partner && partner.sale_fiscal_type_id) {
-    
-                    this.fiscal_type = this.pos.get_fiscal_type_by_id(partner.sale_fiscal_type_id[0]);
+                    this.set_fiscal_type(this.pos.get_fiscal_type_by_id(partner.sale_fiscal_type_id[0]));
     
                 } else {
     
-                    this.fiscal_type = this.pos.get_fiscal_type_by_prefix('B02');
+                    this.set_fiscal_type(this.pos.get_fiscal_type_by_prefix('B02'))
     
                 }    
             }
@@ -177,6 +173,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                 this.ncf_expiration_date = json.ncf_expiration_date || '';
                 this.fiscal_type_id = json.fiscal_type_id || false;
                 this.fiscal_sequence_id = json.fiscal_sequence_id || false;
+                console.log('init_from_JSON', json.fiscal_type_id)
 
                 if(json.fiscal_type_id)
                     this.set_fiscal_type(this.pos.get_fiscal_type_by_id(json.fiscal_type_id));
