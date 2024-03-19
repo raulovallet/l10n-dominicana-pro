@@ -37,8 +37,18 @@
                 <attribute name="groups">l10n_do_accounting.credit_note_group</attribute>
             </xpath>
 
-            <xpath expr="//label[@for='ref']" position="replace"/>
-            <xpath expr="//field[@name='ref']" position="replace"/>
+            <xpath expr="//form/sheet/group/group[@id='header_left_group']/label[@for='ref']" position="attributes">
+                <attribute name="attrs">{'invisible':['|',('is_l10n_do_fiscal_invoice', '=', True),('move_type', 'not in', ('in_invoice', 'in_receipt', 'in_refund'))]}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[@id='header_left_group']/field[@name='ref']" pposition="attributes">
+                <attribute name="attrs">{'invisible':['|',('is_l10n_do_fiscal_invoice', '=', True),('move_type', 'not in', ('in_invoice', 'in_receipt', 'in_refund'))]}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@id='other_tab']/group[@id='other_tab_group']/group[@name='sale_info_group']/label[@for='ref']" position="attributes">
+                <attribute name="attrs">{'invisible':[('is_l10n_do_fiscal_invoice', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@id='other_tab']/group[@id='other_tab_group']/group[@name='sale_info_group']/field[@name='ref']" position="attributes">
+                <attribute name="attrs">{'invisible':[('is_l10n_do_fiscal_invoice', '=', True)]}</attribute>
+            </xpath>
 
             <xpath expr="//field[@name='partner_id']" position="after">
 
