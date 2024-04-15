@@ -627,6 +627,10 @@ class AccountInvoice(models.Model):
         )
         for fiscal_invoice in fiscal_invoices:
             fiscal_invoice._onchange_partner_id()
+            fiscal_invoice.write({
+                'ref': '', 
+                'payment_reference': fiscal_invoice.ref
+            })
 
         return res
     
