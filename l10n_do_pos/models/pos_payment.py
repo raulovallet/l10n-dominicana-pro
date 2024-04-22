@@ -24,10 +24,10 @@ class PosPayment(models.Model):
             'journal_id': payment_method.journal_id.id,
         }
 
-    def _create_payment_moves(self):
+    def _create_payment_moves(self, is_reverse=False):
         
         if self and not self.mapped('session_id.config_id')[0].l10n_do_fiscal_journal:
-            return super(PosPayment, self)._create_payment_moves()
+            return super(PosPayment, self)._create_payment_moves(is_reverse)
 
         result = self.env['account.move']
         for payment in self.filtered(lambda p: not p.payment_method_id.is_cash_count and not p.payment_method_id.is_credit_note):
