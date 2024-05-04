@@ -8,10 +8,9 @@
         <field name="arch" type="xml">
             <field name="type_tax_use" position="after">
                 <field name="l10n_do_tax_type"/>
-                <field name="isr_retention_type" attrs="{
-                    'invisible': [('l10n_do_tax_type','!=','isr')],
-                    'required': [('l10n_do_tax_type','=','isr')],
-                }"/>
+                <field name="isr_retention_type"
+                       invisible="l10n_do_tax_type != 'isr'"
+                       required="l10n_do_tax_type == 'isr'"/>
             </field>
         </field>
     </record>

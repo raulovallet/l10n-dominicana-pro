@@ -6,15 +6,14 @@
         <field name="model">res.company</field>
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
-            
+
             <xpath expr="//field[@name='vat']" position="attributes">
-                <attribute name="attrs">{'invisible': [('country_id', '=', %(base.do)s)]}</attribute>
+                <attribute name="invisible">country_id == %(base.do)d</attribute>
             </xpath>
 
             <xpath expr="//field[@name='vat']" position="after">
-                <field name="vat" placeholder="ej. NNNNNNNNN" string="RNC" attrs="{
-                    'invisible': [('country_id', '!=', %(base.do)s)],
-                }"/>
+                <field name="vat" placeholder="ej. NNNNNNNNN" string="RNC"
+                       invisible="country_id != %(base.do)d"/>
             </xpath>
 
         </field>

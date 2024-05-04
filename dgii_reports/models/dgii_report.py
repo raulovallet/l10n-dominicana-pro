@@ -59,11 +59,11 @@ class DgiiReport(models.Model):
         'res.currency',
         string='Currency',
         required=True,
-        default=lambda self: self.env.user.company_id.currency_id)
+        default=lambda self: self.env.company.currency_id,)
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.user.company_id,
+        default=lambda self: self.env.company,
         required=True
     )
     previous_report_pending = fields.Boolean(

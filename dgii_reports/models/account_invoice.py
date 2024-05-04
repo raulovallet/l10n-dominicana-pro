@@ -23,7 +23,6 @@ class InvoiceServiceTypeDetail(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.move'
 
-
     def _get_invoice_payment_widget(self):                    
         return self.invoice_payments_widget.get('content', []) if self.invoice_payments_widget else []
 

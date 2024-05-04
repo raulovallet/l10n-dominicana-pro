@@ -1,4 +1,4 @@
-odoo.define('dgii_report.dgii_report_widget', function (require) {
+odoo.define('dgii_report.dgii_report_widget', ['web.field_registry', 'web.basic_fields'], function (require) {
     "use strict";
 
     var field_registry = require('web.field_registry');

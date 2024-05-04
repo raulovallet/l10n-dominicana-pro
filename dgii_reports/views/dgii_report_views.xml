@@ -8,13 +8,14 @@
             <form>
                 <header>
                     <button name="generate_report" string="Generate Statements" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="generate_report" string="Generate Statements" type="object"
-                            attrs="{'invisible': [('state', '!=', 'generated')]}"/>
+                            invisible="state != 'generated'"/>
                     <button name="state_sent" string="Set as sent" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'generated')]}"/>
+                            class="oe_highlight" invisible="state != 'generated'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,generated,sent"/>
                 </header>
+
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -23,13 +24,13 @@
                     </div>
                     <group>
                         <group>
-                            <field name="name" placeholder="MM/YYYY" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="start_date" attrs="{'invisible': [('start_date', '=', False)]}"/>
-                            <field name="end_date" attrs="{'invisible': [('end_date', '=', False)]}"/>
+                            <field name="name" placeholder="MM/YYYY" readonly="state != 'draft'"/>
+                            <field name="start_date" invisible="not start_date"/>
+                            <field name="end_date" invisible="not end_date"/>
                             <field name="previous_balance" readonly="1"/>
                         </group>
                     </group>
-                    <div attrs="{'invisible': [('previous_report_pending', '=', False)]}">
+                    <div invisible="not previous_report_pending">
                         <field name="previous_report_pending" invisible="1"/>
                         <div class="alert alert-warning info_icon" role="alert">
                             <span class="fa fa-lightbulb-o fa-lg" title="Info" aria-label="Info"/>
@@ -134,12 +135,13 @@
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="amount" invisible="display_type != False"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+
                                     </group>
                                 </form>
                             </field>
@@ -154,9 +156,9 @@
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="amount" invisible="display_type != False"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
@@ -167,7 +169,7 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (37, 38, 41, 42)">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="local_purchase" string="TOTAL INVOICED" attrs="{'invisible':[('sequence', 'in', ())]}"/>
+                                    <field name="local_purchase" string="TOTAL INVOICED" invisible="sequence in []"/>
                                     <field name="amount"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
@@ -175,10 +177,10 @@
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="local_purchase" string="TOTAL INVOICED" attrs="{'invisible':[('display_type', '!=', False)]}"/>
-                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="local_purchase" string="TOTAL INVOICED" invisible="display_type != False"/>
+                                        <field name="amount" invisible="display_type != False"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
@@ -197,9 +199,9 @@
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="amount" invisible="display_type != False"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
@@ -210,24 +212,24 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (48, 52, 54, 55, 56)">
                                     <field name="sequence" string="Box"/>
                                     <field name="name" style="max-width: 480px !important;"/>
-                                    <field name="local_purchase" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <field name="services" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <field name="imports" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <field name="amount" string="TOTAL" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <field name="coefficient" style="max-width: 45px !important;"   widget="percentage" attrs="{'invisible':[('sequence','!=', 54)]}"/>
+                                    <field name="local_purchase" invisible="sequence == 54"/>
+                                    <field name="services" invisible="sequence == 54"/>
+                                    <field name="imports" invisible="sequence == 54"/>
+                                    <field name="amount" string="TOTAL" invisible="sequence == 54"/>
+                                    <field name="coefficient" style="max-width: 45px !important;"   widget="percentage" invisible="sequence != 54"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="local_purchase" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
-                                        <field name="services" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
-                                        <field name="imports" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
-                                        <field name="amount" string="TOTAL" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '=', 54)]}"/>
-                                        <field name="coefficient" attrs="{'invisible':['|', ('display_type', '!=', False), ('sequence', '!=', 54)]}" widget="percentage" truncate="4"/>
+                                        <field name="local_purchase" invisible="display_type != False or sequence == 54"/>
+                                        <field name="services" invisible="display_type != False or sequence == 54"/>
+                                        <field name="imports" invisible="display_type != False or sequence == 54"/>
+                                        <field name="amount" string="TOTAL" invisible="display_type != False or sequence == 54"/>
+                                        <field name="coefficient" invisible="display_type != False or sequence != 54" widget="percentage" truncate="4"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
@@ -247,9 +249,9 @@
                                 </tree>
                                 <form>
                                     <group>
-                                        <field name="sequence" string="Box" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="sequence" string="Box" invisible="display_type != False"/>
                                         <field name="name"/>
-                                        <field name="amount" attrs="{'invisible':[('display_type', '!=', False)]}"/>
+                                        <field name="amount" invisible="display_type != False"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
@@ -372,7 +374,7 @@
         <field name="name">dgii.reports.sale.line.tree</field>
         <field name="model">dgii.reports.sale.line</field>
         <field name="arch" type="xml">
-            <tree create="false" edit="false" decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
+             <tree create="false" edit="false" decoration-muted="(invoiced_amount &lt; 250000) and (identification_type == '2')">
                 <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>

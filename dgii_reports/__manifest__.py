@@ -14,10 +14,12 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.2.3',
+    'version': '17.0.0.2', #'16.0.1.2.3',
+
     # any module necessary for this one to work correctly
     'depends': [
         'web',
+        'stock',
         'account',
         'l10n_do',
         'l10n_do_accounting'
@@ -37,13 +39,11 @@
         'wizard/dgii_report_regenerate_wizard_views.xml',
     ],
 
-    'assets':{
-        'web.assets_backend': [
-            '/dgii_reports/static/src/scss/dgii_reports.scss',
-            '/dgii_reports/static/src/js/widget.js'
-        ]
-    },
-
-    'post_init_hook': 'update_taxes'
+    # 'assets':{
+    #     'web.assets_backend': [
+    #         'dgii_reports/static/src/scss/dgii_reports.scss',
+    #         'dgii_reports/static/src/js/widget.js'
+    #     ]
+    # }
 
 }

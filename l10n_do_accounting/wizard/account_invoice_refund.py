@@ -180,7 +180,7 @@ class AccountMoveReversal(models.TransientModel):
     #         return result
     #     return True
     
-    def reverse_moves(self):
+    def reverse_moves(self, is_modify):
         self.ensure_one()
 
         if self.refund_ref and self.is_fiscal_refund:
@@ -190,7 +190,7 @@ class AccountMoveReversal(models.TransientModel):
                 'in_refund'
             )
 
-        return super(AccountMoveReversal, self).reverse_moves()
+        return super(AccountMoveReversal, self).reverse_moves(is_modify)
     
     def _prepare_default_reversal(self, move):
         
