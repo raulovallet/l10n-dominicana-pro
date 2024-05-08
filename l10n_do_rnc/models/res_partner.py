@@ -18,7 +18,7 @@ class Partner(models.Model):
     def create(self, vals_list):
         for val in vals_list:
             is_from_vat = val.get('vat', False)
-            rnc = val.get('vat').replace('-', '') if is_from_vat else val.get('name', False).replace('-', '')
+            rnc = val.get('vat').replace('-', '') if is_from_vat else val.get('name', '').replace('-', '')
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
                 contact_exist = self.env['res.partner'].search([('vat', '=', rnc)], limit=1)
