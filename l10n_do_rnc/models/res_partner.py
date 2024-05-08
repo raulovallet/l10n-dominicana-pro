@@ -18,7 +18,9 @@ class Partner(models.Model):
     def create(self, vals_list):
         for val in vals_list:
             is_from_vat = val.get('vat', False)
-            rnc = val.get('vat').replace('-', '') if is_from_vat else val.get('name', '').replace('-', '')
+
+            rnc = val.get('vat', '') if is_from_vat else val.get('name', '')
+            rnc = rnc.replace('-', '') if rnc else rnc
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
                 contact_exist = self.env['res.partner'].search([('vat', '=', rnc)], limit=1)
@@ -53,16 +55,17 @@ class Partner(models.Model):
         return super(Partner, self).create(vals_list)
 
     def write(self, vals):
-        if vals.get('vat', False) and self.country_id and self.country_id.code == 'DO':
+        for partner in self.filtered(lambda p: p.country_id and p.country_id.code == 'DO'):
+            if vals.get('vat', False):
+                
+                try:
+                    name = self.get_name_from_dgii(vals['vat'])
 
-            try:
-                name = self.get_name_from_dgii(vals['vat'])
+                    if name:
+                        vals['name'] = name
 
-                if name:
-                    vals['name'] = name
-
-            except Exception as e:
-                _logger.error(e)
+                except Exception as e:
+                    _logger.error(e)
 
         return super(Partner, self).write(vals)
 
