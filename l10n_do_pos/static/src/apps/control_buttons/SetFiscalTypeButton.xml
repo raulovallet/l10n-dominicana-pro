@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-
-    <t t-name="SetFiscalTypeButton" owl="1">
-        <div class="button" style="color:red">
+    <t t-name="l10n_do_pos.SetFiscalTypeButton">
+        <div class="button paymentmethod btn btn-light rounded-0 border-bottom py-3" t-on-click="() => this.onClick()">
             <i class="fa fa-edit" role="img" aria-label="Set Type position" title="Set fiscal Type"/>
             <t t-esc='currentFiscalTypeName'/>
         </div>
     </t>
-
 </templates>

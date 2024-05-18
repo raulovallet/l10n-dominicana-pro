@@ -5,7 +5,8 @@
             <field name="name">Cliente de consumo</field>
         </record>
 
-        <record model="pos.config" id="point_of_sale.pos_config_main">
+        <record model="pos.config" id="pos_partner_config_main">
+            <field name="name">Default POS Partner</field>
             <field name="pos_partner_id" ref="default_pos_partner"/>
         </record>
 
@@ -15,7 +16,8 @@
             <field name="is_credit_note">True</field>
         </record>
 
-        <record model="pos.config" id="point_of_sale.pos_config_main">
+        <record model="pos.config" id="pos_payment_config_main">
+            <field name="name">Add Payment Method</field>
             <field name="payment_method_ids" eval="[(4, ref('credit_note'))]"/>
         </record>
     </data>

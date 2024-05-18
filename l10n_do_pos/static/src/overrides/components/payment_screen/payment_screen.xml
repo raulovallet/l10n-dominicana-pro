@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('right-content')]" position="attributes">
+            <attribute name="t-att-class">env.services.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+        </xpath>
+    </t>
+    <t t-name="PaymentScreenButtons" t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension" owl="1">
+        <xpath expr="//button[hasclass('partner-button')]" position="after">
+            <t t-if="env.services.pos.config.l10n_do_fiscal_journal">
+                <SetFiscalTypeButton/>
+            </t>
+        </xpath>
+        <xpath expr="//button[hasclass('js_invoice')]" position="attributes">
+            <attribute name="t-if">!env.services.pos.config.l10n_do_fiscal_journal</attribute>
+        </xpath>
+    </t>
+
+    <!--Todo: Fix block of numpad when isCreditNoteMode-->
+    <!--        <t t-name="Numpad" t-inherit="point_of_sale.Numpad" t-inherit-mode="extension" owl="1">
+                <xpath expr="//div/button" position="attributes">
+                    <attribute name="t-att-class">env.services.pos.config.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+                </xpath>
+            </t>-->
+
+    <t t-name="PaymentScreenMethods" t-inherit="point_of_sale.PaymentScreenMethods" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('paymentmethods-container')]" position="attributes">
+            <attribute name="t-att-class">env.services.pos.isCreditNoteMode() ? 'no-clickeable' : '' </attribute>
+        </xpath>
+    </t>
+
+</templates>
