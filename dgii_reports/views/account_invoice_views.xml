@@ -34,7 +34,7 @@
                             <field name="legal_tip"/>
                         </group>
                         <group string="607">
-                            <field name="fiscal_status" widget="state_selection" readonly="1"/>
+                            <field name="fiscal_status" widget="state_selection" readonly="0" options="{'hide_label': False}"/>
                         </group>
                     </group>
 
@@ -60,7 +60,7 @@
                             <field name="income_withholding"/>
                         </group>
                         <group string="606">
-                            <field name="fiscal_status" widget="state_selection"/>
+                            <field name="fiscal_status" widget="state_selection" readonly="0" options="{'hide_label': False}"/>
                         </group>
                     </group>
                 </page>
@@ -75,7 +75,7 @@
         <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="after">
-                <field name="fiscal_status" widget="state_selection" readonly="1" groups="account.group_account_user"/>
+                <field name="fiscal_status" widget="state_selection" readonly="1" options="{'hide_label': False}" />
             </xpath>
         </field>
     </record>

@@ -3,6 +3,9 @@
 
 from werkzeug.utils import redirect
 from odoo.http import request, Controller, route
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class DgiiReportsControllers(Controller):
@@ -10,6 +13,7 @@ class DgiiReportsControllers(Controller):
     @route(['/dgii_reports/<ncf_rnc>'], type='http', auth='user')
     def redirect_link(self, ncf_rnc):
 
+        _logger.info(ncf_rnc)
         env = request.env
         base_url = env['ir.config_parameter'].sudo().get_param('web.base.url')
 
@@ -21,18 +25,20 @@ class DgiiReportsControllers(Controller):
                 # Get action depending on invoice type
                 action_map = {
                     'out_invoice': request.env.ref(
-                        'account.action_invoice_tree1'
+                        'account.action_move_out_invoice_type'
                         ),
                     'in_invoice': request.env.ref(
-                        'account.action_vendor_bill_template'
+                        'account.action_move_in_invoice_type'
                         ),
                     'out_refund': request.env.ref(
-                        'account.action_invoice_out_refund'
+                        'account.action_move_out_refund_type'
                         ),
                     'in_refund': request.env.ref(
-                        'account.action_invoice_in_refund'
+                        'account.action_move_in_refund_type'
                         )
                 }
+                
+                _logger.info(action_map)
                 action = action_map[invoice_id.move_type]
                 url = "%s/web#id=%s&action=%s&model=account.move&view" \
                       "_type=form" % (base_url, invoice_id.id, action.id)
