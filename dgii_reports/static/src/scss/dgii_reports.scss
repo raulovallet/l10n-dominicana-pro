@@ -15,6 +15,16 @@
 .bs-callout p:last-child {
     margin-bottom: 0;
 }
+
+.bs-style-button-report {
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+.bs-style-button-report:hover {
+    background-color: #f3f4f5;
+}
+
 .bs-callout code {
     border-radius: 3px;
 }

@@ -44,7 +44,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <group name="606" class="bs-callout-info">
-                                        <button type="object" name="get_606_tree_view">
+                                        <button class="bs-style-button-report" type="object" name="get_606_tree_view">
                                             <h2>606</h2>
                                         </button>
                                         <separator colspan="1"/>
@@ -67,7 +67,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <group name="607" class="bs-callout-success">
-                                        <button type="object" name="get_607_tree_view">
+                                        <button class="bs-style-button-report" type="object" name="get_607_tree_view">
                                             <h2>607</h2>
                                         </button>
                                         <separator colspan="1"/>
@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <group name="608" class="bs-callout-warning">
-                                        <button type="object" name="get_608_tree_view">
+                                        <button class="bs-style-button-report" type="object" name="get_608_tree_view">
                                             <h2>608</h2>
                                         </button>
                                         <separator colspan="1"/>
@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <group name="609" class="bs-callout-danger">
-                                        <button type="object" name="get_609_tree_view">
+                                        <button class="bs-style-button-report" type="object" name="get_609_tree_view">
                                             <h2>609</h2>
                                         </button>
                                         <separator colspan="1"/>
@@ -341,12 +341,12 @@
                 <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
-                <field name="rnc_cedula"/>
+                <field name="rnc_cedula" widget="dgii_reports_url"/>
                 <field name="invoice_partner_id"/>
                 <field name="identification_type"/>
                 <field name="expense_type"/>
-                <field name="fiscal_invoice_number"/>
-                <field name="modified_invoice_number"/>
+                <field name="fiscal_invoice_number" widget="dgii_reports_url"/>
+                <field name="modified_invoice_number" widget="dgii_reports_url"/>
                 <field name="invoice_date"/>
                 <field name="payment_date"/>
                 <field name="service_total_amount" sum="Total"/>
@@ -378,11 +378,11 @@
                 <button name="action_view_invoice" type="object" string="Invoice" icon="fa-eye"/>
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
-                <field name="rnc_cedula"/>
+                <field name="rnc_cedula" widget="dgii_reports_url"/>
                 <field name="invoice_partner_id"/>
                 <field name="identification_type"/>
-                <field name="fiscal_invoice_number"/>
-                <field name="modified_invoice_number"/>
+                <field name="fiscal_invoice_number" widget="dgii_reports_url"/>
+                <field name="modified_invoice_number" widget="dgii_reports_url"/>
                 <field name="income_type"/>
                 <field name="invoice_date"/>
                 <field name="withholding_date"/>
@@ -416,7 +416,7 @@
                 <field name="dgii_report_id" invisible="1"/>
                 <field name="line"/>
                 <field name="invoice_partner_id"/>
-                <field name="fiscal_invoice_number"/>
+                <field name="fiscal_invoice_number" widget="dgii_reports_url"/>
                 <field name="invoice_date"/>
                 <field name="annulation_type"/>
             </tree>
@@ -434,7 +434,7 @@
                 <field name="line"/>
                 <field name="legal_name"/>
                 <field name="tax_id_type"/>
-                <field name="tax_id"/>
+                <field name="tax_id" widget="dgii_reports_url"/>
                 <field name="country_code"/>
                 <field name="purchased_service_type"/>
                 <field name="service_type_detail"/>
