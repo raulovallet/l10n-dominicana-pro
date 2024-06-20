@@ -24,7 +24,7 @@ class Partner(models.Model):
 
 
     sale_fiscal_type_id = fields.Many2one(
-        "account.fiscal.type",
+        comodel_name="account.fiscal.type",
         string="Sale Fiscal Type",
         domain=[("type", "=", "out_invoice")],
         compute='_compute_sale_fiscal_type_id',
@@ -111,10 +111,14 @@ class Partner(models.Model):
 
         for partner in self:
             vat = str(partner.vat) if partner.vat else False
+            
             is_dominican_partner = bool(partner.country_id == self.env.ref('base.do'))
 
             if not is_dominican_partner:
                 partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B16')
+            
+            elif partner.parent_id:
+                partner.sale_fiscal_type_id = partner.parent_id.sale_fiscal_type_id
 
             elif vat:
 
@@ -126,12 +130,14 @@ class Partner(models.Model):
                         partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B14')
 
                     else:
+
                         partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B01')
 
                 else:
                     partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B02')
 
             else:
+
                 partner.sale_fiscal_type_id = partner.sale_fiscal_type_id
 
     def _inverse_sale_fiscal_type_id(self):
