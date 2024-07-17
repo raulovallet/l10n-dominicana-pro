@@ -266,7 +266,7 @@ class AccountInvoice(models.Model):
     def _compute_is_exterior(self):
         for inv in self:
             inv.is_exterior = True if inv.fiscal_type_id and \
-                inv.fiscal_type_id.prefix in ('B17') else False
+                inv.fiscal_type_id.prefix in ('B17', False) else False
 
     @api.onchange('service_type')
     def onchange_service_type(self):
