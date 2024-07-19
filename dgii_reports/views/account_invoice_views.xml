@@ -74,13 +74,11 @@
         <field name="inherit_id" ref="l10n_do_accounting.view_move_form_inherit"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='expense_type']" position="after">
-                <group attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund'])]}">
-                    <field name="is_exterior" invisible="1"/>
-                    <field name="service_type" attrs="{'invisible': [('is_exterior', '=', False)], 'required': [('is_exterior', '=', True)]}"/>
-                    <field name="service_type_detail" options="{'no_create': True, 'no_open': True}" attrs="{'invisible': [('is_exterior', '=', False)], 'readonly': [('service_type', '=', False)], 'required': [('service_type', '!=', False)]}"/>
-                </group>
+                <field name="is_exterior" invisible="1"/>
+                <field name="service_type" attrs="{'invisible': [('is_exterior', '=', False)], 'required': [('is_exterior', '=', True)]}"/>
+                <field name="service_type_detail" options="{'no_create': True, 'no_open': True}" attrs="{'invisible': [('is_exterior', '=', False)], 'readonly': [('service_type', '=', False)], 'required': [('service_type', '!=', False)]}"/>
             </xpath>
         </field>
     </record>
-    
+
 </odoo>
