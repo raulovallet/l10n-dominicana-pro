@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 account_fiscal_sequence_user,account.fiscal.sequence user,model_account_fiscal_sequence,account.group_account_invoice,1,0,0,0
 account_fiscal_sequence_manager,account.fiscal.sequence manager,model_account_fiscal_sequence,account.group_account_manager,1,1,1,0
-account_fiscal_sequence_type_user,account.fiscal.type user,model_account_fiscal_type,account.group_account_invoice,1,0,0,0
+account_fiscal_sequence_type_user,account.fiscal.type user,model_account_fiscal_type,base.group_user,1,0,0,0
 account_fiscal_sequence_type_manager,account.fiscal.type manager,model_account_fiscal_type,account.group_account_manager,1,1,1,0
 account_fiscal_sequence_validate_wizard_manager,account.fiscal.sequence.validate.wizard,model_account_fiscal_sequence_validate_wizard,account.group_account_manager,1,1,1,1
 access_account_invoice_cancel,account.invoice.cancel,model_account_invoice_cancel,base.group_user,1,1,1,1
