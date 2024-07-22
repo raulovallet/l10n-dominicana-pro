@@ -15,6 +15,16 @@
                 </div>
             </t>
         </xpath>
+
+        <xpath expr="//div[hasclass('control-buttons')]" position="after">
+            <div class="control-buttons">
+                <div class="control-button" t-on-click="() => this.trigger('refund-all-order')" >
+                    <i class="fa  fa-bars"></i>
+                    <span> </span>
+                    <span>Return all products</span>
+                </div>
+            </div>
+        </xpath>
     </t>
 
 

@@ -4,18 +4,43 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0+e\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-24 06:50+0000\n"
-"PO-Revision-Date: 2023-11-24 01:52-0500\n"
-"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
+"POT-Creation-Date: 2024-07-22 21:19+0000\n"
+"PO-Revision-Date: 2024-07-22 17:21-0400\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,help:l10n_do_pos.field_pos_config__l10n_do_type_limit_order_history
+#: model:ir.model.fields,help:l10n_do_pos.field_res_config_settings__l10n_do_type_limit_order_history
+msgid ""
+"\n"
+"        This field allows you to limit the number of orders that are showed "
+"in the POS:\n"
+"            - All orders: All orders will be showed.\n"
+"            - Days: Only the orders of the amount of day will be showed.\n"
+"        "
+msgstr ""
+"\n"
+"        Este campo permite limitar el número de pedidos que se muestran en "
+"el TPV:\n"
+"            - Todos los pedidos: Se mostrarán todos los pedidos.\n"
+"            - Días: Sólo se mostrarán los pedidos del importe del día.\n"
+"        "
+
+#. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_pos/models/pos_payment.py:0
+#, python-format
+msgid "%s POS payments from %s"
+msgstr "%s Pagos TPV de %s"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -28,6 +53,11 @@ msgstr "Afecta a:"
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf_origin_out
 msgid "Affects"
 msgstr "Affectan"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields.selection,name:l10n_do_pos.selection__pos_config__l10n_do_type_limit_order_history__all
+msgid "All orders"
+msgstr "Todas las órdenes"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -68,6 +98,13 @@ msgid "Credit Note"
 msgstr "Nota de Crédito"
 
 #. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid "Credit note %s has no available amount."
+msgstr "El abono %s no tiene importe disponible."
+
+#. module: l10n_do_pos
 #. odoo-python
 #: code:addons/l10n_do_pos/models/pos_order.py:0
 #, python-format
@@ -89,6 +126,13 @@ msgid "DESCRIPTION"
 msgstr "DESCRIPCIÓN"
 
 #. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_config__l10n_do_type_limit_order_history_days
+#: model:ir.model.fields,field_description:l10n_do_pos.field_res_config_settings__l10n_do_type_limit_order_history_days
+#: model:ir.model.fields.selection,name:l10n_do_pos.selection__pos_config__l10n_do_type_limit_order_history__days
+msgid "Days"
+msgstr "Días"
+
+#. module: l10n_do_pos
 #: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
 msgid "Default customer"
 msgstr "Cliente predeterminado"
@@ -105,7 +149,7 @@ msgstr "Empresa predeterminado"
 #: code:addons/l10n_do_pos/static/src/js/TicketScreen.js:0
 #, python-format
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -200,6 +244,14 @@ msgid "For this sale it is necessary for the customer have ID"
 msgstr "Para este venta es necesario el ID del cliente"
 
 #. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_pos/models/pos_payment_method.py:0
+#, python-format
+msgid "Identify customer must be true if is credit note is true."
+msgstr ""
+"Identificar cliente debe ser verdadero si es nota de abono es verdadera."
+
+#. module: l10n_do_pos
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
 #, python-format
@@ -212,6 +264,25 @@ msgid "Is Used In Order"
 msgstr "Es usado en Pedido"
 
 #. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_pos/models/pos_payment_method.py:0
+#, python-format
+msgid "Journal must be empty if is credit note is true."
+msgstr "El diario debe estar vacío si la nota de abono es verdadera."
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_config__l10n_do_type_limit_order_history
+#: model:ir.model.fields,field_description:l10n_do_pos.field_res_config_settings__l10n_do_type_limit_order_history
+#: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
+msgid "Limit order history"
+msgstr "Historial de órdenes limitadas"
+
+#. module: l10n_do_pos
+#: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
+msgid "Max quantity days"
+msgstr "Cantidad máxima días"
+
+#. module: l10n_do_pos
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
 #: code:addons/l10n_do_pos/static/src/js/TicketScreen.js:0
@@ -219,7 +290,7 @@ msgstr "Es usado en Pedido"
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf
 #, python-format
 msgid "NCF"
-msgstr ""
+msgstr "NCF"
 
 #. module: l10n_do_pos
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf_expiration_date
@@ -231,7 +302,7 @@ msgstr "Fecha de vencimiento del NCF"
 #: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "NCF:"
-msgstr ""
+msgstr "NCF:"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -248,11 +319,21 @@ msgid "Name or RNC / Cedula"
 msgstr "Nombre o RNC / Cédula"
 
 #. module: l10n_do_pos
+#: model:pos.payment.method,name:l10n_do_pos.credit_note
+msgid "Nota de Crédito"
+msgstr ""
+
+#. module: l10n_do_pos
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PartnerListScreen.js:0
 #, python-format
 msgid "Offline"
 msgstr "Desconectado"
+
+#. module: l10n_do_pos
+#: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
+msgid "Order history"
+msgstr "Historial de pedidos"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -290,7 +371,12 @@ msgstr "Pedidos del TPV"
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_payment_method
 msgid "Point of Sale Payment Methods"
-msgstr "Métodos de pago en el punto de venta "
+msgstr "Métodos de pago en el punto de venta"
+
+#. module: l10n_do_pos
+#: model:ir.model,name:l10n_do_pos.model_pos_payment
+msgid "Point of Sale Payments"
+msgstr "Pagos en puntos de venta"
 
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_session
@@ -331,6 +417,13 @@ msgstr "Documento requerido (RNC/Cedula:)"
 #, python-format
 msgid "Required fiscal type"
 msgstr "Requiere tipo fiscal"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/xml/TicketScreen.xml:0
+#, python-format
+msgid "Return all products"
+msgstr "Devolver todos los productos"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -403,13 +496,6 @@ msgstr "La nota de crédito ya fue usada en éste pedido"
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
 #, python-format
-msgid "The credit note has no residual amount"
-msgstr "La nota de crédito no tiene monto pendiente"
-
-#. module: l10n_do_pos
-#. odoo-javascript
-#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
-#, python-format
 msgid ""
 "The credit note has no residual amount, please delete the payment of the "
 "credit note and enter it again."
@@ -427,6 +513,13 @@ msgid ""
 msgstr ""
 "El cliente de la nota de crédito no es el mismo cliente del pedido actual, "
 "por favor seleccione el cliente correcto."
+
+#. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_pos/models/pos_config.py:0
+#, python-format
+msgid "The days must be greater than 0"
+msgstr "Los días deben ser mayores que 0"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -491,11 +584,6 @@ msgstr "Esta de nota de crédito (%s) ha sido usedreturned_ncf"
 #, python-format
 msgid "This customer does not have credit notes"
 msgstr "Este cliente no tiene notas de crédito"
-
-#. module: l10n_do_pos
-#: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
-msgid "This customer will be placed automatically in all orders"
-msgstr "Este cliente se asignará automáticamente a todos los pedidos"
 
 #. module: l10n_do_pos
 #. odoo-javascript

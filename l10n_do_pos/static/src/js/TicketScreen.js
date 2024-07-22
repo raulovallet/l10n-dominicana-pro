@@ -3,8 +3,14 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
 
     const TicketScreen = require('point_of_sale.TicketScreen');
     const Registries = require('point_of_sale.Registries');
+    const { useListener } = require("@web/core/utils/hooks");
 
     const L10nDoPosTicketScreen = TicketScreen => class extends TicketScreen {
+        setup() {
+            super.setup();
+            useListener('refund-all-order', this._returnAllOrder);
+        }
+
         async _onDoRefund() {
             const order = this.getSelectedSyncedOrder();
 
@@ -132,6 +138,22 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
             console.log('this', this)
             console.log('test', Object.values(this.env.pos.toRefundLines))
             return new_order_line;
+        }
+        _returnAllOrder(){
+            console.log('returnAll')
+            const order = this.getSelectedSyncedOrder();
+            if (!order) return NumberBuffer.reset();
+
+            for (const orderline of order.orderlines) {
+                // Your code here
+                const toRefundDetail = this._getToRefundDetail(orderline);
+                const refundableQty = toRefundDetail.orderline.qty - toRefundDetail.orderline.refundedQty;
+                if (refundableQty > 0) {
+                    toRefundDetail.qty = refundableQty;
+                }
+
+            }
+        
         }
 
     }
