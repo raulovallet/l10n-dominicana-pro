@@ -12,3 +12,11 @@ class ResConfigSettings(models.TransientModel):
         related='pos_config_id.pos_partner_id', 
         readonly=False
     )
+    l10n_do_type_limit_order_history = fields.Selection(
+        related='pos_config_id.l10n_do_type_limit_order_history',
+        readonly=False
+    )
+    l10n_do_type_limit_order_history_days = fields.Integer(
+        related='pos_config_id.l10n_do_type_limit_order_history_days',
+        readonly=False
+    )

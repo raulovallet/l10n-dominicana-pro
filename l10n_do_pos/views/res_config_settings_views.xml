@@ -19,6 +19,25 @@
                 </div>
             </xpath>
 
+            <xpath expr="//div[@id='pos_technical_section']" position="inside">
+                <div class="col-12 col-lg-6 o_setting_box" id="update_quantities_stock_setting" groups="base.group_no_one">
+                    <div class="o_setting_right_pane">
+                        <div>
+                            <label string="Order history" for="l10n_do_type_limit_order_history"/>
+                            <div class="text-muted">
+                                Limit order history
+                            </div>
+                            <div class="content-group mt16 o_light_label">
+                                <field name="l10n_do_type_limit_order_history" colspan="4" nolabel="1" widget="radio"/>
+                                <div class="row" attrs="{'invisible': [('l10n_do_type_limit_order_history', '!=', 'days')]}">
+                                    <label for="l10n_do_type_limit_order_history_days" string="Max quantity days" class="col-lg-3 o_light_label"/>
+                                    <field name="l10n_do_type_limit_order_history_days"  class="oe_inline"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -1,8 +1,7 @@
-import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.osv.expression import AND
-_logger = logging.getLogger(__name__)
+from datetime import timedelta
 
 
 class PosOrder(models.Model):
@@ -246,16 +245,30 @@ class PosOrder(models.Model):
     @api.model
     def search_paid_order_ids(self, config_id, domain, limit, offset):
         """Search for 'paid' orders that satisfy the given domain, limit and offset."""
+        pos_config = self.env['pos.config'].browse(config_id)
         
-        if self.env['pos.config'].browse(config_id).invoice_journal_id.l10n_do_fiscal_journal:
-            config_ids = self.env['pos.config'].search([
-                ('invoice_journal_id.l10n_do_fiscal_journal', '=', True),
-            ]).ids
+        if pos_config.invoice_journal_id.l10n_do_fiscal_journal:
+            config_ids = self.env['pos.config'].search([('invoice_journal_id.l10n_do_fiscal_journal', '=', True)]).ids 
 
-            default_domain = ['&', '&', ('config_id', '=', config_ids), ('ncf', 'not like', '%B04%'), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
+            default_domain = [
+                '&', '&', '&',
+                ('config_id', 'in', config_ids), 
+                ('ncf', '!=', False),
+                ('amount_total', '>', 0),
+                '!', '|', 
+                ('state', '=', 'draft'), 
+                ('state', '=', 'cancelled')
+            ]
+            
+            if pos_config.l10n_do_type_limit_order_history == 'days':
+                default_domain.insert(3, '&')
+                default_domain.insert(4, 
+                    ('create_date', '>=', fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=pos_config.l10n_do_type_limit_order_history_days))))
+
             real_domain = AND([domain, default_domain])
             ids = self.search(AND([domain, default_domain]), limit=limit, offset=offset).ids
             totalCount = self.search_count(real_domain)
+            
             return {'ids': ids, 'totalCount': totalCount}
 
         return super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
