@@ -462,8 +462,11 @@ class AccountInvoice(models.Model):
                     )
 
                     origin_invoice = self.env['account.move'].search([
-                        ('ref', '=', inv.origin_out), 
+                        '|', '|',
                         ('partner_id', '=', inv.partner_id.id),
+                        ('partner_id', '=', inv.partner_id.parent_id.id),
+                        ('partner_id', 'in', inv.partner_id.child_ids.ids),
+                        ('ref', '=', inv.origin_out), 
                         ('state', '=', 'posted'),
                         ('is_l10n_do_fiscal_invoice', '=', True),
                         ('move_type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice')
