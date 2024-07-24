@@ -42,7 +42,10 @@ class DgiiReport(models.Model):
             else:
                 report.previous_report_pending = False
 
-    name = fields.Char(string='Period', required=True, size=7)
+    name = fields.Char(
+        string='Period', 
+        required=True, size=7
+    )
     state = fields.Selection(
         string="state",
         selection=[
@@ -54,16 +57,20 @@ class DgiiReport(models.Model):
         default='draft',
         copy=False
     )
-    previous_balance = fields.Float('Previous balance', copy=False)
+    previous_balance = fields.Float(
+        string='Previous balance', 
+        copy=False
+    )
     currency_id = fields.Many2one(
-        'res.currency',
+        comodel_name='res.currency',
         string='Currency',
         required=True,
-        default=lambda self: self.env.user.company_id.currency_id)
+        related='company_id.currency_id',
+    )
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.user.company_id,
+        default=lambda self: self.env.company,
         required=True
     )
     previous_report_pending = fields.Boolean(
