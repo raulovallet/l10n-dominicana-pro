@@ -430,7 +430,8 @@ class DgiiReport(models.Model):
             ('invoice_date', '<', self.start_date),
             ('company_id', '=', self.company_id.id),
             ('move_type', 'in', types),
-            ('state', 'in', states)
+            ('state', 'in', states),
+            ('is_l10n_do_fiscal_invoice', '=', True)
         ]).filtered(lambda inv: self.get_date_tuple(inv.payment_date if inv.payment_date else inv.invoice_date) == (period.year, period.month))
 
         return invoice_ids
