@@ -78,11 +78,13 @@ class DgiiReport(models.Model):
     )
     start_date = fields.Date(
         compute='_compute_dates', 
-        string='Start Date'
+        string='Start Date',
+        store=True
     )
     end_date = fields.Date(
         compute='_compute_dates', 
-        string='End Date'
+        string='End Date',
+        store=True
     )
     
     @api.depends('name')
@@ -1739,6 +1741,16 @@ class DgiiReport(models.Model):
         self.state = 'generated'
 
     def generate_report(self):
+        reports_without_sent = self.env['dgii.reports'].search([
+            ('state', '!=', 'sent'),
+            ('company_id', '=', self.company_id.id),
+            ('end_date', '<', self.end_date)
+        ])
+
+        if reports_without_sent:
+            raise ValidationError(
+                _('There are reports that have not been sent yet. Please send them before generating a new one.'))
+
         if self.state == 'generated':
             action = self.env.ref(
                 'dgii_reports.dgii_report_regenerate_wizard_action').read()[0]
