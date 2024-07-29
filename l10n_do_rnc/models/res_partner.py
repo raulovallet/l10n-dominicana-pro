@@ -52,7 +52,11 @@ class Partner(models.Model):
                     
                     _logger.error(e)
 
-        return super(Partner, self).create(vals_list)
+        res = super(Partner, self).create(vals_list)
+
+        res._compute_sale_fiscal_type_id()
+        
+        return res
 
     def write(self, vals):
         for partner in self.filtered(lambda p: p.country_id and p.country_id.code == 'DO'):

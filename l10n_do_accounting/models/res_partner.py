@@ -110,38 +110,50 @@ class Partner(models.Model):
         """ Compute the type of partner depending on soft decisions"""
 
         for partner in self:
-            vat = str(partner.vat) if partner.vat else False
-            
+            vat = partner.name if partner.name and partner.name.isdigit() else partner.vat
             is_dominican_partner = bool(partner.country_id == self.env.ref('base.do'))
+            new_fiscal_type = False
 
             if not is_dominican_partner:
-                partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B16')
+                new_fiscal_type= self._get_fiscal_type_domain('B16')
             
             elif partner.parent_id:
-                partner.sale_fiscal_type_id = partner.parent_id.sale_fiscal_type_id
+                new_fiscal_type = partner.parent_id.sale_fiscal_type_id
 
-            elif vat:
+            elif vat and not partner.name.isdigit() and not partner.sale_fiscal_type_id:
 
                 if vat.isdigit() and len(vat) == 9:
                     if partner.name and 'MINISTERIO' in partner.name:
-                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B15')
+                        new_fiscal_type = self._get_fiscal_type_domain('B15')
 
                     elif partner.name and any([n for n in ('IGLESIA', 'ZONA FRANCA') if n in partner.name]):
-                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B14')
+                        new_fiscal_type = self._get_fiscal_type_domain('B14')
 
                     else:
-
-                        partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B01')
+                        new_fiscal_type = self._get_fiscal_type_domain('B01')
 
                 else:
-                    partner.sale_fiscal_type_id = self._get_fiscal_type_domain('B02')
+                    new_fiscal_type = self._get_fiscal_type_domain('B02')
 
             else:
-
-                partner.sale_fiscal_type_id = partner.sale_fiscal_type_id
+                new_fiscal_type = partner.sale_fiscal_type_id
+            
+            partner.sale_fiscal_type_id = new_fiscal_type
+            
+            if new_fiscal_type and new_fiscal_type.fiscal_position_id:
+                partner.write({
+                    'property_account_position_id': new_fiscal_type.fiscal_position_id.id
+                })
 
     def _inverse_sale_fiscal_type_id(self):
-        pass
+        for partner in self:
+            partner.sale_fiscal_type_id = partner.sale_fiscal_type_id
+            
+            if partner.sale_fiscal_type_id and partner.sale_fiscal_type_id.fiscal_position_id:
+                partner.write({
+                    'property_account_position_id': partner.sale_fiscal_type_id.fiscal_position_id.id
+                })
+
 
     @api.model
     def get_sale_fiscal_type_id_selection(self):
