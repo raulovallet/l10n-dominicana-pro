@@ -59,9 +59,13 @@ class Partner(models.Model):
         return res
 
     def write(self, vals):
-        for partner in self.filtered(lambda p: p.country_id and p.country_id.code == 'DO'):
-            if vals.get('vat', False):
+
+        if vals.get('vat', False):
+            dominican_company_parnters = self.filtered(
+                lambda p: p.country_id and p.country_id.code == 'DO' and not p.parent_id)
                 
+            for partner in dominican_company_parnters:
+
                 try:
                     name = self.get_name_from_dgii(vals['vat'])
 
