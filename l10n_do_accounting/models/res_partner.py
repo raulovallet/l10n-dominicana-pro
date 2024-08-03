@@ -135,7 +135,12 @@ class Partner(models.Model):
                 else:
                     new_fiscal_type = self._get_fiscal_type_domain('B02')
 
+            elif is_dominican_partner and not partner.sale_fiscal_type_id:
+
+                new_fiscal_type = self._get_fiscal_type_domain('B02')
+
             else:
+                
                 new_fiscal_type = partner.sale_fiscal_type_id
             
             partner.sale_fiscal_type_id = new_fiscal_type
