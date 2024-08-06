@@ -411,11 +411,13 @@ class AccountFiscalType(models.Model):
     )
     fiscal_position_id = fields.Many2one(
         comodel_name="account.fiscal.position",
-        string="Fiscal Position"
+        string="Fiscal Position",
+        company_dependent=True,
     )
     journal_id = fields.Many2one(
         comodel_name="account.journal", 
-        string="Journal"
+        string="Journal",
+        company_dependent=True,
     )
     assigned_sequence = fields.Boolean(
         string="Assigned Sequence",

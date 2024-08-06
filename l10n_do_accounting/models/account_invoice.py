@@ -171,7 +171,7 @@ class AccountInvoice(models.Model):
             ):
 
                 inv.assigned_sequence = fiscal_type.assigned_sequence
-                inv.fiscal_position_id = fiscal_type.fiscal_position_id
+                inv.fiscal_position_id = fiscal_type.with_company(inv.company_id).fiscal_position_id
 
                 domain = [
                     ("company_id", "=", inv.company_id.id),
@@ -343,7 +343,7 @@ class AccountInvoice(models.Model):
                 self.partner_id = self.company_id.partner_id
 
             fiscal_type = self.fiscal_type_id
-            fiscal_type_journal = fiscal_type.journal_id
+            fiscal_type_journal = fiscal_type.with_company(self.company_id).journal_id
             if fiscal_type_journal and fiscal_type_journal != self.journal_id:
                 self.journal_id = fiscal_type_journal
 

@@ -109,7 +109,7 @@ class Partner(models.Model):
     def _compute_sale_fiscal_type_id(self):
         """ Compute the type of partner depending on soft decisions"""
 
-        for partner in self:
+        for partner in self.sudo():
             vat = partner.name if partner.name and partner.name.isdigit() else partner.vat
             is_dominican_partner = bool(partner.country_id == self.env.ref('base.do'))
             new_fiscal_type = False
@@ -144,21 +144,12 @@ class Partner(models.Model):
                 new_fiscal_type = partner.sale_fiscal_type_id
             
             partner.sale_fiscal_type_id = new_fiscal_type
-            
-            if new_fiscal_type and new_fiscal_type.fiscal_position_id:
-                partner.write({
-                    'property_account_position_id': new_fiscal_type.fiscal_position_id.id
-                })
+            partner.sudo().set_fiscal_position_from_fiscal_type(new_fiscal_type)
 
     def _inverse_sale_fiscal_type_id(self):
         for partner in self:
             partner.sale_fiscal_type_id = partner.sale_fiscal_type_id
-            
-            if partner.sale_fiscal_type_id and partner.sale_fiscal_type_id.fiscal_position_id:
-                partner.write({
-                    'property_account_position_id': partner.sale_fiscal_type_id.fiscal_position_id.id
-                })
-
+            self.sudo().set_fiscal_position_from_fiscal_type(partner.sale_fiscal_type_id)
 
     @api.model
     def get_sale_fiscal_type_id_selection(self):
@@ -167,3 +158,13 @@ class Partner(models.Model):
             "sale_fiscal_type_list": self.sale_fiscal_type_list,
             "sale_fiscal_type_vat": self.sale_fiscal_type_vat
         }
+
+    def set_fiscal_position_from_fiscal_type(self, fiscal_type):
+        if fiscal_type:
+            for company in self.env['res.company'].sudo().search([]):
+                company_new_fiscal_type = fiscal_type.with_company(company).sudo()
+
+                if company_new_fiscal_type.fiscal_position_id:
+                    self.with_company(company).sudo().write({
+                        'property_account_position_id': company_new_fiscal_type.fiscal_position_id.id
+                    })
