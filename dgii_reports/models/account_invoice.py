@@ -290,62 +290,74 @@ class AccountInvoice(models.Model):
     service_total_amount = fields.Monetary(
         string="Service Total Amount",
         compute='_compute_amount_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     good_total_amount = fields.Monetary(
         string="Good Total Amount",
         compute='_compute_amount_fields',
         currency_field='company_currency_id',
+        store=True
     )
     invoiced_itbis = fields.Monetary(
         string="Invoiced ITBIS",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     proportionality_tax = fields.Monetary(
         string="Proportionality Tax",
         compute='_compute_taxes_fields',
         currency_field='company_currency_id'
+        store=True
     )
     cost_itbis = fields.Monetary(
         string="Cost Itbis",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     advance_itbis = fields.Monetary(
         string="Advanced ITBIS",
         compute='_compute_taxes_fields',
         currency_field='company_currency_id',
+        store=True
     )
     isr_withholding_type = fields.Char(
         string="ISR Withholding Type",
         compute='_compute_isr_withholding_type',
-        size=2
+        size=2,
+        store=True
     )
     selective_tax = fields.Monetary(
         string="Selective Tax",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     other_taxes = fields.Monetary(
         string="Other taxes",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     legal_tip = fields.Monetary(
         string="Legal tip amount",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     ) 
     withholding_itbis = fields.Monetary(
         string="Withholding ITBIS",
         compute='_compute_withholding_taxes',
         currency_field='company_currency_id',
+        store=True
     )
     income_withholding = fields.Monetary(
         string="Income Withholding",
         compute='_compute_withholding_taxes',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
+        store=True
     )
     payment_date = fields.Date(
         string="Payment date",
