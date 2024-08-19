@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-24 21:44+0000\n"
-"PO-Revision-Date: 2024-07-24 17:46-0400\n"
+"POT-Creation-Date: 2024-08-19 19:41+0000\n"
+"PO-Revision-Date: 2024-08-19 15:45-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -2257,6 +2257,13 @@ msgid "Report"
 msgstr "Reporte"
 
 #. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "Report generated again."
+msgstr "Informe generado de nuevo."
+
+#. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__fiscal_status__done
 msgid "Reported"
 msgstr "Reportado"
@@ -2518,6 +2525,11 @@ msgstr "Detalle del Servicio"
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "Set as sent"
 msgstr "Marcar como enviado"
+
+#. module: dgii_reports
+#: model:ir.actions.server,name:dgii_reports.action_server_dgii_reports
+msgid "Set to Generated"
+msgstr "Marcar como generado"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__start_date
