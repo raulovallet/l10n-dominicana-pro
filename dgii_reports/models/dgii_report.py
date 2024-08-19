@@ -55,7 +55,8 @@ class DgiiReport(models.Model):
             ('sent', 'Sent')
         ],
         default='draft',
-        copy=False
+        copy=False,
+        tracking=True    
     )
     previous_balance = fields.Float(
         string='Previous balance', 

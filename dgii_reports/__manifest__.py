@@ -14,7 +14,7 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.3.0',
+    'version': '16.0.1.3.1',
     # any module necessary for this one to work correctly
     'depends': [
         'web',
@@ -27,6 +27,7 @@
     'data': [
         'data/invoice_service_type_detail_data.xml',
         'data/account_tax_data.xml',
+        'data/action_server.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
         'views/res_partner_views.xml',
