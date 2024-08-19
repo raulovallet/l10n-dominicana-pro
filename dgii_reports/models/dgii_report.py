@@ -1341,8 +1341,7 @@ class DgiiReport(models.Model):
         domain = [
             ('move_id.state', '=', 'posted'),
             ('date', '>=', self.start_date),
-            ('date', '<=', self.end_date),
-            ('balance', '>', 0)
+            ('date', '<=', self.end_date)
         ]
         domain += [('account_id.box_attachment_a', '=', box)] if 'A' in box else [('account_id.box_it1', '=', box)]
 

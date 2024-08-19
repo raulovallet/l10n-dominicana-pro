@@ -308,7 +308,7 @@ class AccountInvoice(models.Model):
     proportionality_tax = fields.Monetary(
         string="Proportionality Tax",
         compute='_compute_taxes_fields',
-        currency_field='company_currency_id'
+        currency_field='company_currency_id',
         store=True
     )
     cost_itbis = fields.Monetary(
