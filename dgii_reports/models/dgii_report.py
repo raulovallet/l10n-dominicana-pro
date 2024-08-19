@@ -1740,6 +1740,7 @@ class DgiiReport(models.Model):
         self._compute_609_data()
         self._compute_attachment_a_and_it1_data()
         self.state = 'generated'
+        self.message_post(body='Report generated again by {}'.format(self.env.user.name))
 
     def generate_report(self):
         reports_without_sent = self.env['dgii.reports'].search([
