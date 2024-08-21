@@ -67,8 +67,10 @@ class Partner(models.Model):
     @api.depends('vat', 'country_id', 'name')
     def _compute_sale_fiscal_type_id(self):
         for partner in self.sudo():
-            vat = partner.name if partner.name and isinstance(partner.name,
-                                                              str) and partner.name.isdigit() else partner.vat
+            vat = partner.name if partner.name and \
+                isinstance(partner.name, str) and \
+                partner.name.isdigit() else partner.vat
+
             is_dominican_partner = partner.country_id == self.env.ref('base.do')
 
             new_fiscal_type = self._determine_fiscal_type(partner, vat, is_dominican_partner)
@@ -77,19 +79,26 @@ class Partner(models.Model):
             partner.sudo().set_fiscal_position_from_fiscal_type(new_fiscal_type)
 
     def _determine_fiscal_type(self, partner, vat, is_dominican_partner):
+        not_digit_name = partner.name and isinstance(partner.name, str) and not partner.name.isdigit()
+
         if not is_dominican_partner:
             return self._get_fiscal_type_domain('B16')
 
-        if partner.parent_id:
+        elif partner.parent_id:
             return partner.parent_id.sale_fiscal_type_id
 
-        if vat and isinstance(vat, str) and not partner.sale_fiscal_type_id:
+        elif vat and \
+            isinstance(vat, str) and \
+            not partner.sale_fiscal_type_id and \
+            not_digit_name:
+            
             return self._determine_fiscal_type_by_vat(partner, vat)
 
-        if is_dominican_partner and not partner.sale_fiscal_type_id:
+        elif is_dominican_partner and not partner.sale_fiscal_type_id and not_digit_name:
             return self._get_fiscal_type_domain('B02')
 
-        return partner.sale_fiscal_type_id
+        else:
+            return partner.sale_fiscal_type_id
 
     def _determine_fiscal_type_by_vat(self, partner, vat):
         if vat.isdigit() and len(vat) == 9:
