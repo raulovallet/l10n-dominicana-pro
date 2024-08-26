@@ -20,8 +20,6 @@ class AccountMoveReversal(models.TransientModel):
         res = super(AccountMoveReversal, self).default_get(fields)
         context = dict(self._context or {})
         invoice_ids = self.env["account.move"].browse(context.get("active_ids"))
-        test = set(invoice_ids.mapped("is_l10n_do_fiscal_invoice"))
-        test = set(invoice_ids.mapped("move_type"))
         res.update({
             'is_fiscal_refund': set(invoice_ids.mapped("is_l10n_do_fiscal_invoice")) == {True},
             'is_vendor_refund': set(invoice_ids.mapped("move_type")) == {'in_invoice'}
@@ -199,6 +197,7 @@ class AccountMoveReversal(models.TransientModel):
         if self.is_fiscal_refund:
             res.update({
                 'ref': self.refund_ref,
+                'payment_reference': res['ref'],
                 'origin_out': move.ref,
                 'expense_type': move.expense_type,
                 'income_type': move.income_type,

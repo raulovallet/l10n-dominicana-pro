@@ -1,15 +1,6 @@
 from odoo import models, fields, api, _
-import logging
-import json
-import re
-_logger = logging.getLogger(__name__)
 
-try:
-    from stdnum.do import rnc, cedula
-except (ImportError, IOError) as err:
-    _logger.debug(str(err))
 
-    
 class Partner(models.Model):
     _inherit = "res.partner"
 

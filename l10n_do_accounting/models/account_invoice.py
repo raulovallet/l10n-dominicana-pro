@@ -626,11 +626,12 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).create(vals_list)
         
         fiscal_invoices = res.filtered(
-            lambda i: i.is_l10n_do_fiscal_invoice and not i.fiscal_type_id and i.is_invoice()
+            lambda i: i.is_l10n_do_fiscal_invoice and not \
+            i.fiscal_type_id and i.is_invoice()
         )
         for fiscal_invoice in fiscal_invoices:
             fiscal_invoice._onchange_partner_id()
-            fiscal_invoice.write({
+            fiscal_invoice.filtered(lambda i: i.move_type not in ['in_refund']).write({
                 'ref': '', 
                 'payment_reference': fiscal_invoice.ref
             })
