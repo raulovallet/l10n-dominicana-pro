@@ -37,6 +37,7 @@ class AccountFiscalSequence(models.Model):
         tracking=True,
     )
     expiration_date = fields.Date(
+        string="Expiration Date",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
@@ -58,6 +59,7 @@ class AccountFiscalSequence(models.Model):
         store=True,
     )
     sequence_start = fields.Integer(
+        string="Start",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
@@ -66,6 +68,7 @@ class AccountFiscalSequence(models.Model):
         copy=False,
     )
     sequence_end = fields.Integer(
+        string="End",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
@@ -78,7 +81,9 @@ class AccountFiscalSequence(models.Model):
         compute="_compute_sequence_remaining",
     )
     sequence_id = fields.Many2one(
-        "ir.sequence", string="Internal Sequence", copy=False,
+        comodel_name="ir.sequence", 
+        string="Internal Sequence", 
+        copy=False,
     )
     warning_gap = fields.Integer(compute="_compute_warning_gap",)
     remaining_percentage = fields.Float(
@@ -92,9 +97,11 @@ class AccountFiscalSequence(models.Model):
         help="Next number of this sequence",
         related="sequence_id.number_next_actual",
     )
-    next_fiscal_number = fields.Char(compute="_compute_next_fiscal_number",)
+    next_fiscal_number = fields.Char(
+        compute="_compute_next_fiscal_number",
+    )
     state = fields.Selection(
-        [
+        selection=[
             ("draft", "Draft"),
             ("queue", "Queue"),
             ("active", "Active"),
@@ -106,11 +113,14 @@ class AccountFiscalSequence(models.Model):
         tracking=True,
         copy=False,
     )
-    can_be_queue = fields.Boolean(compute="_compute_can_be_queue",)
+    can_be_queue = fields.Boolean(
+        compute="_compute_can_be_queue",
+    )
     company_id = fields.Many2one(
-        "res.company",
-        default=lambda self: self.env.user.company_id,
+        comodel_name="res.company",
+        default=lambda self: self.env.company,
         readonly=True,
+        required=True,
         states={"draft": [("readonly", False)]},
         tracking=True,
     )

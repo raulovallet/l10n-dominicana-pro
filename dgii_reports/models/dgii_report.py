@@ -628,7 +628,7 @@ class DgiiReport(models.Model):
 
     def _convert_to_user_currency(self, base_currency, amount, date):
         context = dict(self._context or {})
-        user_currency_id = self.env.user.company_id.currency_id
+        user_currency_id = self.env.company.currency_id
         base_currency_id = base_currency
         ctx = context.copy()
         return base_currency_id.with_context(ctx)._convert(
