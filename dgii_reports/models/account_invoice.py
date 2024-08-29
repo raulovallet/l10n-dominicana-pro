@@ -215,49 +215,46 @@ class AccountInvoice(models.Model):
         """Compute Vendor Bills payment method string
 
         Keyword / Values:
-        cash        -- Efectivo
-        bank        -- Cheques / Transferencias / Depósitos
-        card        -- Tarjeta Crédito / Débito
-        credit      -- Compra a Crédito
-        swap        -- Permuta
-        credit_note -- Notas de Crédito
-        mixed       -- Mixto
+        cash        -- Efectivo code 01
+        bank        -- Cheques / Transferencias / Depósitos code 02
+        card        -- Tarjeta Crédito / Débito code 03
+        credit      -- Compra a Crédito code 04
+        swap        -- Permuta code 05
+        credit_note -- Notas de Crédito code 06
+        mixed       -- Mixto code 07
         """
-        payments = []
-        p_string = ""
+        payment_code = "mixed"
+        payments_widget = self._get_invoice_payment_widget()
+        
+        if len(payments_widget) > 1:
+            return payment_code
 
-        for payment in self._get_invoice_payment_widget():
-            payment_id = self.env['account.payment'].browse(
-                payment.get('account_payment_id'))
-            move_id = False
-            if payment_id:
-                if payment_id.journal_id.type in ['cash', 'bank']:
-                    p_string = payment_id.journal_id.payment_form
+        for payment in payments_widget:
+            payment_id = self.env['account.payment'].browse(payment.get('account_payment_id', False))
+            move_id = self.env['account.move'].browse(payment.get('move_id', False))
+            
+            if payment_id and payment_id.journal_id.type in ['cash', 'bank']:
+                payment_code = payment_id.journal_id.payment_form
+            
+            # If payment is account move assume it is a credit note
+            if move_id:
+                payment_code = "credit_note"
 
-            if not payment_id:
-                move_id = self.env['account.move'].browse(
-                    payment.get('move_id'))
-                if move_id:
-                    p_string = 'swap'
-
-            # If invoice is paid, but the payment doesn't come from
-            # a journal, assume it is a credit note
-            payment = p_string if payment_id or move_id else 'credit_note'
-            payments.append(payment)
-
-        methods = {p for p in payments}
-        if len(methods) == 1:
-            return list(methods)[0]
-        elif len(methods) > 1:
-            return 'mixed'
+        return payment_code
 
     @api.depends('payment_state')
     def _compute_in_invoice_payment_form(self):
         for inv in self:
             if inv.payment_state in ('paid', 'in_payment'):
-                payment_dict = {'cash': '01', 'bank': '02', 'card': '03',
-                                'credit': '04', 'swap': '05',
-                                'credit_note': '06', 'mixed': '07'}
+                payment_dict = {
+                    'cash': '01', 
+                    'bank': '02', 
+                    'card': '03',
+                    'credit': '04', 
+                    'swap': '05',
+                    'credit_note': '06', 
+                    'mixed': '07'
+                }
                 inv.payment_form = payment_dict.get(inv._get_payment_string())
             else:
                 inv.payment_form = '04'

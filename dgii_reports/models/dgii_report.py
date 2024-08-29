@@ -673,7 +673,7 @@ class DgiiReport(models.Model):
                 invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
         else:
             for payment in invoice_id._get_invoice_payment_widget():
-                payments_dict['swap'] += self._convert_to_user_currency(
+                payments_dict['others'] += self._convert_to_user_currency(
                     invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
 
             payments_dict['credit'] += self._convert_to_user_currency(
