@@ -9,7 +9,7 @@
     "license": "LGPL-3",
     "website": "https://github.com/odoo-dominicana",
     "category": "Localization",
-    "version": "16.0.2.1.5",
+    "version": "16.0.2.1.6",
     # any module necessary for this one to work correctly
     "depends": [
         "base",
@@ -25,6 +25,7 @@
         # "data/report_layout_data.xml",
         # "data/mail_template_data.xml",
 
+        "security/ir_rule.xml",
         "security/ir.model.access.csv",
         "security/res_groups.xml",
 
