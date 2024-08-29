@@ -265,7 +265,7 @@ class AccountFiscalSequence(models.Model):
                 rec.state = "expired"
             else:
                 # Creates a new sequence of this Fiscal Sequence
-                sequence_id = self.env["ir.sequence"].create(
+                sequence_id = self.env["ir.sequence"].sudo().create(
                     {
                         "name": _("%s %s Sequence")
                         % (rec.fiscal_type_id.name, rec.name[-9:]),
@@ -304,7 +304,9 @@ class AccountFiscalSequence(models.Model):
             if rec.sequence_id:
                 # *-*-*-*-*- Remove this comment *-*-*-*-*-*
                 # Preserve internal sequence just for audit purpose.
-                rec.sequence_id.active = False
+                rec.sequence_id.sudo().write({
+                    "active": False,
+                })
 
     def action_queue(self):
         for rec in self:
