@@ -1,0 +1,8 @@
+<odoo>
+    <record id="ir_rule_company_filter" model="ir.rule">
+        <field name="name">Company Filter for Account Fiscal Sequence</field>
+        <field name="model_id" ref="model_account_fiscal_sequence"/>
+        <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>
