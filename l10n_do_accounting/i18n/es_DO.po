@@ -6,14 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-20 22:32+0000\n"
-"PO-Revision-Date: 2024-02-20 22:32+0000\n"
+"POT-Creation-Date: 2024-09-04 19:35+0000\n"
+"PO-Revision-Date: 2024-09-04 15:40-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -265,22 +267,22 @@ msgstr "11 - Gastos de Seguro"
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_validate_wizard_form
 msgid ""
-"<span class=\"fa fa-warning fa-lg\" title=\"Warning\" aria-label=\"Warning\"/>\n"
+"<span class=\"fa fa-warning fa-lg\" title=\"Warning\" aria-"
+"label=\"Warning\"/>\n"
 "                    <br/>"
 msgstr ""
-"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-label=\"Warning\"/>\n"
+"<span class=\"fa fa-warning fa-lg\" title=\"Advertencia\" aria-"
+"label=\"Warning\"/>\n"
 "                    <br/>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.view_move_form_inherit
 msgid ""
-"<span class=\"o_form_label\" attrs=\"{'invisible': "
-"['|',('state','=','draft'), ('is_debit_note','=',False)]}\">Debit "
-"Note</span>"
+"<span class=\"o_form_label\" attrs=\"{'invisible': ['|',"
+"('state','=','draft'), ('is_debit_note','=',False)]}\">Debit Note</span>"
 msgstr ""
-"<span class=\"o_form_label\" attrs=\"{'invisible': "
-"['|',('state','=','draft'), ('is_debit_note','=',False)]}\">Nota de "
-"débito</span>"
+"<span class=\"o_form_label\" attrs=\"{'invisible': ['|',"
+"('state','=','draft'), ('is_debit_note','=',False)]}\">Nota de débito</span>"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
@@ -349,7 +351,7 @@ msgstr "Tipo de Cuenta Fiscal"
 #. module: l10n_do_accounting
 #: model:ir.model,name:l10n_do_accounting.model_account_move_reversal
 msgid "Account Move Reversal"
-msgstr "Revocación de movimiento en cuenta"
+msgstr "Reversión de movimiento de cuenta"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__message_needaction
@@ -528,8 +530,8 @@ msgid ""
 "this invoice."
 msgstr ""
 "No se puede crear una nota de crédito para la factura que ya está "
-"conciliada, primero se debe anular la conciliación de la factura, luego solo"
-" usted puede agregar una nota de crédito para esta factura."
+"conciliada, primero se debe anular la conciliación de la factura, luego "
+"solo usted puede agregar una nota de crédito para esta factura."
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -683,6 +685,11 @@ msgstr "Borrador"
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 msgid "Eg : 8001695033"
 msgstr "Ej. 8001695033"
+
+#. module: l10n_do_accounting
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__sequence_end
+msgid "End"
+msgstr "Fin de secuencia"
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -858,7 +865,6 @@ msgstr "Si está marcado, los nuevos mensajes requieren su atención."
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,help:l10n_do_accounting.field_account_fiscal_sequence__message_has_error
-#: model:ir.model.fields,help:l10n_do_accounting.field_account_fiscal_sequence__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Si está marcada, algunos mensajes tienen un error de entrega."
 
@@ -1001,6 +1007,11 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: l10n_do_accounting
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Próximo evento del calendario de actividades"
+
+#. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Fecha límite de la próxima actividad"
@@ -1053,7 +1064,8 @@ msgid ""
 "Note that the easiest way to create a debit note is to do it directly\n"
 "            from the customer invoice."
 msgstr ""
-"Tenga en cuenta que la forma más fácil de crear una nota de débito es hacerlo directamente\n"
+"Tenga en cuenta que la forma más fácil de crear una nota de débito es "
+"hacerlo directamente\n"
 "             de la factura del cliente."
 
 #. module: l10n_do_accounting
@@ -1165,11 +1177,6 @@ msgid "Responsible User"
 msgstr "Usuario responsable"
 
 #. module: l10n_do_accounting
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Error de entrega de SMS"
-
-#. module: l10n_do_accounting
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_fiscal_type__journal_type__sale
 #: model:ir.model.fields.selection,name:l10n_do_accounting.selection__account_fiscal_type__type__out_invoice
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_search
@@ -1206,16 +1213,6 @@ msgid "Sequence"
 msgstr "Secuencia"
 
 #. module: l10n_do_accounting
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__sequence_end
-msgid "Sequence End"
-msgstr "Fin de secuencia"
-
-#. module: l10n_do_accounting
-#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__sequence_start
-msgid "Sequence Start"
-msgstr "Inicio de secuencia"
-
-#. module: l10n_do_accounting
 #. odoo-python
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
@@ -1230,6 +1227,11 @@ msgid "Service sales to oversas customer must have Consumo Fiscal Type"
 msgstr ""
 "Las ventas de servicios a clientes en el extranjero deben tener Tipo de "
 "Consumo Fiscal"
+
+#. module: l10n_do_accounting
+#: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__sequence_start
+msgid "Start"
+msgstr "Inicio de secuencia"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__state
@@ -1271,6 +1273,13 @@ msgstr "Intercambio"
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.report_invoice_document_inherit
 msgid "Tax ID"
 msgstr "RNC"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/account_invoice.py:0
+#, python-format
+msgid "The NCF number {} is already in use for this {}."
+msgstr "El número de NCF {} ya está en uso para este {}."
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -1456,7 +1465,7 @@ msgstr "No puede cancelar varias facturas fiscales a la vez."
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "You cannot delete a fiscal invoice that has been validated."
-msgstr ""
+msgstr "No se puede borrar una factura fiscal que haya sido validada."
 
 #. module: l10n_do_accounting
 #. odoo-python
@@ -1486,6 +1495,13 @@ msgid "[FISCAL] Expire sequences"
 msgstr "[FISCAL] Caducar secuencias"
 
 #. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/account_invoice.py:0
+#, python-format
+msgid "customer"
+msgstr "cliente"
+
+#. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.fiscal_info
 msgid "e-NCF:"
 msgstr ""
@@ -1506,8 +1522,15 @@ msgstr "ej. NNNNNNNNNN"
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
-"if the invoice amount is greater than RD$250,000.00 the customer should have"
-" RNC or Cédfor make invoice"
+"if the invoice amount is greater than RD$250,000.00 the customer should "
+"have RNC or Cédfor make invoice"
 msgstr ""
 "Si el monto de la factura es mayor a RD$250,000.00 el cliente debe indicar "
 "un RNC o Cédula"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/account_invoice.py:0
+#, python-format
+msgid "vendor"
+msgstr "vendedor"

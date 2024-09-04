@@ -395,6 +395,26 @@ class AccountInvoice(models.Model):
         for inv in self:
 
             if inv.is_l10n_do_fiscal_invoice and inv.is_invoice():
+                fiscal_partner_ids = [inv.partner_id.id] + \
+                    inv.partner_id.child_ids.ids + \
+                    [inv.partner_id.parent_id.id if inv.partner_id.parent_id else 0]
+
+                repeated_ncf = self.env["account.move"].search_count([
+                    ("ref", "=", inv.ref), 
+                    ('id', '!=', inv.id),
+                    ('partner_id', 'in', fiscal_partner_ids),
+                    ('state', '=', 'posted'),
+                    ('is_l10n_do_fiscal_invoice', '=', True),
+                    ('move_type', '=', inv.move_type),
+                    ('company_id', '=', inv.company_id.id)
+                ])
+
+                if repeated_ncf > 0:
+                    raise UserError(
+                        _("The NCF number {} is already in use for this {}.").format(
+                            inv.ref, _('customer') if inv.move_type in ('out_invoice', 'out_refund') else _('vendor'))
+                    )
+
                 if inv.amount_total == 0:
                     raise UserError(
                         _(
@@ -417,6 +437,7 @@ class AccountInvoice(models.Model):
                     raise ValidationError(_("There is not active Fiscal Sequence for this type of document."))
 
                 if inv.move_type == "out_invoice":
+                    
                     if not inv.partner_id.sale_fiscal_type_id:
                         inv.partner_id.sale_fiscal_type_id = inv.fiscal_type_id
 
@@ -424,6 +445,7 @@ class AccountInvoice(models.Model):
 
                     if not inv.partner_id.purchase_fiscal_type_id:
                         inv.partner_id.purchase_fiscal_type_id = inv.fiscal_type_id
+                    
                     if not inv.partner_id.expense_type:
                         inv.partner_id.expense_type = inv.expense_type
 
@@ -462,10 +484,7 @@ class AccountInvoice(models.Model):
                     )
 
                     origin_invoice = self.env['account.move'].search([
-                        '|', '|',
-                        ('partner_id', '=', inv.partner_id.id),
-                        ('partner_id', '=', inv.partner_id.parent_id.id),
-                        ('partner_id', 'in', inv.partner_id.child_ids.ids),
+                        ('partner_id', 'in', fiscal_partner_ids),
                         ('ref', '=', inv.origin_out), 
                         ('state', '=', 'posted'),
                         ('is_l10n_do_fiscal_invoice', '=', True),
