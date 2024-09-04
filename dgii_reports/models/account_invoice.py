@@ -56,15 +56,6 @@ class AccountInvoice(models.Model):
             if len(line) != len(set(line)):
                 raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))
 
-    def _convert_to_local_currency(self, amount):
-        sign = -1 if self.move_type in ['in_refund', 'out_refund'] else 1
-        if self.currency_id != self.company_id.currency_id:
-            currency_id = self.currency_id.with_context(date=self.invoice_date)
-            round_curr = currency_id.round
-            amount = round_curr(currency_id._convert(amount, self.company_id.currency_id, self.company_id, self.invoice_date))
-
-        return amount * sign
-
     def _get_tax_line_ids(self):
         return self.line_ids.filtered(lambda l: l.tax_line_id)
 
@@ -154,7 +145,8 @@ class AccountInvoice(models.Model):
         'invoice_date',
         'invoice_line_ids', 
         'invoice_line_ids.product_id',
-        'invoice_line_ids.price_subtotal'
+        'invoice_line_ids.price_subtotal',
+        'invoice_line_ids.balance'
     )
     def _compute_amount_fields(self):
         
@@ -167,16 +159,16 @@ class AccountInvoice(models.Model):
             if inv.state != 'draft' and inv.invoice_date:
                 for line in inv.invoice_line_ids:
                     if not line.product_id:
-                        service_amount += line.price_subtotal
+                        service_amount += abs(line.balance)
                     
                     elif line.product_id.type in ['product', 'consu']:
-                        good_amount += line.price_subtotal
+                        good_amount += abs(line.balance)
                     
                     else:
-                        service_amount += line.price_subtotal
+                        service_amount += abs(line.balance)
                 
-                service_amount = inv._convert_to_local_currency(service_amount)
-                good_amount = inv._convert_to_local_currency(good_amount)
+                service_amount = service_amount
+                good_amount = good_amount
 
             inv.service_total_amount = service_amount
             inv.good_total_amount = good_amount
