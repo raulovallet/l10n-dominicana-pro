@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//OrderWidget" position="before">
+            <t t-if="env.services.pos.config.l10n_do_fiscal_journal">
+                <div class="pos-receipt-fiscal-type-name" t-if="props.data.ncf">
+                    <t t-esc="props.data.fiscal_type.name"/>
+                </div>
+                <div class="pos-receipt-titles">
+                    <span>
+                        DESCRIPTION
+                    </span>
+                    <span class="pos-receipt-right-align">
+                        Value
+                    </span>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[@class='pos-receipt-right-align' and text()='--------']" position="replace">
+            <div t-if="!env.services.pos.config.l10n_do_fiscal_journal" class="pos-receipt-right-align">--------</div>
+            <div t-if="env.services.pos.config.l10n_do_fiscal_journal" class="pos-receipt-fiscal-type-name"></div>
+        </xpath>
+    </t>
+</templates>

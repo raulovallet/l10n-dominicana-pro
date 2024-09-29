@@ -14,10 +14,12 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '16.0.1.2.3',
+    'version': '17.0.0.3', #'16.0.1.2.3',
+
     # any module necessary for this one to work correctly
     'depends': [
         'web',
+        'stock',
         'account',
         'l10n_do',
         'l10n_do_accounting'
@@ -25,8 +27,8 @@
 
     # always loaded
     'data': [
-        'data/invoice_service_type_detail_data.xml',
-        'data/account_tax_data.xml',
+        #'data/invoice_service_type_detail_data.xml',
+        #'data/account_tax_data.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
         'views/res_partner_views.xml',
@@ -39,11 +41,11 @@
 
     'assets':{
         'web.assets_backend': [
-            '/dgii_reports/static/src/scss/dgii_reports.scss',
-            '/dgii_reports/static/src/js/widget.js'
+            'dgii_reports/static/src/scss/dgii_reports.scss',
+            'dgii_reports/static/src/js/widget.js',
+            'dgii_reports/static/src/js/owl_DgiiRport.xml'
         ]
     },
 
-    'post_init_hook': 'update_taxes'
-
+    'post_init_hook': 'post_init',
 }

@@ -14,16 +14,22 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@id='company']" position="attributes">
-                <attribute name='attrs'>{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '=', %(base.do)s), ('is_company', '=', False)]}</attribute>
+                <attribute name='required'>type == 'contact'</attribute>
+                <attribute name='invisible'>country_id == %(base.do)s or not is_company</attribute>
             </xpath>
 
             <xpath expr="//field[@id='individual']" position="attributes">
-                <attribute name='attrs'>{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '=', %(base.do)s), ('is_company', '=', True)]}</attribute>
+                <attribute name='required'>type == 'contact'</attribute>
+                <attribute name='invisible'>country_id == %(base.do)s or is_company</attribute>
             </xpath>
 
             <xpath expr="//field[@id='individual']" position="after">
-                <field id="company" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc or RNC e.g. NNNNNNNNN" attrs="{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', False)]}"/>
-                <field id="individual" class="text-break" name="name" default_focus="1" placeholder="e.g. Brandom Freeman or Cedula e.g. NNNNNNNNNNN" attrs="{'required' : [('type', '=', 'contact')], 'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', True)]}"/>
+                <field id="company" class="text-break" name="name" default_focus="1"
+                       placeholder="e.g. Lumber Inc or RNC e.g. NNNNNNNNN"
+                       required="type == 'contact'" invisible="country_id != %(base.do)s or not is_company"/>
+                <field id="individual" class="text-break" name="name" default_focus="1"
+                       placeholder="e.g. Brandom Freeman or Cedula e.g. NNNNNNNNNNN"
+                       required="type == 'contact'" invisible="country_id != %(base.do)s or is_company"/>
             </xpath>
 
         </field>

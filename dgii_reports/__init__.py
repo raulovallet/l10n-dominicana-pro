@@ -7,27 +7,14 @@ from . import models
 from . import wizard
 
 
-from odoo import api, SUPERUSER_ID
-
-def update_taxes(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
-    tax_template_ids = env['ir.model.data'].search([
-        ('model', '=', 'account.tax.template'),
-        ('module', '=', 'l10n_do'),
-    ])
-    for tax_template_id in tax_template_ids:
-        tax_ids = env['ir.model.data'].search([
-            ('model', '=', 'account.tax'),
-            ('module', '=', 'l10n_do'),
-            ('name', 'like', '%_' + tax_template_id.name), 
-        ])
-        
-        taxes = env['account.tax'].browse(tax_ids.mapped('res_id')) if tax_ids else False
-        
-        if taxes:
-            tax_template_obj = env['account.tax.template'].browse(tax_template_id.res_id)
-            taxes.write({
-                'l10n_do_tax_type': tax_template_obj.l10n_do_tax_type,
-                'isr_retention_type': tax_template_obj.isr_retention_type,
-                'tax_group_id': tax_template_obj.tax_group_id.id
-            })
+def post_init(env):
+    companies = env['res.company'].search([('chart_template', '=', 'do')])
+    for company in companies:
+        Template = env['account.chart.template'].with_company(company)
+        print(Template)
+        for xml_id, tax_data in Template._get_do_info_account_tax().items():
+            tax = Template.ref(xml_id, raise_if_not_found=False)
+            print(tax)
+            if tax and 'l10n_do_tax_type' in tax_data:
+                tax.l10n_do_tax_type = tax_data['l10n_do_tax_type']
+                tax.isr_retention_type = tax_data['isr_retention_type']

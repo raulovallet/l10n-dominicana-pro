@@ -9,7 +9,7 @@
             <xpath expr="//field[@name='company_type']" position="after">
                 <br/><field name="related" widget="radio" class="oe_edit_only"
                             options="{'horizontal': true}"
-                            attrs="{'invisible': [('country_id', '=', %(base.do)d)]}"/>
+                            invisible="country_id == %(base.do)d"/>
             </xpath>
         </field>
     </record>

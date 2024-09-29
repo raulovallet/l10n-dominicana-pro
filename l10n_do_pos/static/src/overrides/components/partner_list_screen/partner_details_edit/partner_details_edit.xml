@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="PartnerDetailsEdit" t-inherit="point_of_sale.PartnerDetailsEdit" t-inherit-mode="extension" owl="1">
+        <xpath expr="//input[hasclass('partner-name')]" position="replace">
+            <input class="detail partner-name" name="name" t-model="changes.name" placeholder="Name or RNC / Cedula" t-on-change="captureChange" t-if="this.pos.config.l10n_do_fiscal_journal"/>
+            <input class="detail partner-name" name="name" t-model="changes.name" placeholder="Name" t-on-change="captureChange" t-if="!this.pos.config.l10n_do_fiscal_journal"/>
+        </xpath>
+        <xpath expr="//label[contains(text(), 'Tax ID')]" position="replace">
+            <span class="label" t-if="!this.pos.config.l10n_do_fiscal_journal">Tax ID</span>
+            <span class="label" t-if="this.pos.config.l10n_do_fiscal_journal">RNC / Cedula</span>
+        </xpath>
+    </t>
+</templates>

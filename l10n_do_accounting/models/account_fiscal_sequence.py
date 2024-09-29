@@ -32,14 +32,10 @@ class AccountFiscalSequence(models.Model):
     name = fields.Char(
         string="Authorization number",
         required=True,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     expiration_date = fields.Date(
         required=True,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=datetime.strptime(
             str(int(str(fields.Date.today())[0:4]) + 1) + "-12-31", "%Y-%m-%d"
@@ -49,8 +45,6 @@ class AccountFiscalSequence(models.Model):
         string='Fiscal type',
         comodel_name="account.fiscal.type",
         required=True,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     type = fields.Selection(
@@ -59,16 +53,12 @@ class AccountFiscalSequence(models.Model):
     )
     sequence_start = fields.Integer(
         required=True,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
     )
     sequence_end = fields.Integer(
         required=True,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
@@ -109,9 +99,7 @@ class AccountFiscalSequence(models.Model):
     can_be_queue = fields.Boolean(compute="_compute_can_be_queue",)
     company_id = fields.Many2one(
         "res.company",
-        default=lambda self: self.env.user.company_id,
-        readonly=True,
-        states={"draft": [("readonly", False)]},
+        default=lambda self: self.env.company,
         tracking=True,
     )
 
@@ -452,7 +440,7 @@ class AccountFiscalType(models.Model):
         
         fiscal_type = self
         message = ''
-        
+
         if not self:
             fiscal_type = self.search([
                 ('prefix', '=', fiscal_number[0:3]), 
@@ -468,7 +456,6 @@ class AccountFiscalType(models.Model):
             )
 
         origin_out_padding = len(fiscal_number) - len(fiscal_type.prefix) if fiscal_type.prefix else len(fiscal_number)
-        
 
         if origin_out_padding != fiscal_type.padding:
             raise ValidationError(
@@ -480,8 +467,10 @@ class AccountFiscalType(models.Model):
             raise ValidationError(
                 _('After the document type, all characters must be digits from 0 to 9.')
             )
-        
+
         if fiscal_type.prefix and fiscal_number[0:3] != fiscal_type.prefix:
             raise ValidationError(
                 _('The document type (%s) must start with (%s)') % (fiscal_type.name, fiscal_type.prefix)
             )
+
+        

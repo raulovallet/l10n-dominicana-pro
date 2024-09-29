@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ReceiptHeader" t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
+            <t t-set="ReceiptOrder" t-value="env.services.pos.get_order()"></t>
+            <t t-set="ReceiptOrderPartner" t-value="env.services.pos.get_order().get_partner()"></t>
+            <t t-if="env.services.pos.config.l10n_do_fiscal_journal">
+                <div class="pos-receipt-font-75" t-if="ReceiptOrder.get_partner()">
+                    <br/>
+                    <div>
+                        Customer: <t t-esc="ReceiptOrderPartner.name"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.vat">
+                        RNC / Cedula: <t t-esc="ReceiptOrderPartner.vat"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.street">
+                        <t t-esc="ReceiptOrderPartner.street"/><t t-if="ReceiptOrderPartner.street2" t-esc="', ' + ReceiptOrderPartner.street2"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.city">
+                        <t t-esc="ReceiptOrderPartner.city"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.state_id">
+                        <t t-esc="ReceiptOrderPartner.state_id[1]"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.zip">
+                        <t t-esc="ReceiptOrderPartner.zip"/>
+                    </div>
+                    <div t-if="ReceiptOrderPartner.country_id and ReceiptOrderPartner.street">
+                        <t t-esc="ReceiptOrderPartner.country_id[1]"/>
+                    </div>
+                </div>
+                <div t-if="ReceiptOrder.ncf">
+                    <br/>
+                    <div class="pos-receipt-contact">
+                        Autorized by DGII
+                    </div>
+                    <br/>
+                    <div class="pos-receipt-font-75">
+                        <div>
+                            <t t-if="props.data.date">
+                                <div>
+                                    <t t-esc="props.data.date" />
+                                </div>
+                            </t>
+                        </div>
+                        <div>
+                            NCF: <t t-esc="ReceiptOrder.ncf"/>
+                        </div>
+                        <div>
+                            Expiration date NCF: <t t-esc="ReceiptOrder.ncf_expiration_date"/>
+                        </div>
+                        <div t-if="ReceiptOrder.ncf_origin_out">
+                            Affect: <t t-esc="ReceiptOrder.nfc_origin_out"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+
+
+    </t>
+</templates>

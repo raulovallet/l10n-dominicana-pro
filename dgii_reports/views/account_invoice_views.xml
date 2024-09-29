@@ -8,17 +8,20 @@
         <field name="arch" type="xml">
 
             <xpath expr="//group[@id='header_right_group']" position="after">
-                <group attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund'])]}">
+                <group invisible="move_type not in ['in_invoice', 'in_refund']">
                     <field name="is_exterior" invisible="1"/>
-                    <field name="service_type" attrs="{'invisible': [('is_exterior', '=', False)], 'required': [('is_exterior', '=', True)]}"/>
-                    <field name="service_type_detail" options="{'no_create': True, 'no_open': True}" attrs="{'invisible': [('is_exterior', '=', False)], 'readonly': [('service_type', '=', False)], 'required': [('service_type', '!=', False)]}"/>
+                    <field name="service_type" invisible="not is_exterior" required="is_exterior"/>
+                    <field name="service_type_detail" options="{'no_create': True, 'no_open': True}"
+                           invisible="not is_exterior"
+                           readonly="not service_type"
+                           required="service_type"/>
                 </group>
                 
             </xpath>
 
             <xpath expr="//page[@name='other_info']" position="after">
                 <page name="dgii_fields" string="DGII" groups="account.group_account_user">
-                    <group attrs="{'invisible': [('move_type', 'not in', ['out_invoice', 'out_refund'])]}">
+                    <group invisible="move_type not in ['out_invoice', 'out_refund']">
                         <group string="Withholding" groups="account.group_account_manager">
                             <field name="payment_date"/>
                             <field name="withholding_itbis"/>
@@ -31,11 +34,11 @@
                             <field name="legal_tip"/>
                         </group>
                         <group string="607">
-                            <field name="fiscal_status" widget="state_selection" readonly="1"/>
+                            <field name="fiscal_status" widget="state_selection" readonly="0" options="{'hide_label': False}"/>
                         </group>
                     </group>
-                    
-                    <group attrs="{'invisible': [('move_type', 'not in', ['in_invoice', 'in_refund'])]}">
+
+                    <group invisible="move_type not in ['in_invoice', 'in_refund']">
                         <group string="Taxes" groups="account.group_account_manager">
                             <field name="invoiced_itbis"/>
                             <field name="proportionality_tax"/>
@@ -57,7 +60,7 @@
                             <field name="income_withholding"/>
                         </group>
                         <group string="606">
-                            <field name="fiscal_status" widget="state_selection"/>
+                            <field name="fiscal_status" widget="state_selection" readonly="0" options="{'hide_label': False}"/>
                         </group>
                     </group>
                 </page>
@@ -72,7 +75,7 @@
         <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="after">
-                <field name="fiscal_status" widget="state_selection" readonly="1" groups="account.group_account_user"/>
+                <field name="fiscal_status" widget="state_selection" readonly="1" options="{'hide_label': False}" />
             </xpath>
         </field>
     </record>

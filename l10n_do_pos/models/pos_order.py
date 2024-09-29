@@ -123,18 +123,18 @@ class PosOrder(models.Model):
     @api.model
     def create_from_ui(self, orders, draft=False):
         order_ids = super(PosOrder, self).create_from_ui(orders, draft)
-        
+
         for order in self.sudo().browse([o['id'] for o in order_ids]):
-            
+
             if order.config_id.invoice_journal_id.l10n_do_fiscal_journal \
                     and order.state != 'invoiced' \
                     and order.amount_total != 0 \
                     and order.ncf:
-                
+
                 if not order.partner_id:
                     if not order.config_id.pos_partner_id:
                         raise UserError(_('This point of sale not have default customer, please set default customer in config POS'))
-                    
+
                     order.write({
                         'partner_id': order.config_id.pos_partner_id.id
                     })
@@ -145,11 +145,11 @@ class PosOrder(models.Model):
 
 
     def get_next_fiscal_sequence(
-            self, 
+            self,
             fiscal_type_id,
-            company_id, 
+            company_id,
             payments
-        ):
+    ):
         """
         search active fiscal sequence dependent with fiscal type
         :param order:[fiscal_type_id, company_id, mode, lines,]
@@ -185,8 +185,7 @@ class PosOrder(models.Model):
                 _(u"There is no current active NCF of {}, please create a new fiscal sequence of type {}.").format(
                     fiscal_type.name,
                     fiscal_type.name,
-            ))
-
+                ))
         return {
             'ncf': fiscal_sequence.get_fiscal_number(),
             'fiscal_sequence_id': fiscal_sequence.id,
@@ -245,17 +244,14 @@ class PosOrder(models.Model):
 
     @api.model
     def search_paid_order_ids(self, config_id, domain, limit, offset):
-        """Search for 'paid' orders that satisfy the given domain, limit and offset."""
-        
-        if self.env['pos.config'].browse(config_id).invoice_journal_id.l10n_do_fiscal_journal:
+        pos_config = self.env['pos.config'].browse(config_id)
+        # reescribiendo la logica para la versión 17.0
+        if pos_config.invoice_journal_id.l10n_do_fiscal_journal:
             config_ids = self.env['pos.config'].search([
                 ('invoice_journal_id.l10n_do_fiscal_journal', '=', True),
             ]).ids
 
-            default_domain = ['&', '&', ('config_id', '=', config_ids), ('ncf', 'not like', '%B04%'), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
-            real_domain = AND([domain, default_domain])
-            ids = self.search(AND([domain, default_domain]), limit=limit, offset=offset).ids
-            totalCount = self.search_count(real_domain)
-            return {'ids': ids, 'totalCount': totalCount}
+            domain += ['&', ('config_id', 'in', config_ids), ('ncf', 'not like', '%B04%')]
 
-        return super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
+        result = super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
+        return result

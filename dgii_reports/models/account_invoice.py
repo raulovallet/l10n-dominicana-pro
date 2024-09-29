@@ -23,7 +23,6 @@ class InvoiceServiceTypeDetail(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.move'
 
-
     def _get_invoice_payment_widget(self):                    
         return self.invoice_payments_widget.get('content', []) if self.invoice_payments_widget else []
 
@@ -385,16 +384,11 @@ class AccountInvoice(models.Model):
         string='Service type detail',
         comodel_name='invoice.service.type.detail',
     )
-    fiscal_status = fields.Selection(
-        selection=[
-            ('normal', 'Partial'), 
-            ('done', 'Reported'), 
-            ('blocked', 'Not Sent')
-        ],
+    fiscal_status = fields.Selection([('normal', 'Partial'), ('done', 'Reported'), ('blocked', 'Not Sent')],
         copy=False,
-        help="* The \'Green\' status means the invoice was sent to the DGII.\n"
-        "* The \'Red\' status means the invoice is in a DGII report but has not yet been sent to the DGII.\n"
-        "* The \'Grey\' status means Has not yet been reported or was partially reported.",
+        help="* The 'Partial' status means the invoice was sent to the DGII.\n"
+             "* The 'Reported' status means the invoice is in a DGII report but has not yet been sent to the DGII.\n"
+             "* The 'Not Sent' status means has not yet been reported or was partially reported.",
         default='normal'
     )
 

@@ -405,7 +405,7 @@ class AccountInvoice(models.Model):
 
                 if inv.fiscal_type_id and not inv.fiscal_type_id.assigned_sequence:
                     inv.fiscal_type_id.check_format_fiscal_number(inv.ref)
-                        
+
                 # Because a Fiscal Sequence can be depleted while an invoice
                 # is waiting to be validated, compute fiscal_sequence_id again
                 # on invoice validate.
@@ -441,9 +441,9 @@ class AccountInvoice(models.Model):
 
                 elif inv.move_type in ("out_invoice", "out_refund"):
                     if (
-                        inv.amount_untaxed_signed >= 250000
-                        and inv.fiscal_type_id.prefix != "B12"
-                        and not inv.partner_id.vat
+                            inv.amount_untaxed_signed >= 250000
+                            and inv.fiscal_type_id.prefix != "B12"
+                            and not inv.partner_id.vat
                     ):
                         raise UserError(
                             _(
@@ -453,35 +453,36 @@ class AccountInvoice(models.Model):
                                 u"for make invoice"
                             )
                         )
-                
+
                 # Check refund stuff
                 if inv.origin_out and inv.move_type in ('out_refund', 'in_refund'):
                     self.env['account.fiscal.type'].check_format_fiscal_number(
                         inv.origin_out,
-                        'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'  
+                        'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'
                     )
 
                     origin_invoice = self.env['account.move'].search([
-                        ('ref', '=', inv.origin_out), 
+                        ('ref', '=', inv.origin_out),
                         ('partner_id', '=', inv.partner_id.id),
                         ('state', '=', 'posted'),
                         ('is_l10n_do_fiscal_invoice', '=', True),
                         ('move_type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice')
                     ], limit=1)
-                    
+
                     if not origin_invoice:
                         raise UserError(_(
-                                'The invoice ({}) to which the credit note refers does not exist in the system or is not under the name of {}'
-                            ).format(inv.origin_out, inv.partner_id.name)
-                        )
-                    
+                            'The invoice ({}) to which the credit note refers does not exist in the system or is not under the name of {}'
+                        ).format(inv.origin_out, inv.partner_id.name)
+                                        )
+
                     delta_time = inv.invoice_date - origin_invoice.invoice_date
 
-                    if delta_time.days > 30 and inv.line_ids.filtered(lambda l: l.tax_line_id and 'itbis' in l.tax_line_id.name.lower()):
+                    if delta_time.days > 30 and inv.line_ids.filtered(
+                            lambda l: l.tax_line_id and 'itbis' in l.tax_line_id.name.lower()):
                         raise UserError(_(
-                                'The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed.'
-                            ).format(inv.origin_out, delta_time.days)
-                        )
+                            'The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed.'
+                        ).format(inv.origin_out, delta_time.days)
+                                        )
 
         res = super(AccountInvoice, self)._post(soft)
 
@@ -489,7 +490,7 @@ class AccountInvoice(models.Model):
             if inv.is_l10n_do_fiscal_invoice \
                     and not inv.ref \
                     and inv.fiscal_type_id.assigned_sequence \
-                    and inv.is_invoice()\
+                    and inv.is_invoice() \
                     and inv.state == "posted":
                 inv.write({
                     'ref': inv.fiscal_sequence_id.get_fiscal_number(),
@@ -497,6 +498,75 @@ class AccountInvoice(models.Model):
                 })
 
         return res
+
+    #esta funcion no esta en la 16.0.2.0.9
+    # def validate_fiscal_purchase(self):
+    #     for inv in self.filtered(
+    #         lambda i: i.move_type == "in_invoice" and i.state == "draft"
+    #     ):
+    #         ncf = inv.ref if inv.ref else None
+    #         if ncf and ncf_dict.get(inv.fiscal_type_id.prefix) == "fiscal":
+    #             if ncf[-10:-8] == "02" or ncf[1:3] == "32":
+    #                 raise ValidationError(
+    #                     _(
+    #                         "NCF *{}* does not correspond with the fiscal type\n\n"
+    #                         "You cannot register Consumo (02 or 32) for purchases"
+    #                     ).format(ncf)
+    #                 )
+    #
+    #             elif inv.fiscal_type_id.requires_document and not inv.partner_id.vat:
+    #                 raise ValidationError(
+    #                     _(
+    #                         "Partner [{}] {} doesn't have RNC/Céd, "
+    #                         "is required for NCF type {}"
+    #                     ).format(
+    #                         inv.partner_id.id,
+    #                         inv.partner_id.name,
+    #                         inv.fiscal_type_id.name,
+    #                     )
+    #                 )
+    #
+    #             elif not ncf_validation.is_valid(ncf):
+    #                 raise UserError(
+    #                     _(
+    #                         "NCF wrongly typed\n\n"
+    #                         "This NCF *{}* does not have the proper structure, "
+    #                         "please validate if you have typed it correctly."
+    #                     ).format(ncf)
+    #                 )
+    #
+    #             ncf_in_invoice = (
+    #                 inv.search_count(
+    #                     [
+    #                         ("id", "!=", inv.id),
+    #                         ("company_id", "=", inv.company_id.id),
+    #                         ("partner_id", "=", inv.partner_id.id),
+    #                         ("ref", "=", ncf),
+    #                         ("state", "in", ("draft", "open", "paid", "cancel")),
+    #                         ("move_type", "in", ("in_invoice", "in_refund")),
+    #                     ]
+    #                 )
+    #                 if inv.id
+    #                 else inv.search_count(
+    #                     [
+    #                         ("partner_id", "=", inv.partner_id.id),
+    #                         ("company_id", "=", inv.company_id.id),
+    #                         ("ref", "=", ncf),
+    #                         ("state", "in", ("draft", "open", "paid", "cancel")),
+    #                         ("move_type", "in", ("in_invoice", "in_refund")),
+    #                     ]
+    #                 )
+    #             )
+    #
+    #             if ncf_in_invoice:
+    #                 raise ValidationError(
+    #                     _(
+    #                         "NCF already used in another invoice\n\n"
+    #                         "The NCF *{}* has already been registered in another "
+    #                         "invoice with the same supplier. Look for it in "
+    #                         "invoices with canceled or draft states"
+    #                     ).format(ncf)
+    #                 )
 
     def action_invoice_cancel(self):
 
@@ -619,23 +689,34 @@ class AccountInvoice(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         # Add default fiscal type from sales and purchase orders
-        
+
         res = super(AccountInvoice, self).create(vals_list)
-        
+
         fiscal_invoices = res.filtered(
             lambda i: i.is_l10n_do_fiscal_invoice and not i.fiscal_type_id and i.is_invoice()
         )
         for fiscal_invoice in fiscal_invoices:
             fiscal_invoice._onchange_partner_id()
             fiscal_invoice.write({
-                'ref': '', 
+                'ref': '',
                 'payment_reference': fiscal_invoice.ref
             })
 
         return res
-    
+
     @api.ondelete(at_uninstall=False)
     def _unlink_except_fiscal_invoice(self):
         for invoice in self:
             if invoice.is_l10n_do_fiscal_invoice and invoice.is_invoice() and invoice.ref:
                 raise UserError(_("You cannot delete a fiscal invoice that has been validated."))
+        
+
+    # def invoice_print(self):
+    #     # Companies which has installed l10n_do localization use
+    #     # l10n_do fiscal invoice template
+    #     l10n_do_coa = self.env.ref("l10n_do.do_chart_template")
+    #     if self.journal_id.company_id.chart_template_id.id == l10n_do_coa.id:
+    #         report_id = self.env.ref("l10n_do_accounting.l10n_do_account_invoice")
+    #         return report_id.report_action(self)
+
+    #     return super(AccountInvoice, self).invoice_print()
