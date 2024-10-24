@@ -53,17 +53,19 @@ class PosPayment(models.Model):
         pos_payment_cash = self.filtered(lambda p: p.payment_method_id.is_cash_count and not p.payment_method_id.is_credit_note)
         
         if pos_payment_cash:
-            account_payment_cash = self.env['account.payment'].create(
-                self._get_payment_values(pos_payment_cash)
-            )
-            account_payment_cash.action_post()
-            account_payment_cash.move_id.write({
-                'pos_payment_ids': pos_payment_cash.ids,
-            })
-            pos_payment_cash.write({
-                'account_move_id': account_payment_cash.move_id.id
-            })
-            result |= account_payment_cash.move_id
+            cash_payment_values = self._get_payment_values(pos_payment_cash)
+            if cash_payment_values['amount'] > 0:
+                account_payment_cash = self.env['account.payment'].create(
+                    self._get_payment_values(pos_payment_cash)
+                )
+                account_payment_cash.action_post()
+                account_payment_cash.move_id.write({
+                    'pos_payment_ids': pos_payment_cash.ids,
+                })
+                pos_payment_cash.write({
+                    'account_move_id': account_payment_cash.move_id.id
+                })
+                result |= account_payment_cash.move_id
                 
         for credit_note in self.filtered(lambda p: p.payment_method_id.is_credit_note and p.name):
             account_move_credit_note = self.env['account.move'].search([                    
