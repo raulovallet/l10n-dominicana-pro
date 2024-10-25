@@ -1,11 +1,8 @@
-# Part of Domincana Premium.
-# See LICENSE file for full copyright and licensing details.
-
 import json
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
+from collections import defaultdict
 
 class InvoiceServiceTypeDetail(models.Model):
     _name = 'invoice.service.type.detail'
@@ -22,7 +19,6 @@ class InvoiceServiceTypeDetail(models.Model):
 
 class AccountInvoice(models.Model):
     _inherit = 'account.move'
-
 
     def _get_invoice_payment_widget(self):                    
         return self.invoice_payments_widget.get('content', []) if self.invoice_payments_widget else []
@@ -43,18 +39,6 @@ class AccountInvoice(models.Model):
                         else invoice_date
 
             inv.payment_date = payment_date
-
-    @api.constrains('line_ids',  'line_ids.tax_line_id')
-    def _check_isr_tax(self):
-        """Restrict one ISR tax per invoice"""
-        for inv in self:
-            line = [
-                tax_line.tax_line_id.l10n_do_tax_type
-                for tax_line in inv._get_tax_line_ids()
-                if tax_line.tax_line_id.l10n_do_tax_type in ['isr', 'ritbis']
-            ]
-            if len(line) != len(set(line)):
-                raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))
 
     def _get_tax_line_ids(self):
         return self.line_ids.filtered(lambda l: l.tax_line_id)
@@ -112,33 +96,26 @@ class AccountInvoice(models.Model):
                 inv.advance_itbis = inv.invoiced_itbis - inv.cost_itbis
 
     @api.depends(
-        'state', 
+        'state',
         'payment_state',
         'line_ids', 
         'line_ids.balance', 
         'line_ids.tax_line_id'
     )
     def _compute_withholding_taxes(self):
-
         # Withholdings
-        
         for inv in self:
             tax_line_ids = inv._get_tax_line_ids()
             
-            inv.withholding_itbis = 0
-            inv.income_withholding = 0
-            
-            if inv.payment_state in ('paid', 'in_payment') and tax_line_ids and inv.state != 'draft':
+            inv.withholding_itbis = abs(sum(
+                tax_line_ids.filtered(
+                    lambda tax: tax.tax_line_id.l10n_do_tax_type == 'ritbis').mapped('balance')
+            ))
 
-                inv.withholding_itbis = abs(sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.l10n_do_tax_type == 'ritbis').mapped('balance')
-                ))
-
-                inv.income_withholding = abs(sum(
-                    tax_line_ids.filtered(
-                        lambda tax: tax.tax_line_id.l10n_do_tax_type == 'isr').mapped('balance')
-                ))
+            inv.income_withholding = abs(sum(
+                tax_line_ids.filtered(
+                    lambda tax: tax.tax_line_id.l10n_do_tax_type == 'isr').mapped('balance')
+            ))
 
     @api.depends(
         'state',
@@ -229,7 +206,7 @@ class AccountInvoice(models.Model):
                 payment_code = payment_id.journal_id.payment_form
             
             # If payment is account move assume it is a credit note
-            if move_id:
+            if move_id.is_invoice():
                 payment_code = "credit_note"
 
         return payment_code
@@ -389,8 +366,8 @@ class AccountInvoice(models.Model):
     fiscal_status = fields.Selection(
         selection=[
             ('normal', 'Partial'), 
+            ('blocked', 'Not Sent'),
             ('done', 'Reported'), 
-            ('blocked', 'Not Sent')
         ],
         copy=False,
         help="* The \'Green\' status means the invoice was sent to the DGII.\n"
@@ -414,3 +391,24 @@ class AccountInvoice(models.Model):
                 self.env.add_todo(self._fields[k], invoice_ids)
 
         self.recompute()
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    @api.constrains('tax_line_id', 'tax_ids')
+    def _check_isr_tax(self):
+        """Restrict one ISR tax per invoice"""
+
+        for line in self:
+            if line.tax_line_id and \
+                line.move_id.is_invoice() and \
+                line.move_id.is_l10n_do_fiscal_invoice:
+
+                isr_taxes = [
+                    tax_line.tax_line_id.isr_retention_type 
+                    for tax_line in line.move_id._get_tax_line_ids()
+                    if tax_line.tax_line_id.l10n_do_tax_type == 'isr'
+                ]
+                
+                if len(set(isr_taxes)) > 1:
+                    raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))

@@ -22,7 +22,7 @@
                             <field name="legal_tip"/>
                         </group>
                         <group string="607">
-                            <field name="fiscal_status" widget="state_selection" readonly="1"/>
+                            <field name="fiscal_status" widget="state_selection"/>
                         </group>
                     </group>
                     

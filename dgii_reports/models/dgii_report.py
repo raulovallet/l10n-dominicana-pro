@@ -416,24 +416,24 @@ class DgiiReport(models.Model):
     
     def write(self, vals):
         self._validate_date_format(vals.get('name'))
-
         return super(DgiiReport, self).write(vals)
 
-    @staticmethod
-    def get_date_tuple(date):
-        return date.year, date.month
-
     def _get_pending_invoices(self, types, states):
-        period = dt.strptime(self.name, '%m/%Y')
         invoice_ids = self.env['account.move'].search([
+            '&',
+            '|',
+            ('withholding_itbis', '!=', 0.0),
+            ('income_withholding', '!=', 0.0),
             ('fiscal_status', '=', 'normal'),
             ('payment_state', 'in', ('paid', 'in_payment')),
             ('invoice_date', '<', self.start_date),
             ('company_id', '=', self.company_id.id),
             ('move_type', 'in', types),
             ('state', 'in', states),
-            ('is_l10n_do_fiscal_invoice', '=', True)
-        ]).filtered(lambda inv: self.get_date_tuple(inv.payment_date if inv.payment_date else inv.invoice_date) == (period.year, period.month))
+            ('is_l10n_do_fiscal_invoice', '=', True),
+            ('payment_date', '>=', self.start_date),
+            ('payment_date', '<=', self.end_date)
+        ])
 
         return invoice_ids
 
@@ -534,25 +534,6 @@ class DgiiReport(models.Model):
             'purchase_binary': base64.b64encode(open(file_path, 'rb').read())
         })
 
-    def _include_in_current_report(self, invoice):
-        """
-        Evaluate if invoice was paid in current month or
-        was included in a previous period.
-        New reported invoices should not include any
-        withholding amount nor payment date
-        if payment was made after current period.
-        :param invoice: account.move object
-        :return: boolean
-        """
-        if not invoice.payment_date or (invoice.withholding_itbis == 0.0 and invoice.income_withholding == 0.0):
-            return False
-
-        payment_date = invoice.payment_date
-        period = dt.strptime(self.name, '%m/%Y')
-        same_minor_period = (payment_date.month, payment_date.year) <= (period.month, period.year)
-
-        return True if (payment_date and same_minor_period) else False
-
     
     def _compute_606_data(self):
         for rec in self:
@@ -575,7 +556,6 @@ class DgiiReport(models.Model):
                 ) if inv.fiscal_type_id.prefix != 'B17' else \
                     self.formatted_rnc_cedula(
                     inv.company_id.vat)
-                show_payment_date = self._include_in_current_report(inv)
                 values = {
                     'dgii_report_id': rec.id,
                     'line': line,
@@ -587,8 +567,7 @@ class DgiiReport(models.Model):
                     'modified_invoice_number': inv.origin_out if
                     inv.move_type == 'in_refund' else False,
                     'invoice_date': inv.invoice_date,
-                    'payment_date': inv.payment_date if
-                    show_payment_date else False,
+                    'payment_date': inv.payment_date  if self.is_applicable_payment_date(inv) else False,
                     'service_total_amount': inv.service_total_amount,
                     'good_total_amount': inv.good_total_amount,
                     'invoiced_amount': abs(inv.amount_untaxed_signed),
@@ -599,10 +578,8 @@ class DgiiReport(models.Model):
                     'purchase_perceived_itbis': 0,  # Falta computar en la fact
                     'purchase_perceived_isr': 0,  # Falta computarlo en la fact
                     'isr_withholding_type': inv.isr_withholding_type,
-                    'withholded_itbis': inv.withholding_itbis if
-                    show_payment_date else 0,
-                    'income_withholding': inv.income_withholding if
-                    show_payment_date else 0,
+                    'withholded_itbis': inv.withholding_itbis if self.is_applicable_for_withholding(inv) else 0,
+                    'income_withholding': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'selective_tax': inv.selective_tax,
                     'other_taxes': inv.other_taxes,
                     'legal_tip': inv.legal_tip,
@@ -766,7 +743,6 @@ class DgiiReport(models.Model):
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.prefix != 'B12' \
                     else self.formatted_rnc_cedula(inv.company_id.vat)
-                show_payment_date = self._include_in_current_report(inv)
                 payments = self._get_sale_payments_forms(inv)
                 values = {
                     'dgii_report_id': rec.id,
@@ -780,16 +756,12 @@ class DgiiReport(models.Model):
                         False,
                     'income_type': inv.income_type,
                     'invoice_date': inv.invoice_date,
-                    'withholding_date': inv.payment_date if (
-                        inv.move_type != 'out_refund' and
-                        show_payment_date) else False,
+                    'withholding_date': inv.payment_date if inv.move_type != 'out_refund' and self.is_applicable_payment_date(inv) else False,
                     'invoiced_amount': abs(inv.amount_untaxed_signed),
                     'invoiced_itbis': inv.invoiced_itbis,
-                    'third_withheld_itbis': inv.withholding_itbis
-                        if show_payment_date else 0,
+                    'third_withheld_itbis': inv.withholding_itbis if self.is_applicable_for_withholding(inv) else 0,
+                    'third_income_withholding': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'perceived_itbis': 0,  # Pendiente
-                    'third_income_withholding': inv.income_withholding
-                        if show_payment_date else 0,
                     'perceived_isr': 0,  # Pendiente
                     'selective_tax': inv.selective_tax,
                     'other_taxes': inv.other_taxes,
@@ -974,9 +946,7 @@ class DgiiReport(models.Model):
                     'dgii_report_id': rec.id,
                     'line': line,
                     'legal_name': inv.partner_id.name,
-                    'tax_id_type':
-                        1
-                        if inv.partner_id.company_type == 'individual' else 2,
+                    'tax_id_type': 1 if inv.partner_id.company_type == 'individual' else 2,
                     'tax_id': inv.partner_id.vat,
                     'country_code': self._get_country_number(inv.partner_id),
                     'purchased_service_type': int(inv.service_type),
@@ -985,11 +955,9 @@ class DgiiReport(models.Model):
                     'doc_number': inv.name,
                     'doc_date': inv.invoice_date,
                     'invoiced_amount': inv.amount_untaxed,
-                    'isr_withholding_date': inv.payment_date if
-                    inv.payment_date else False,
+                    'isr_withholding_date': inv.payment_date if self.is_applicable_payment_date(inv) else False,
                     'presumed_income': 0,  # Pendiente
-                    'withholded_isr': inv.income_withholding if
-                    inv.payment_date else 0,
+                    'withholded_isr': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'invoice_id': inv.id
                 }
                 ExteriorLine.create(values)
@@ -1763,15 +1731,31 @@ class DgiiReport(models.Model):
             return action
         else:
             self._generate_report()
+    
+    def is_applicable_for_withholding(self, invoice):
+        
+        if (invoice.withholding_itbis != 0 or invoice.income_withholding != 0) and \
+            invoice.payment_date and \
+            invoice.payment_date >= self.start_date and \
+            invoice.payment_date <= self.end_date:
+            return True
+        
+        return False
+    
+    def has_pending_withholding(self, invoice):
+        has_withholding = invoice.withholding_itbis != 0 or invoice.income_withholding != 0
+        
+        if has_withholding and not invoice.payment_date:
+            return True
+        elif has_withholding and invoice.payment_date and invoice.payment_date > self.end_date:
+            return True
 
-    def _has_withholding(self, inv):
+        return False
 
-        """Validate if given invoice has an Withholding tax"""
-
-        return True if any([
-            inv.withholding_itbis, 
-            inv.income_withholding
-        ]) else False
+    def is_applicable_payment_date(self, invoice):
+        if invoice.payment_date and invoice.payment_date <= self.end_date:
+            return True
+        return False
 
     
     def _invoice_status_sent(self):
@@ -1792,13 +1776,9 @@ class DgiiReport(models.Model):
             invoice_ids += ExteriorLine.search([
                 ('dgii_report_id', '=', report.id)
             ]).mapped('invoice_id')
-            for inv in invoice_ids:
-                if (inv.payment_state in ['paid', 'in_payment'] or inv.state == 'cancel') and \
-                        self._include_in_current_report(inv):
-                    inv.fiscal_status = 'done'
-                    continue
 
-                if self._has_withholding(inv):
+            for inv in invoice_ids:                
+                if self.has_pending_withholding(inv):
                     inv.fiscal_status = 'normal'
                 else:
                     inv.fiscal_status = 'done'
