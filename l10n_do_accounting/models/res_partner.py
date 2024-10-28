@@ -47,7 +47,9 @@ class Partner(models.Model):
     @api.depends('sale_fiscal_type_id')
     def _compute_is_fiscal_info_required(self):
         for rec in self:
-            rec.is_fiscal_info_required = rec.sale_fiscal_type_id.prefix in ['B01', 'B14', 'B15']
+            rec.is_fiscal_info_required = rec.sale_fiscal_type_id.prefix in ['B01', 'B14', 'B15'] and \
+            rec.country_id == self.env.ref('base.do') and \
+            not rec.parent_id
 
     def _get_fiscal_type_domain(self, prefix):
         return self.env['account.fiscal.type'].search([

@@ -6,19 +6,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-04 19:35+0000\n"
-"PO-Revision-Date: 2024-09-04 15:40-0400\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2024-10-28 23:31+0000\n"
+"PO-Revision-Date: 2024-10-28 19:33-0400\n"
+"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "%s %s Sequence"
@@ -317,6 +318,7 @@ msgstr "<strong>Dirección de Envío</strong>"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -351,7 +353,7 @@ msgstr "Tipo de Cuenta Fiscal"
 #. module: l10n_do_accounting
 #: model:ir.model,name:l10n_do_accounting.model_account_move_reversal
 msgid "Account Move Reversal"
-msgstr "Reversión de movimiento de cuenta"
+msgstr "Revocación de movimiento en cuenta"
 
 #. module: l10n_do_accounting
 #: model:ir.model.fields,field_description:l10n_do_accounting.field_account_fiscal_sequence__message_needaction
@@ -394,6 +396,7 @@ msgstr "Afecta"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "After the document type, all characters must be digits from 0 to 9."
@@ -420,6 +423,7 @@ msgstr "Tipo de Anulación"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "Another sequence is active for this type."
@@ -427,6 +431,7 @@ msgstr "Hay otra secuencia activa para este tipo."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid ""
@@ -438,6 +443,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid ""
@@ -522,6 +528,7 @@ msgstr "Cancelada"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/wizard/account_invoice_refund.py:0
 #: code:addons/l10n_do_accounting/wizard/account_invoice_refund.py:0
 #, python-format
 msgid ""
@@ -535,6 +542,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/wizard/account_invoice_refund.py:0
 #: code:addons/l10n_do_accounting/wizard/account_invoice_refund.py:0
 #, python-format
 msgid "Cannot create credit note for the draft/cancelled invoice."
@@ -646,11 +654,6 @@ msgid "Customer:"
 msgstr "Cliente:"
 
 #. module: l10n_do_accounting
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
-msgid "Cédula"
-msgstr ""
-
-#. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_search
 msgid "Debit Note"
 msgstr "Nota de débito"
@@ -682,6 +685,11 @@ msgid "Draft"
 msgstr "Borrador"
 
 #. module: l10n_do_accounting
+#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
+msgid "EXP.... NNNNNNNNN or NNNNNNNNNNN"
+msgstr "EJ… NNNNNNNNN o NNNNNNNNNNN"
+
+#. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.account_fiscal_sequence_form
 msgid "Eg : 8001695033"
 msgstr "Ej. 8001695033"
@@ -693,6 +701,7 @@ msgstr "Fin de secuencia"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "End sequence must be greater than start sequence."
@@ -783,6 +792,7 @@ msgstr "Tipos fiscales"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "Fiscal number can not be blank"
@@ -823,6 +833,7 @@ msgstr "Icono de fuente impresionante e.g. fa-tasks"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "Goods sales to overseas customers must have Exportaciones Fiscal Type"
@@ -1043,6 +1054,7 @@ msgstr "Siguiente número de esta secuencia"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "No Fiscal Sequence available for this type of document."
@@ -1105,6 +1117,7 @@ msgstr "Relleno"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "Partner [{}] {} doesn't have RNC/Céd, is required for NCF type {}"
@@ -1142,8 +1155,12 @@ msgstr "Cola"
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_view_company_form
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
 msgid "RNC"
+msgstr ""
+
+#. module: l10n_do_accounting
+#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
+msgid "RNC / Cedula"
 msgstr ""
 
 #. module: l10n_do_accounting
@@ -1191,6 +1208,7 @@ msgstr "Tipo de comprobante"
 
 #. module: l10n_do_accounting
 #. odoo-javascript
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/static/src/xml/l10n_do_accounting.xml:0
 #: code:addons/l10n_do_accounting/static/src/xml/l10n_do_accounting.xml:0
 #, python-format
 msgid "Search cities..."
@@ -1198,6 +1216,7 @@ msgstr "Buscar ciudades..."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice_cancel.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice_cancel.py:0
 #, python-format
 msgid ""
@@ -1214,6 +1233,7 @@ msgstr "Secuencia"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "Sequence values must be greater than zero."
@@ -1221,6 +1241,7 @@ msgstr "Los valores de secuencia deben ser mayores que cero."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "Service sales to oversas customer must have Consumo Fiscal Type"
@@ -1276,6 +1297,7 @@ msgstr "RNC"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "The NCF number {} is already in use for this {}."
@@ -1283,6 +1305,7 @@ msgstr "El número de NCF {} ya está en uso para este {}."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid ""
@@ -1293,6 +1316,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "The document type (%s) must start with (%s)"
@@ -1300,6 +1324,7 @@ msgstr "El tipo de documento (%s) debe empezar por (%s)"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "The fiscal number type (%s) is not a credit note."
@@ -1307,6 +1332,7 @@ msgstr "El tipo de número fiscal (%s) no es una nota de crédito."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -1318,6 +1344,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -1329,6 +1356,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/wizard/account_fiscal_sequence_validate_wizard.py:0
 #: code:addons/l10n_do_accounting/wizard/account_fiscal_sequence_validate_wizard.py:0
 #, python-format
 msgid "There is no Fiscal Sequence to perform this action."
@@ -1336,6 +1364,7 @@ msgstr "No existe una Secuencia Fiscal para realizar esta acción."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "There is not active Fiscal Sequence for this type of document."
@@ -1348,6 +1377,7 @@ msgstr "Debe haber un solo Tipo Fiscal de este Tipo y Prefijo"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -1359,6 +1389,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "This document type (%s) does not exist."
@@ -1366,6 +1397,7 @@ msgstr "Este tipo de documento (%s) no existe."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "This origin fiscal number must have more than 3 characters"
@@ -1373,6 +1405,7 @@ msgstr "Este número fiscal de origen debe tener más de 3 caracteres"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -1444,6 +1477,7 @@ msgstr "Puede crear su primera Secuencia Fiscal aquí."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_journal.py:0
 #: code:addons/l10n_do_accounting/models/account_journal.py:0
 #, python-format
 msgid ""
@@ -1455,6 +1489,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "You cannot cancel multiple fiscal invoices at a time."
@@ -1462,6 +1497,7 @@ msgstr "No puede cancelar varias facturas fiscales a la vez."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "You cannot delete a fiscal invoice that has been validated."
@@ -1469,6 +1505,7 @@ msgstr "No se puede borrar una factura fiscal que haya sido validada."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "You cannot duplicate a Fiscal Sequence."
@@ -1476,6 +1513,7 @@ msgstr "No se puede duplicar una Secuencia Fiscal."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #: code:addons/l10n_do_accounting/models/account_fiscal_sequence.py:0
 #, python-format
 msgid "You cannot use another Fiscal Sequence range."
@@ -1483,6 +1521,7 @@ msgstr "No puede usar otro rango de Secuencia Fiscal."
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "You cannot validate an invoice whose total amount is equal to 0"
@@ -1496,6 +1535,7 @@ msgstr "[FISCAL] Caducar secuencias"
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "customer"
@@ -1508,17 +1548,12 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #: model_terms:ir.ui.view,arch_db:l10n_do_accounting.inherit_view_company_form
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
 msgid "ej. NNNNNNNNN"
 msgstr ""
 
 #. module: l10n_do_accounting
-#: model_terms:ir.ui.view,arch_db:l10n_do_accounting.l10n_do_accounting_view_partner_form
-msgid "ej. NNNNNNNNNNN"
-msgstr "ej. NNNNNNNNNN"
-
-#. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid ""
@@ -1530,6 +1565,7 @@ msgstr ""
 
 #. module: l10n_do_accounting
 #. odoo-python
+#: code:addons/custom/jenrax/l10n-dominicana-pro/l10n_do_accounting/models/account_invoice.py:0
 #: code:addons/l10n_do_accounting/models/account_invoice.py:0
 #, python-format
 msgid "vendor"
