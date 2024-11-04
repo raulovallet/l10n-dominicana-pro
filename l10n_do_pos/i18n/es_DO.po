@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-22 21:19+0000\n"
-"PO-Revision-Date: 2024-07-22 17:21-0400\n"
+"POT-Creation-Date: 2024-11-04 16:25+0000\n"
+"PO-Revision-Date: 2024-11-04 11:28-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: l10n_do_pos
 #: model:ir.model.fields,help:l10n_do_pos.field_pos_config__l10n_do_type_limit_order_history
@@ -72,6 +72,13 @@ msgstr "Autorizado por la DGII"
 #, python-format
 msgid "Card and cash payment"
 msgstr "Tarjeta y pago en efectivo"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid "Card and pay later payment"
+msgstr "Pago con tarjeta y pago a crédito"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -290,7 +297,7 @@ msgstr "Cantidad máxima días"
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf
 #, python-format
 msgid "NCF"
-msgstr "NCF"
+msgstr ""
 
 #. module: l10n_do_pos
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf_expiration_date
@@ -302,7 +309,7 @@ msgstr "Fecha de vencimiento del NCF"
 #: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "NCF:"
-msgstr "NCF:"
+msgstr ""
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -334,6 +341,27 @@ msgstr "Desconectado"
 #: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
 msgid "Order history"
 msgstr "Historial de pedidos"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid "Pay later and cash payment"
+msgstr "Pago a crédito y pago en efectivo"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid "Pay later payment"
+msgstr "Pago a crédito"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid "Pay later payment cannot exceed the total order"
+msgstr "El pago a crédito no puede superar el importe total del pedido"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -371,12 +399,12 @@ msgstr "Pedidos del TPV"
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_payment_method
 msgid "Point of Sale Payment Methods"
-msgstr "Métodos de pago en el punto de venta"
+msgstr "Métodos de pago en el punto de venta "
 
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_payment
 msgid "Point of Sale Payments"
-msgstr "Pagos en puntos de venta"
+msgstr "Pagos en el punto de venta"
 
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_session
@@ -535,12 +563,33 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
 #, python-format
+msgid "The sum for Card and Pay Later payment cannot exceed the total order."
+msgstr ""
+"La suma de los pagos con tarjeta y de los pagos a crédito no pueden superar "
+"el total del pedido."
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
 msgid ""
 "The total payment with the card is sufficient to pay the order, please "
 "eliminate the payment in cash or reduce the amount to be paid by card"
 msgstr ""
 "El pago total con la tarjeta es suficiente para pagar el pedido, elimine el "
 "pago en efectivo o reduzca el monto a pagar con tarjeta"
+
+#. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
+#, python-format
+msgid ""
+"The total payment with the pay later is sufficient to pay the order, please "
+"eliminate the payment in cash or reduce the amount to be paid by pay later"
+msgstr ""
+"El pago total con el pago a crédito es suficiente para pagar el pedido, por "
+"favor elimine el pago en efectivo o reduzca la cantidad a pagar por pago "
+"posterior"
 
 #. module: l10n_do_pos
 #. odoo-javascript
