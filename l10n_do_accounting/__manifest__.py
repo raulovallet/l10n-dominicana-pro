@@ -24,6 +24,7 @@
         "data/account_fiscal_type_data.xml",
         # "data/report_layout_data.xml",
         # "data/mail_template_data.xml",
+        "data/update_sequences.xml",
 
         "security/ir_rule.xml",
         "security/ir.model.access.csv",

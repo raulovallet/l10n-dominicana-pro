@@ -51,7 +51,7 @@
                                 <field name="remaining_percentage"/>
                                 <span>%</span>
                             </div>
-                            <field name="number_next_actual" invisible="1"/>
+                            <field name="number_next_actual" groups="base.group_no_one"/>
                             <field name="sequence_remaining"
                                    attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
                             <field name="next_fiscal_number"
