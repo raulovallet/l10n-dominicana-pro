@@ -2,6 +2,7 @@
 <odoo>
 
     <template id="fiscal_info">
+        <t t-set="ecf_representation" t-value="o.fiscal_type_id.prefix.startswith('E')"/>
         <div class="col-6 first-page">
             <h3 t-if="o.fiscal_type_id">
                 <t t-if="o.fiscal_type_id.prefix == 'B13'">
@@ -21,7 +22,7 @@
             <div t-if="o.move_type in ['in_refund', 'out_refund'] and o.origin_out">
                 <strong>NCF modified:</strong>
                 <span t-field="o.origin_out"/>
-                <!-- TODO: ADD l10n_do_ecf_modification_code FIELD <t t-if="ecf_representation">
+                <!-- TODO: ADD l10n_do_ecf_modification_code FIELD <t t-if="    ">
                     <br/>
                     <strong>Modification Code::</strong>
                     <span t-field="o.l10n_do_ecf_modification_code"/>
@@ -37,6 +38,7 @@
                 <strong>
                     <t t-if="ecf_representation">Expiration e-NCF:</t>
                     <t t-else="">Valid until:</t>
+                    
                 </strong>
                 <span t-field="o.ncf_expiration_date"/>
             </div>
