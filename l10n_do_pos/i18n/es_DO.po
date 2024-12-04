@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 16:25+0000\n"
-"PO-Revision-Date: 2024-11-04 11:28-0500\n"
+"POT-Creation-Date: 2024-12-04 19:16+0000\n"
+"PO-Revision-Date: 2024-12-04 14:18-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -156,7 +156,7 @@ msgstr "Empresa predeterminado"
 #: code:addons/l10n_do_pos/static/src/js/TicketScreen.js:0
 #, python-format
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -251,6 +251,13 @@ msgid "For this sale it is necessary for the customer have ID"
 msgstr "Para este venta es necesario el ID del cliente"
 
 #. module: l10n_do_pos
+#. odoo-javascript
+#: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
+#, python-format
+msgid "ITBIS"
+msgstr "ITBIS"
+
+#. module: l10n_do_pos
 #. odoo-python
 #: code:addons/l10n_do_pos/models/pos_payment_method.py:0
 #, python-format
@@ -309,7 +316,7 @@ msgstr "Fecha de vencimiento del NCF"
 #: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "NCF:"
-msgstr ""
+msgstr "NCF:"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -404,7 +411,7 @@ msgstr "Métodos de pago en el punto de venta "
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_payment
 msgid "Point of Sale Payments"
-msgstr "Pagos en el punto de venta"
+msgstr "Pagos en puntos de venta"
 
 #. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_pos_session
@@ -677,8 +684,8 @@ msgstr "No se pueden guardar los cambios."
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
-msgid "Value"
-msgstr "Valor"
+msgid "VALUE"
+msgstr "VALOR"
 
 #. module: l10n_do_pos
 #. odoo-javascript

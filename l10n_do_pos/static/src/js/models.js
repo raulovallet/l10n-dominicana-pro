@@ -1,7 +1,7 @@
 odoo.define('l10n_do_pos.models', function (require) {
     "use strict";
 
-    var { Order, PosGlobalState, Payment } = require('point_of_sale.models');
+    var { Order, PosGlobalState, Payment, Orderline} = require('point_of_sale.models');
     var Registries = require('point_of_sale.Registries');
 
     const L10nDoPosPosGlobalState = PosGlobalState => class extends PosGlobalState {
@@ -216,8 +216,31 @@ odoo.define('l10n_do_pos.models', function (require) {
         }
     }
 
+    const L10nDoPosOrderLine = Orderline => class extends Orderline {
+        export_for_printing (){
+            let res = super.export_for_printing();
+            res.l10n_do_itbis = this.get_itbis();
+
+            return res;
+        }
+
+        get_itbis() {
+            let itbis = 0;
+            const tax_details = this.get_tax_details();
+            
+            for (const tax_id in tax_details) {
+                if (this.pos.taxes_by_id[tax_id].tax_group_id[1] === 'ITBIS') {
+                    itbis += tax_details[tax_id].amount;
+                }
+            }
+
+            return itbis;
+        }
+    }
+
     Registries.Model.extend(PosGlobalState, L10nDoPosPosGlobalState);
     Registries.Model.extend(Order, L10nDoPosOrder);
+    Registries.Model.extend(Orderline, L10nDoPosOrderLine);
     Registries.Model.extend(Payment, L10nDoPayment);
 
 });
