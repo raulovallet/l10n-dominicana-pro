@@ -756,7 +756,7 @@ class DgiiReport(models.Model):
                         False,
                     'income_type': inv.income_type,
                     'invoice_date': inv.invoice_date,
-                    'withholding_date': inv.payment_date if inv.move_type != 'out_refund' and self.is_applicable_payment_date(inv) else False,
+                    'withholding_date': inv.payment_date if inv.move_type != 'out_refund' and self.is_applicable_for_withholding(inv) else False,
                     'invoiced_amount': abs(inv.amount_untaxed_signed),
                     'invoiced_itbis': inv.invoiced_itbis,
                     'third_withheld_itbis': inv.withholding_itbis if self.is_applicable_for_withholding(inv) else 0,
@@ -955,7 +955,7 @@ class DgiiReport(models.Model):
                     'doc_number': inv.name,
                     'doc_date': inv.invoice_date,
                     'invoiced_amount': inv.amount_untaxed,
-                    'isr_withholding_date': inv.payment_date if self.is_applicable_payment_date(inv) else False,
+                    'isr_withholding_date': inv.payment_date if self.is_applicable_for_withholding(inv) else False,
                     'presumed_income': 0,  # Pendiente
                     'withholded_isr': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'invoice_id': inv.id
