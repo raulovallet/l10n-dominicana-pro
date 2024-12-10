@@ -627,31 +627,31 @@ class DgiiReport(models.Model):
 
         if invoice_id.move_type == 'out_invoice':
             for payment in invoice_id._get_invoice_payment_widget():
-                payment_id = Payment.browse(payment['account_payment_id'])
+                payment_id = payment.get('account_payment_id', False)
+
                 if payment_id:
-                    key = payment_id.journal_id.payment_form
-                    if key:
-                        if self.include_payment(invoice_id, payment_id):
-                            payments_dict[key] += self._convert_to_user_currency(
-                                invoice_id.currency_id,
-                                payment['amount'],
-                                invoice_id.invoice_date,
-                            )
-                        else:
-                            payments_dict['credit'] += self._convert_to_user_currency(
-                                invoice_id.currency_id,
-                                payment['amount'],
-                                invoice_id.invoice_date,
-                            )
+                    payment_obj = Payment.browse(payment_id)
+                    key = payment_obj.journal_id.payment_form
+
+                    if self.include_payment(invoice_id, payment_obj):
+                        payments_dict[key] += self._convert_to_user_currency(
+                            invoice_id.currency_id,
+                            payment['amount'],
+                            invoice_id.invoice_date,
+                        )
+
+                    else:
+
+                        payments_dict['credit'] += self._convert_to_user_currency(
+                            invoice_id.currency_id,
+                            payment['amount'],
+                            invoice_id.invoice_date,
+                        )
+
                 else:
-                    payments_dict['swap'] += self._convert_to_user_currency(
+
+                    payments_dict['others'] += self._convert_to_user_currency(
                         invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
-            payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
-        else:
-            for payment in invoice_id._get_invoice_payment_widget():
-                payments_dict['others'] += self._convert_to_user_currency(
-                    invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
 
             payments_dict['credit'] += self._convert_to_user_currency(
                 invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
