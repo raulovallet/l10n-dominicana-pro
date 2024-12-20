@@ -622,6 +622,8 @@ class DgiiReport(models.Model):
             p_date.month <= i_date.month) else False
 
     def _get_sale_payments_forms(self, invoice_id):
+        # TODO: TRY REFACTORING _convert_to_user_currency THIS IS NOT ACCURATE
+        
         payments_dict = self._get_payments_dict()
         Payment = self.env['account.payment']
 
@@ -647,14 +649,12 @@ class DgiiReport(models.Model):
                             payment['amount'],
                             invoice_id.invoice_date,
                         )
-
                 else:
 
                     payments_dict['others'] += self._convert_to_user_currency(
                         invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
 
-            payments_dict['credit'] += self._convert_to_user_currency(
-                invoice_id.currency_id, invoice_id.amount_residual, invoice_id.invoice_date)
+            payments_dict['credit'] += abs(invoice_id.amount_residual_signed)
 
         return payments_dict
 
