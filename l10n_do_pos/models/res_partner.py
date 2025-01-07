@@ -8,6 +8,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
     
     def unlink(self):
-        if self.filtered(lambda x: x.self.env.ref('l10n_do_pos.default_pos_partner').id):
+        pos_consumer_partner_id = self.env.ref('l10n_do_pos.default_pos_partner').id
+        if self.filtered(lambda p: p.id == pos_consumer_partner_id):
             raise UserError(_("You can't delete this partner."))
         return super(ResPartner, self).unlink()
