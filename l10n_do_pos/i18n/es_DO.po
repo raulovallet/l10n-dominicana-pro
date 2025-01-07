@@ -727,3 +727,10 @@ msgstr ""
 #, python-format
 msgid "confirm"
 msgstr "confirmar"
+
+#. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_banks/models/res_partner.py:0
+#, python-format
+msgid "You can't delete this partner."
+msgstr "No puedes eliminar este cliente."
