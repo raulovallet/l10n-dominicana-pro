@@ -10,10 +10,12 @@ class ResPartner(models.Model):
     def _get_res_partner_list(self):
         
         POS_CONSUMER_PARTNER = self.env.ref('l10n_do_pos.default_pos_partner')
+        DEFAULT_PARTNER = self.env.ref('l10n_do_pos.default_pos_partner')
         
         
         return {
-            'pos_consumer_partner': POS_CONSUMER_PARTNER.id
+            'pos_consumer_partner': POS_CONSUMER_PARTNER.id,
+            'default_pos_partner': DEFAULT_PARTNER.id
         }
 
     def unlink(self):
