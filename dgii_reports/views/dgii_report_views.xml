@@ -131,6 +131,12 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -151,6 +157,12 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -172,6 +184,12 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -194,6 +212,12 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -218,6 +242,13 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                        attrs="{'invisible': [('sequence', '=', 54)]}"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -244,6 +275,12 @@
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
+                                    <button 
+                                        name="action_copy" 
+                                        string="" 
+                                        type="object" 
+                                        icon="fa-regular fa-copy"
+                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -259,27 +296,169 @@
                         </page>
                         <page name="consumer" string="Consumer Invoices Summary">
                             <group string="General Summary of Consumer Invoices">
-                                <group col="3">
-                                    <field name="csmr_ncf_qty" readonly="1"/>
-                                    <field name="csmr_ncf_total_amount" readonly="1"/>
-                                    <field name="csmr_ncf_total_itbis" readonly="1"/>
-                                    <field name="csmr_ncf_total_isc" readonly="1"/>
-                                    <field name="csmr_ncf_total_other" readonly="1"/>
-                                    <field name="csmr_ncf_total_lgl_tip" readonly="1"/>
+                                <group col="2">
+                                    <group>
+                                        <field name="csmr_ncf_qty" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_qty']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_ncf_total_amount" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_total_amount']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_ncf_total_itbis" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_total_itbis']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_ncf_total_isc" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_total_isc']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_ncf_total_other" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_total_other']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_ncf_total_lgl_tip" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_ncf_total_lgl_tip']"
+                                        />
+                                    </group>
                                 </group>
-                                <group col="3">
-                                    <field name="csmr_cash" readonly="1"/>
-                                    <field name="csmr_bank" readonly="1"/>
-                                    <field name="csmr_card" readonly="1"/>
-                                    <field name="csmr_credit" readonly="1"/>
-                                    <field name="csmr_bond" readonly="1"/>
-                                    <field name="csmr_swap" readonly="1"/>
-                                    <field name="csmr_others" readonly="1"/>
+                                <group col="2">
+                                    <group>
+                                        <field name="csmr_cash" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_cash']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_bank" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_bank']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_card" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_card']"
+                                        /> 
+                                    </group>
+                                    <group>
+                                        <field name="csmr_credit" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_credit']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_bond" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_bond']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_swap" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_swap']"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="csmr_others" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button 
+                                            name="action_copy_to_clipboard"
+                                            string=""
+                                            icon="fa-regular fa-copy"
+                                            type="object"
+                                            args="['csmr_others']"
+                                        />
+                                    </group>
                                 </group>
                             </group>
                         </page>
                     </notebook>
-
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

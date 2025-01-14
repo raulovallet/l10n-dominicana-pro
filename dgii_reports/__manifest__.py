@@ -14,7 +14,7 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     "category": "Localization",
-    'version': '16.0.1.3.7',
+    'version': '16.0.1.3.8',
     # any module necessary for this one to work correctly
     'depends': [
         'web',
@@ -43,6 +43,9 @@
             '/dgii_reports/static/src/scss/dgii_reports.scss',
             '/dgii_reports/static/src/js/widget.js'
         ]
+    },
+    "external_dependencies": {
+        "python": ["pyperclip", "pycountry"]
     },
 
     'post_init_hook': 'update_taxes'
