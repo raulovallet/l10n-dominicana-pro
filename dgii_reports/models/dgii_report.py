@@ -1641,8 +1641,8 @@ class DgiiReport(models.Model):
                           it1_lines[32]['amount']
 
             it1_lines[33]['amount'] = it1_line_33_34 if it1_line_33_34 > 0 else 0
-            it1_lines[34]['amount'] = it1_line_33_34 \
-                if it1_line_33_34 < 0 else sum([it1_lines[box]['amount'] for box in range(27, 33)])
+            it1_lines[34]['amount'] = sum([it1_lines[box]['amount'] for box in range(27, 33)]) \
+                if it1_line_33_34 < 0 else 0
 
             # IT1IV
             it1_lines[35]['amount'] = abs(sum(rec._get_move_lines_it1('I35').mapped('balance')))
@@ -1669,7 +1669,7 @@ class DgiiReport(models.Model):
             it1_lines[49]['amount'] = it1_lines[47]['amount'] + it1_lines[48]['amount']
             it1_lines[50]['amount'] = it1_lines[41]['amount'] * 0.18
             it1_lines[51]['amount'] = it1_lines[42]['amount'] * 0.18
-            it1_lines[52]['amount'] = it1_lines[43]['amount'] * 0.18
+            it1_lines[52]['amount'] = it1_lines[43]['amount'] * 0.18 * 0.30
             it1_lines[53]['amount'] = it1_lines[44]['amount'] * 0.18
             it1_lines[54]['amount'] = it1_lines[45]['amount'] * 0.16
             it1_lines[55]['amount'] = it1_lines[53]['amount'] + it1_lines[54]['amount']
