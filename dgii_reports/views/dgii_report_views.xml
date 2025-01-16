@@ -140,6 +140,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>
@@ -160,6 +161,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>
@@ -182,6 +184,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>
@@ -203,6 +206,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>
@@ -231,6 +235,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>
@@ -253,6 +258,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="dgii_report_id" invisible="1"/>
                                         <field name="display_type" invisible="1"/>
+                                        <field name="move_line_ids" attrs="{'invisible':[('move_line_ids', '=', [])]}"/>
                                     </group>
                                 </form>
                             </field>

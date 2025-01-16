@@ -375,6 +375,25 @@ class AccountInvoice(models.Model):
         "* The \'Grey\' status means Has not yet been reported or was partially reported.",
         default='normal'
     )
+    l10n_do_is_subject_to_proportionality = fields.Boolean( 
+        string='Subject to proportionality',
+        help='Indicates if the invoice is subject to proportionality tax.',
+        default=lambda self: self._default_l10n_do_is_subject_to_proportionality()
+    )
+
+    def _default_l10n_do_is_subject_to_proportionality(self):
+        """Determines the default value for the field based on the company and move type."""
+        company = self.env.company
+        if company.l10n_do_is_subject_to_proportionality and self.move_type == 'in_invoice':
+            return True
+        return False
+
+    @api.constrains('l10n_do_is_subject_to_proportionality')
+    def l10n_do_is_subject_to_proportionality_constrains(self):
+        for inv in self:
+            if inv.fiscal_status == 'done':
+                raise ValidationError(
+                    _('You cannot change the proportionality status of a reported invoice.'))
 
     @api.model
     def norma_recompute(self):

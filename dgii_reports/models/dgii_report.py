@@ -1313,6 +1313,10 @@ class DgiiReport(models.Model):
             ('date', '<=', self.end_date)
         ]
         domain += [('account_id.box_attachment_a', '=', box)] if 'A' in box else [('account_id.box_it1', '=', box)]
+        
+        # Not subjet to proportionality
+        if box in ['A49c', 'A49s', 'A49i', 'A50c', 'A50s', 'A50i', 'A51c', 'A51s', 'A51i']:
+            domain += [('move_id.l10n_do_is_subject_to_proportionality', '=', False)]
 
         return self.env['account.move.line'].search(domain)
 
@@ -1428,28 +1432,36 @@ class DgiiReport(models.Model):
                     attachment_a_lines[44]['amount'] += purchase_invoice.invoice_id.amount_untaxed
 
                 # IXc
-                for invoice_line in purchase_invoice.invoice_id.invoice_line_ids:
-                    line_itbis_taxes = invoice_line.tax_ids.filtered(
-                        lambda t: t.l10n_do_tax_type == 'itbis'
+                itbis_tax_objs = self.env['account.tax'].search([
+                    ('l10n_do_tax_type', '=', 'itbis')
+                ])
+                for invoice_line in purchase_invoice.filtered(
+                    lambda i: i.invoice_id.l10n_do_is_subject_to_proportionality).mapped('invoice_id').mapped('invoice_line_ids'):
+
+                    total_itbis_line = sum(
+                        tax_values['balance']
+                        for tax_key, tax_values in invoice_line.compute_all_tax.items()
+                        if tax_key.get('tax_repartition_line_id', 0) in itbis_tax_objs.ids
                     )
-                    itbis_taxes_data = line_itbis_taxes.compute_all(
-                        price_unit=invoice_line.price_unit,
-                        quantity=invoice_line.quantity,
-                    )
+                    
                     if not invoice_line.product_id or invoice_line.product_id.type == 'service':
-                        attachment_a_lines[53]['services'] += sum([t["amount"] for t in itbis_taxes_data["taxes"]])
+                        attachment_a_lines[53]['services'] += total_itbis_line
+
                     else:
-                        attachment_a_lines[53]['local_purchase'] += sum([t["amount"] for t in itbis_taxes_data["taxes"]])
+                        attachment_a_lines[53]['local_purchase'] += total_itbis_line
 
 
             # AII
-            attachment_a_line_9 = rec._get_move_lines_it1('A9')
-            attachment_a_line_10 = rec._get_move_lines_it1('A10')
-            attachment_a_lines[9]['amount'] = abs(sum(attachment_a_line_9.mapped('balance')))
-            attachment_a_lines[9]['quantity'] = len(attachment_a_line_9)
-            attachment_a_lines[10]['amount'] = abs(sum(attachment_a_line_10.mapped('balance')))
-            attachment_a_lines[10]['quantity'] = len(attachment_a_line_10)
-
+            attachment_a_lines_9 = rec._get_move_lines_it1('A9')
+            attachment_a_lines[9]['amount'] = abs(sum(attachment_a_lines_9.mapped('balance')))
+            attachment_a_lines[9]['quantity'] = len(attachment_a_lines_9)
+            attachment_a_lines[9]['move_line_ids'] = [(6, 0, attachment_a_lines_9.ids)] if attachment_a_lines_9 else False
+            
+            attachment_a_lines_10 = rec._get_move_lines_it1('A10')
+            attachment_a_lines[10]['amount'] = abs(sum(attachment_a_lines_10.mapped('balance')))
+            attachment_a_lines[10]['quantity'] = len(attachment_a_lines_10)
+            attachment_a_lines[10]['move_line_ids'] = [(6, 0, attachment_a_lines_10.ids)] if attachment_a_lines_10 else False
+            
             attachment_a_lines[11]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(1, 11)])
             attachment_a_lines[11]['quantity'] = sum([attachment_a_lines[box]['quantity'] for box in range(1, 11)])
 
@@ -1460,147 +1472,222 @@ class DgiiReport(models.Model):
             attachment_a_lines[26]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(20, 26)])
 
             # AV
-            attachment_a_lines[27]['amount'] = abs(sum(rec._get_move_lines_it1('A27').mapped('balance')))
-            attachment_a_lines[28]['amount'] = abs(sum(rec._get_move_lines_it1('A28').mapped('balance')))
-            attachment_a_lines[29]['amount'] = abs(sum(rec._get_move_lines_it1('A29').mapped('balance')))
-            attachment_a_lines[30]['amount'] = abs(sum(rec._get_move_lines_it1('A30').mapped('balance')))
-            attachment_a_lines[31]['amount'] = abs(sum(rec._get_move_lines_it1('A31').mapped('balance')))
-            attachment_a_lines[32]['amount'] = abs(sum(rec._get_move_lines_it1('A32').mapped('balance')))
+            attachment_a_lines_27 = rec._get_move_lines_it1('A27')
+            attachment_a_lines[27]['amount'] = abs(sum(attachment_a_lines_27.mapped('balance')))
+            attachment_a_lines[27]['move_line_ids'] = [(6, 0, attachment_a_lines_27.ids)] if attachment_a_lines_27 else False
+
+            attachment_a_lines_28 = rec._get_move_lines_it1('A28')
+            attachment_a_lines[28]['amount'] = abs(sum(attachment_a_lines_28.mapped('balance')))
+            attachment_a_lines[28]['move_line_ids'] = [(6, 0, attachment_a_lines_28.ids)] if attachment_a_lines_28 else False
+            
+            attachment_a_lines_29 = rec._get_move_lines_it1('A29')
+            attachment_a_lines[29]['amount'] = abs(sum(attachment_a_lines_29.mapped('balance')))
+            attachment_a_lines[29]['move_line_ids'] = [(6, 0, attachment_a_lines_29.ids)] if attachment_a_lines_29 else False
+
+            attachment_a_lines_30 = rec._get_move_lines_it1('A30')
+            attachment_a_lines[30]['amount'] = abs(sum(attachment_a_lines_30.mapped('balance')))
+            attachment_a_lines[30]['move_line_ids'] = [(6, 0, attachment_a_lines_30.ids)] if attachment_a_lines_30 else False
+
+            attachment_a_lines_31 = rec._get_move_lines_it1('A31')
+            attachment_a_lines[31]['amount'] = abs(sum(attachment_a_lines_31.mapped('balance')))
+            attachment_a_lines[31]['move_line_ids'] = [(6, 0, attachment_a_lines_31.ids)] if attachment_a_lines_31 else False
+
+            attachment_a_lines_32 = rec._get_move_lines_it1('A32')
+            attachment_a_lines[32]['amount'] = abs(sum(attachment_a_lines_32.mapped('balance')))
+            attachment_a_lines[32]['move_line_ids'] = [(6, 0, attachment_a_lines_32.ids)] if attachment_a_lines_32 else False
+            
             attachment_a_lines[33]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(27, 33)])
 
             # AVI
-            attachment_a_lines[34]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A34').mapped('balance')))
+            attachment_a_lines_34 = rec._get_move_lines_it1('A34')
+            attachment_a_lines[34]['local_purchase'] = abs(sum(attachment_a_lines_34.mapped('balance')))
+            attachment_a_lines[34]['move_line_ids'] = [(6, 0, attachment_a_lines_34.ids)] if attachment_a_lines_34 else False
             attachment_a_lines[34]['amount'] = attachment_a_lines[34]['local_purchase'] * 0.10
-            attachment_a_lines[35]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A35').mapped('balance')))
+
+            attachment_a_lines_35 = rec._get_move_lines_it1('A35')
+            attachment_a_lines[35]['local_purchase'] = abs(sum(attachment_a_lines_35.mapped('balance')))
+            attachment_a_lines[35]['move_line_ids'] = [(6, 0, attachment_a_lines_35.ids)] if attachment_a_lines_35 else False
             # TODO: missing boxes: attachment_a_lines[35]['amount'], attachment_a_lines[39]['amount'] and
             #  attachment_a_lines[40]['amount']
             # attachment_a_lines[35]['amount'] =
-            attachment_a_lines[36]['amount'] = abs(sum(rec._get_move_lines_it1('A36').mapped('balance')))
+
+            attachment_a_lines_36 = rec._get_move_lines_it1('A36')
+            attachment_a_lines[36]['amount'] = abs(sum(attachment_a_lines_36.mapped('balance')))
+            attachment_a_lines[36]['move_line_ids'] = [(6, 0, attachment_a_lines_36.ids)] if attachment_a_lines_36 else False
+
             attachment_a_lines[37]['local_purchase'] = attachment_a_lines[34]['local_purchase'] + \
-                                                       attachment_a_lines[35]['local_purchase']
+                                                    attachment_a_lines[35]['local_purchase']
             attachment_a_lines[37]['amount'] = attachment_a_lines[34]['amount'] + \
-                                               attachment_a_lines[35]['amount'] + \
-                                               attachment_a_lines[36]['amount']
+                                            attachment_a_lines[35]['amount'] + \
+                                            attachment_a_lines[36]['amount']
             attachment_a_lines[38]['amount'] = attachment_a_lines[37]['local_purchase'] - \
-                                               attachment_a_lines[37]['amount']
+                                            attachment_a_lines[37]['amount']
             # AVII
-            attachment_a_lines[39]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A39').mapped('balance')))
+            attachment_a_lines_39 = rec._get_move_lines_it1('A39')
+            attachment_a_lines[39]['local_purchase'] = abs(sum(attachment_a_lines_39.mapped('balance')))
             # attachment_a_lines[39]['amount'] =
-            attachment_a_lines[40]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A40').mapped('balance')))
+            attachment_a_lines[39]['move_line_ids'] = [(6, 0, attachment_a_lines_36.ids)] if attachment_a_lines_39 else False
+
+            attachment_a_lines_40 = rec._get_move_lines_it1('A40')
+            attachment_a_lines[40]['local_purchase'] = abs(sum(attachment_a_lines_40.mapped('balance')))
             # attachment_a_lines[40]['amount'] =
+            attachment_a_lines[40]['move_line_ids'] = [(6, 0, attachment_a_lines_40.ids)] if attachment_a_lines_40 else False
+
             attachment_a_lines[41]['local_purchase'] = attachment_a_lines[39]['local_purchase'] + \
-                                                       attachment_a_lines[40]['local_purchase']
+                                                    attachment_a_lines[40]['local_purchase']
             attachment_a_lines[41]['amount'] = attachment_a_lines[39]['amount'] + attachment_a_lines[40]['amount']
             attachment_a_lines[42]['amount'] = attachment_a_lines[41]['local_purchase'] - \
-                                               attachment_a_lines[41]['amount']
+                                            attachment_a_lines[41]['amount']
 
             # AIXa
-            attachment_a_lines[45]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A45c').mapped('balance')))
-            attachment_a_lines[46]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A46c').mapped('balance')))
-            attachment_a_lines[47]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A47c').mapped('balance')))
+            attachment_a_lines_45c = rec._get_move_lines_it1('A45c')
+            attachment_a_lines_45s = rec._get_move_lines_it1('A45s')
+            attachment_a_lines_45i = rec._get_move_lines_it1('A45i')
+            attachment_a_lines[45]['local_purchase'] = abs(sum(attachment_a_lines_45c.mapped('balance')))
+            attachment_a_lines[45]['services'] = abs(sum(attachment_a_lines_45s.mapped('balance')))
+            attachment_a_lines[45]['imports'] = abs(sum(attachment_a_lines_45i.mapped('balance')))
+            attachment_a_lines[45]['move_line_ids'] = [(6, 0, attachment_a_lines_45c.ids + attachment_a_lines_45s.ids + attachment_a_lines_45i.ids)] if attachment_a_lines_45c or attachment_a_lines_45s or attachment_a_lines_45i else False
+            attachment_a_lines[45]['amount'] = attachment_a_lines[45]['local_purchase'] + \
+                                            attachment_a_lines[45]['services'] + \
+                                            attachment_a_lines[45]['imports']
+            
+            attachment_a_lines_46c = rec._get_move_lines_it1('A46c')
+            attachment_a_lines_46s = rec._get_move_lines_it1('A46s')
+            attachment_a_lines_46i = rec._get_move_lines_it1('A46i')
+            attachment_a_lines[46]['local_purchase'] = abs(sum(attachment_a_lines_46c.mapped('balance')))
+            attachment_a_lines[46]['services'] = abs(sum(attachment_a_lines_46s.mapped('balance')))
+            attachment_a_lines[46]['imports'] = abs(sum(attachment_a_lines_46i.mapped('balance')))
+            attachment_a_lines[46]['move_line_ids'] = [(6, 0, attachment_a_lines_46c.ids + attachment_a_lines_46s.ids + attachment_a_lines_46i.ids)] if attachment_a_lines_46c or attachment_a_lines_46s or attachment_a_lines_46i else False
+            attachment_a_lines[46]['amount'] = attachment_a_lines[46]['local_purchase'] + \
+                                            attachment_a_lines[46]['services'] + \
+                                            attachment_a_lines[46]['imports']
+            
+            attachment_a_lines_47c = rec._get_move_lines_it1('A47c')
+            attachment_a_lines_47s = rec._get_move_lines_it1('A47s')
+            attachment_a_lines_47i = rec._get_move_lines_it1('A47i')
+            attachment_a_lines[47]['local_purchase'] = abs(sum(attachment_a_lines_47c.mapped('balance')))
+            attachment_a_lines[47]['services'] = abs(sum(attachment_a_lines_47s.mapped('balance')))
+            attachment_a_lines[47]['imports'] = abs(sum(attachment_a_lines_47i.mapped('balance')))
+            attachment_a_lines[47]['move_line_ids'] = [(6, 0, attachment_a_lines_47c.ids + attachment_a_lines_47s.ids + attachment_a_lines_47i.ids)] if attachment_a_lines_47c or attachment_a_lines_47s or attachment_a_lines_47i else False
+            attachment_a_lines[47]['amount'] = attachment_a_lines[47]['local_purchase'] + \
+                                            attachment_a_lines[47]['services'] + \
+                                            attachment_a_lines[47]['imports']
+            
             attachment_a_lines[48]['local_purchase'] = sum([
                 attachment_a_lines[box]['local_purchase'] for box in range(45, 48)])
-
-            attachment_a_lines[45]['services'] = abs(sum(rec._get_move_lines_it1('A45s').mapped('balance')))
-            attachment_a_lines[46]['services'] = abs(sum(rec._get_move_lines_it1('A46s').mapped('balance')))
-            attachment_a_lines[47]['services'] = abs(sum(rec._get_move_lines_it1('A47s').mapped('balance')))
             attachment_a_lines[48]['services'] = sum([
                 attachment_a_lines[box]['services'] for box in range(45, 48)])
-
-            attachment_a_lines[45]['imports'] = abs(sum(rec._get_move_lines_it1('A45i').mapped('balance')))
-            attachment_a_lines[46]['imports'] = abs(sum(rec._get_move_lines_it1('A46i').mapped('balance')))
-            attachment_a_lines[47]['imports'] = abs(sum(rec._get_move_lines_it1('A47i').mapped('balance')))
             attachment_a_lines[48]['imports'] = sum([
                 attachment_a_lines[box]['imports'] for box in range(45, 48)])
-
-            attachment_a_lines[45]['amount'] = attachment_a_lines[45]['local_purchase'] + \
-                                               attachment_a_lines[45]['services'] + \
-                                               attachment_a_lines[45]['imports']
-
-            attachment_a_lines[46]['amount'] = attachment_a_lines[46]['local_purchase'] + \
-                                               attachment_a_lines[46]['services'] + \
-                                               attachment_a_lines[46]['imports']
-
-            attachment_a_lines[47]['amount'] = attachment_a_lines[47]['local_purchase'] + \
-                                               attachment_a_lines[47]['services'] + \
-                                               attachment_a_lines[47]['imports']
-
             attachment_a_lines[48]['amount'] = attachment_a_lines[48]['local_purchase'] + \
-                                               attachment_a_lines[48]['services'] + \
-                                               attachment_a_lines[48]['imports']
+                                            attachment_a_lines[48]['services'] + \
+                                            attachment_a_lines[48]['imports']
 
             # AIXb
-            attachment_a_lines[49]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A49c').mapped('balance')))
-            attachment_a_lines[50]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A50c').mapped('balance')))
-            attachment_a_lines[51]['local_purchase'] = abs(sum(rec._get_move_lines_it1('A51c').mapped('balance')))
+            attachment_a_lines_49c = rec._get_move_lines_it1('A49c')
+            attachment_a_lines_49s = rec._get_move_lines_it1('A49s')
+            attachment_a_lines_49i = rec._get_move_lines_it1('A49i')
+            attachment_a_lines[49]['local_purchase'] = abs(sum(attachment_a_lines_49c.mapped('balance')))
+            attachment_a_lines[49]['services'] = abs(sum(attachment_a_lines_49s.mapped('balance')))
+            attachment_a_lines[49]['imports'] = abs(sum(attachment_a_lines_49i.mapped('balance')))
+            attachment_a_lines[49]['move_line_ids'] = [(6, 0, attachment_a_lines_49c.ids + attachment_a_lines_49s.ids + attachment_a_lines_49i.ids)] if attachment_a_lines_49c or attachment_a_lines_49s or attachment_a_lines_49i else False
+            attachment_a_lines[49]['amount'] = attachment_a_lines[49]['local_purchase'] + \
+                                            attachment_a_lines[49]['services'] + \
+                                            attachment_a_lines[49]['imports']
+
+            attachment_a_lines_50c = rec._get_move_lines_it1('A50c')
+            attachment_a_lines_50s = rec._get_move_lines_it1('A50s')
+            attachment_a_lines_50i = rec._get_move_lines_it1('A50i')
+            attachment_a_lines[50]['local_purchase'] = abs(sum(attachment_a_lines_50c.mapped('balance')))
+            attachment_a_lines[50]['services'] = abs(sum(attachment_a_lines_50s.mapped('balance')))
+            attachment_a_lines[50]['imports'] = abs(sum(attachment_a_lines_50i.mapped('balance')))
+            attachment_a_lines[50]['move_line_ids'] = [(6, 0, attachment_a_lines_50c.ids + attachment_a_lines_50s.ids + attachment_a_lines_50i.ids)] if attachment_a_lines_50c or attachment_a_lines_50s or attachment_a_lines_50i else False
+            attachment_a_lines[50]['amount'] = attachment_a_lines[50]['local_purchase'] + \
+                                            attachment_a_lines[50]['services'] + \
+                                            attachment_a_lines[50]['imports']
+            
+            attachment_a_lines_51c = rec._get_move_lines_it1('A51c')
+            attachment_a_lines_51s = rec._get_move_lines_it1('A51s')
+            attachment_a_lines_51i = rec._get_move_lines_it1('A51i')
+            attachment_a_lines[51]['local_purchase'] = abs(sum(attachment_a_lines_51c.mapped('balance')))
+            attachment_a_lines[51]['services'] = abs(sum(attachment_a_lines_51s.mapped('balance')))
+            attachment_a_lines[51]['imports'] = abs(sum(attachment_a_lines_51i.mapped('balance')))
+            attachment_a_lines[51]['move_line_ids'] = [(6, 0, attachment_a_lines_51c.ids + attachment_a_lines_51s.ids + attachment_a_lines_51i.ids)] if attachment_a_lines_51c or attachment_a_lines_51s or attachment_a_lines_51i else False
+            attachment_a_lines[51]['amount'] = attachment_a_lines[51]['local_purchase'] + \
+                                            attachment_a_lines[51]['services'] + \
+                                            attachment_a_lines[51]['imports']
+
             attachment_a_lines[52]['local_purchase'] = sum([
                 attachment_a_lines[box]['local_purchase'] for box in range(49, 53)])
-
-            attachment_a_lines[49]['services'] = abs(sum(rec._get_move_lines_it1('A49s').mapped('balance')))
-            attachment_a_lines[50]['services'] = abs(sum(rec._get_move_lines_it1('A50s').mapped('balance')))
-            attachment_a_lines[51]['services'] = abs(sum(rec._get_move_lines_it1('A51s').mapped('balance')))
             attachment_a_lines[52]['services'] = sum([
                 attachment_a_lines[box]['services'] for box in range(49, 53)])
-
-            attachment_a_lines[49]['imports'] = abs(sum(rec._get_move_lines_it1('A49i').mapped('balance')))
-            attachment_a_lines[50]['imports'] = abs(sum(rec._get_move_lines_it1('A50i').mapped('balance')))
-            attachment_a_lines[51]['imports'] = abs(sum(rec._get_move_lines_it1('A51i').mapped('balance')))
             attachment_a_lines[52]['imports'] = sum([
                 attachment_a_lines[box]['imports'] for box in range(49, 53)])
-
-            attachment_a_lines[49]['amount'] = attachment_a_lines[49]['local_purchase'] + \
-                                               attachment_a_lines[49]['services'] + \
-                                               attachment_a_lines[49]['imports']
-
-            attachment_a_lines[50]['amount'] = attachment_a_lines[50]['local_purchase'] + \
-                                               attachment_a_lines[50]['services'] + \
-                                               attachment_a_lines[50]['imports']
-
-            attachment_a_lines[51]['amount'] = attachment_a_lines[51]['local_purchase'] + \
-                                               attachment_a_lines[51]['services'] + \
-                                               attachment_a_lines[51]['imports']
-
             attachment_a_lines[52]['amount'] = attachment_a_lines[52]['local_purchase'] + \
-                                               attachment_a_lines[52]['services'] + \
-                                               attachment_a_lines[52]['imports']
+                                            attachment_a_lines[52]['services'] + \
+                                            attachment_a_lines[52]['imports']
+                                            
+
             # AIXc
-            attachment_a_lines[53]['imports'] = abs(sum(rec._get_move_lines_it1('A53').mapped('balance')))
+            attachment_a_lines_53 = rec._get_move_lines_it1('A53')
+            attachment_a_lines[53]['imports'] = abs(sum(attachment_a_lines_53.mapped('balance')))
+            attachment_a_lines[53]['move_line_ids'] = [(6, 0, attachment_a_lines_53.ids)] if attachment_a_lines_53 else False
             attachment_a_lines[53]['amount'] = attachment_a_lines[53]['local_purchase'] + \
-                                               attachment_a_lines[53]['services'] + \
-                                               attachment_a_lines[53]['imports']
+                                            attachment_a_lines[53]['services'] + \
+                                            attachment_a_lines[53]['imports']
 
             # IT1II
             it1_lines[1]['amount'] = attachment_a_lines[11]['amount']
 
             # IT1IIA
-            it1_lines[2]['amount'] = abs(sum(rec._get_move_lines_it1('I2').mapped('balance')))
-            it1_lines[3]['amount'] = abs(sum(rec._get_move_lines_it1('I3').mapped('balance')))
-            it1_lines[4]['amount'] = abs(sum(rec._get_move_lines_it1('I4').mapped('balance')))
-            it1_lines[5]['amount'] = abs(sum(rec._get_move_lines_it1('I5').mapped('balance')))
+            it1_lines_2 = rec._get_move_lines_it1('I2')
+            it1_lines[2]['amount'] = abs(sum(it1_lines_2.mapped('balance')))
+            it1_lines[2]['move_line_ids'] = [(6, 0, it1_lines_2.ids)] if it1_lines_2 else False
+
+            it1_lines_3 = rec._get_move_lines_it1('I3')
+            it1_lines[3]['amount'] = abs(sum(it1_lines_3.mapped('balance')))
+            it1_lines[3]['move_line_ids'] = [(6, 0, it1_lines_3.ids)] if it1_lines_3 else False
+
+            it1_lines_4 = rec._get_move_lines_it1('I4')
+            it1_lines[4]['amount'] = abs(sum(it1_lines_4.mapped('balance')))
+            it1_lines[4]['move_line_ids'] = [(6, 0, it1_lines_4.ids)] if it1_lines_4 else False
+
+            it1_lines_5 = rec._get_move_lines_it1('I5')
+            it1_lines[5]['amount'] = abs(sum(it1_lines_5.mapped('balance')))
+            it1_lines[5]['move_line_ids'] = [(6, 0, it1_lines_5.ids)] if it1_lines_5 else False
+
             it1_lines[6]['amount'] = attachment_a_lines[38]['amount']
+
             it1_lines[7]['amount'] = attachment_a_lines[42]['amount']
-            it1_lines[8]['amount'] = abs(sum(rec._get_move_lines_it1('I8').mapped('balance')))
+
+            it1_lines_8 = rec._get_move_lines_it1('I8')
+            it1_lines[8]['amount'] = abs(sum(it1_lines_8.mapped('balance')))
+            it1_lines[8]['move_line_ids'] = [(6, 0, it1_lines_8.ids)] if it1_lines_8 else False
+
             it1_lines[9]['amount'] = sum([it1_lines[box]['amount'] for box in range(2, 9)])
 
             # IT1IIB
             it1_lines[10]['amount'] = it1_lines[1]['amount'] - it1_lines[9]['amount']
-            it1_lines[15]['amount'] = abs(sum(rec._get_move_lines_it1('I15').mapped('balance')))
 
+            it1_lines_15 = rec._get_move_lines_it1('I15')
+            it1_lines[15]['amount'] = abs(sum(it1_lines_15.mapped('balance')))
+            it1_lines[15]['move_line_ids'] = [(6, 0, it1_lines_15.ids)] if it1_lines_15 else False
+            
             attachment_a_lines[54]['coefficient'] = (it1_lines[2]['amount'] +
-                                                     it1_lines[5]['amount'] +
-                                                     it1_lines[10]['amount']) / (it1_lines[1]['amount']) \
+                                                    it1_lines[5]['amount'] +
+                                                    it1_lines[10]['amount']) / (it1_lines[1]['amount']) \
                 if it1_lines[1]['amount'] != 0 else 0
 
             attachment_a_lines[55]['local_purchase'] = attachment_a_lines[53]['local_purchase'] * \
-                                                       attachment_a_lines[54]['coefficient']
+                                                    attachment_a_lines[54]['coefficient']
             attachment_a_lines[55]['services'] = attachment_a_lines[53]['services'] * \
-                                                 attachment_a_lines[54]['coefficient']
+                                                attachment_a_lines[54]['coefficient']
             attachment_a_lines[55]['imports'] = attachment_a_lines[53]['imports'] * \
                                                 attachment_a_lines[54]['coefficient']
             attachment_a_lines[55]['amount'] = attachment_a_lines[53]['amount'] * attachment_a_lines[54]['coefficient']
 
             attachment_a_lines[56]['local_purchase'] = attachment_a_lines[52]['local_purchase'] + \
-                                                       attachment_a_lines[55]['local_purchase']
+                                                    attachment_a_lines[55]['local_purchase']
             attachment_a_lines[56]['services'] = attachment_a_lines[52]['services'] + attachment_a_lines[55]['services']
             attachment_a_lines[56]['imports'] = attachment_a_lines[52]['imports'] + attachment_a_lines[55]['imports']
             attachment_a_lines[56]['amount'] = attachment_a_lines[52]['amount'] + attachment_a_lines[55]['amount']
@@ -1620,7 +1707,10 @@ class DgiiReport(models.Model):
                 if it1_lines[25]['amount'] < it1_lines[21]['amount'] else 0
             it1_lines[27]['amount'] = abs(it1_lines[21]['amount'] - it1_lines[25]['amount']) \
                 if it1_lines[25]['amount'] > it1_lines[21]['amount'] else 0
-            it1_lines[28]['amount'] = abs(sum(rec._get_move_lines_it1('I28').mapped('balance')))
+
+            it1_lines_28 = rec._get_move_lines_it1('I28')
+            it1_lines[28]['amount'] = abs(sum(it1_lines_28.mapped('balance')))
+            it1_lines[28]['move_line_ids'] = [(6, 0, it1_lines_28.ids)] if it1_lines_28 else False
 
             previous_it1_line_34_obj = self.env['dgii.reports.it1.line'].search([
                 ('dgii_report_id', '=', previous_report.id if previous_report else 0),
@@ -1630,71 +1720,139 @@ class DgiiReport(models.Model):
 
             it1_lines[29]['amount'] = previous_it1_line_34_obj.amount if previous_it1_line_34_obj else 0
             it1_lines[30]['amount'] = attachment_a_lines[33]['amount']
-            it1_lines[31]['amount'] = abs(sum(rec._get_move_lines_it1('I31').mapped('balance')))
-            it1_lines[32]['amount'] = abs(sum(rec._get_move_lines_it1('I32').mapped('balance')))
+
+            it1_lines_31 = rec._get_move_lines_it1('I31')
+            it1_lines[31]['amount'] = abs(sum(it1_lines_31.mapped('balance')))
+            it1_lines[31]['move_line_ids'] = [(6, 0, it1_lines_31.ids)] if it1_lines_31 else False
+
+            it1_lines_32 = rec._get_move_lines_it1('I32')
+            it1_lines[32]['amount'] = abs(sum(it1_lines_32.mapped('balance')))
+            it1_lines[32]['move_line_ids'] = [(6, 0, it1_lines_32.ids)] if it1_lines_32 else False
 
             it1_line_33_34 = it1_lines[26]['amount'] - \
-                          it1_lines[28]['amount'] - \
-                          it1_lines[29]['amount'] - \
-                          it1_lines[30]['amount'] - \
-                          it1_lines[31]['amount'] - \
-                          it1_lines[32]['amount']
+                        it1_lines[28]['amount'] - \
+                        it1_lines[29]['amount'] - \
+                        it1_lines[30]['amount'] - \
+                        it1_lines[31]['amount'] - \
+                        it1_lines[32]['amount']
 
             it1_lines[33]['amount'] = it1_line_33_34 if it1_line_33_34 > 0 else 0
             it1_lines[34]['amount'] = sum([it1_lines[box]['amount'] for box in range(27, 33)]) \
                 if it1_line_33_34 < 0 else 0
 
             # IT1IV
-            it1_lines[35]['amount'] = abs(sum(rec._get_move_lines_it1('I35').mapped('balance')))
-            it1_lines[36]['amount'] = abs(sum(rec._get_move_lines_it1('I36').mapped('balance')))
-            it1_lines[37]['amount'] = abs(sum(rec._get_move_lines_it1('I37').mapped('balance')))
+            it1_lines_35 = rec._get_move_lines_it1('I35')
+            it1_lines[35]['amount'] = abs(sum(it1_lines_35.mapped('balance')))
+            it1_lines[35]['move_line_ids'] = [(6, 0, it1_lines_35.ids)] if it1_lines_35 else False
+
+            it1_lines_36 = rec._get_move_lines_it1('I36')
+            it1_lines[36]['amount'] = abs(sum(it1_lines_36.mapped('balance')))
+            it1_lines[36]['move_line_ids'] = [(6, 0, it1_lines_36.ids)] if it1_lines_36 else False
+
+            it1_lines_37 = rec._get_move_lines_it1('I37')
+            it1_lines[37]['amount'] = abs(sum(it1_lines_37.mapped('balance')))
+            it1_lines[37]['move_line_ids'] = [(6, 0, it1_lines_37.ids)] if it1_lines_37 else False
 
             # IT1V
             it1_lines[38]['amount'] = it1_lines[33]['amount'] + \
-                                      it1_lines[35]['amount'] + \
-                                      it1_lines[36]['amount'] + \
-                                      it1_lines[37]['amount']
+                                    it1_lines[35]['amount'] + \
+                                    it1_lines[36]['amount'] + \
+                                    it1_lines[37]['amount']
 
             # IT1A
-            it1_lines[39]['amount'] = abs(sum(rec._get_move_lines_it1('I39').mapped('balance')))
-            it1_lines[40]['amount'] = abs(sum(rec._get_move_lines_it1('I40').mapped('balance')))
+            it1_lines_39 = rec._get_move_lines_it1('I39')
+            it1_lines[39]['amount'] = abs(sum(it1_lines_39.mapped('balance')))
+            it1_lines[39]['move_line_ids'] = [(6, 0, it1_lines_39.ids)] if it1_lines_39 else False
+
+            it1_lines_40 = rec._get_move_lines_it1('I40')
+            it1_lines[40]['amount'] = abs(sum(it1_lines_40.mapped('balance')))
+            it1_lines[40]['move_line_ids'] = [(6, 0, it1_lines_40.ids)] if it1_lines_40 else False
+
             it1_lines[41]['amount'] = it1_lines[39]['amount'] + it1_lines[40]['amount']
-            it1_lines[42]['amount'] = abs(sum(rec._get_move_lines_it1('I42').mapped('balance')))
-            it1_lines[43]['amount'] = abs(sum(rec._get_move_lines_it1('I43').mapped('balance')))
-            it1_lines[44]['amount'] = abs(sum(rec._get_move_lines_it1('I44').mapped('balance')))
-            it1_lines[45]['amount'] = abs(sum(rec._get_move_lines_it1('I45').mapped('balance')))
+
+            it1_lines_42 = rec._get_move_lines_it1('I42')
+            it1_lines[42]['amount'] = abs(sum(it1_lines_42.mapped('balance')))
+            it1_lines[42]['move_line_ids'] = [(6, 0, it1_lines_42.ids)] if it1_lines_42 else False
+
+            it1_lines_43 = rec._get_move_lines_it1('I43')
+            it1_lines[43]['amount'] = abs(sum(it1_lines_43.mapped('balance')))
+            it1_lines[43]['move_line_ids'] = [(6, 0, it1_lines_43.ids)] if it1_lines_43 else False
+
+            it1_lines_44 = rec._get_move_lines_it1('I44')
+            it1_lines[44]['amount'] = abs(sum(it1_lines_44.mapped('balance')))
+            it1_lines[44]['move_line_ids'] = [(6, 0, it1_lines_44.ids)] if it1_lines_44 else False
+
+            it1_lines_45 = rec._get_move_lines_it1('I45')
+            it1_lines[45]['amount'] = abs(sum(it1_lines_45.mapped('balance')))
+            it1_lines[45]['move_line_ids'] = [(6, 0, it1_lines_45.ids)] if it1_lines_45 else False
+            
             it1_lines[46]['amount'] = it1_lines[44]['amount'] + it1_lines[45]['amount']
-            it1_lines[47]['amount'] = abs(sum(rec._get_move_lines_it1('I47').mapped('balance')))
-            it1_lines[48]['amount'] = abs(sum(rec._get_move_lines_it1('I48').mapped('balance')))
+
+            it1_lines_47 = rec._get_move_lines_it1('I47')
+            it1_lines[47]['amount'] = abs(sum(it1_lines_47.mapped('balance')))
+            it1_lines[47]['move_line_ids'] = [(6, 0, it1_lines_47.ids)] if it1_lines_47 else False
+
+            it1_lines_48 = rec._get_move_lines_it1('I48')
+            it1_lines[48]['amount'] = abs(sum(it1_lines_48.mapped('balance')))
+            it1_lines[48]['move_line_ids'] = [(6, 0, it1_lines_48.ids)] if it1_lines_48 else False
+
             it1_lines[49]['amount'] = it1_lines[47]['amount'] + it1_lines[48]['amount']
+
             it1_lines[50]['amount'] = it1_lines[41]['amount'] * 0.18
+
             it1_lines[51]['amount'] = it1_lines[42]['amount'] * 0.18
+
             it1_lines[52]['amount'] = it1_lines[43]['amount'] * 0.18 * 0.30
+
             it1_lines[53]['amount'] = it1_lines[44]['amount'] * 0.18
+
             it1_lines[54]['amount'] = it1_lines[45]['amount'] * 0.16
+
             it1_lines[55]['amount'] = it1_lines[53]['amount'] + it1_lines[54]['amount']
+
             it1_lines[56]['amount'] = it1_lines[47]['amount'] * 0.18
+
             it1_lines[57]['amount'] = it1_lines[48]['amount'] * 0.16
+
             it1_lines[58]['amount'] = it1_lines[56]['amount'] + it1_lines[57]['amount']
-            it1_lines[59]['amount'] = abs(sum(rec._get_move_lines_it1('I59').mapped('balance')))
+
+            it1_lines_59 = rec._get_move_lines_it1('I59')
+            it1_lines[59]['amount'] = abs(sum(it1_lines_59.mapped('balance')))
+            it1_lines[59]['move_line_ids'] = [(6, 0, it1_lines_59.ids)] if it1_lines_59 else False
+
             it1_lines[60]['amount'] = it1_lines[50]['amount'] + \
-                                      it1_lines[51]['amount'] + \
-                                      it1_lines[52]['amount'] + \
-                                      it1_lines[55]['amount'] + \
-                                      it1_lines[58]['amount'] + \
-                                      it1_lines[59]['amount']
-            it1_lines[61]['amount'] = abs(sum(rec._get_move_lines_it1('I61').mapped('balance')))
+                                    it1_lines[51]['amount'] + \
+                                    it1_lines[52]['amount'] + \
+                                    it1_lines[55]['amount'] + \
+                                    it1_lines[58]['amount'] + \
+                                    it1_lines[59]['amount']
+
+            it1_lines_61 = rec._get_move_lines_it1('I61')
+            it1_lines[61]['amount'] = abs(sum(it1_lines_61.mapped('balance')))
+            it1_lines[61]['move_line_ids'] = [(6, 0, it1_lines_61.ids)] if it1_lines_61 else False
+
             it1_lines[62]['amount'] = abs(it1_lines[60]['amount'] - it1_lines[61]['amount']) \
                 if it1_lines[60]['amount'] > it1_lines[61]['amount'] else 0
+
             it1_lines[63]['amount'] = abs(it1_lines[60]['amount'] - it1_lines[61]['amount']) \
                 if it1_lines[60]['amount'] < it1_lines[61]['amount'] else 0
-            it1_lines[64]['amount'] = abs(sum(rec._get_move_lines_it1('I64').mapped('balance')))
-            it1_lines[65]['amount'] = abs(sum(rec._get_move_lines_it1('I65').mapped('balance')))
-            it1_lines[66]['amount'] = abs(sum(rec._get_move_lines_it1('I66').mapped('balance')))
+            
+            it1_lines_64 = rec._get_move_lines_it1('I64')
+            it1_lines[64]['amount'] = abs(sum(it1_lines_64.mapped('balance')))
+            it1_lines[64]['move_line_ids'] = [(6, 0, it1_lines_64.ids)] if it1_lines_64 else False
+
+            it1_lines_65 = rec._get_move_lines_it1('I65')
+            it1_lines[65]['amount'] = abs(sum(it1_lines_65.mapped('balance')))
+            it1_lines[65]['move_line_ids'] = [(6, 0, it1_lines_65.ids)] if it1_lines_65 else False
+
+            it1_lines_66 = rec._get_move_lines_it1('I66')
+            it1_lines[66]['amount'] = abs(sum(it1_lines_66.mapped('balance')))
+            it1_lines[66]['move_line_ids'] = [(6, 0, it1_lines_66.ids)] if it1_lines_66 else False
+
             it1_lines[67]['amount'] = it1_lines[62]['amount'] + \
-                                      it1_lines[64]['amount'] + \
-                                      it1_lines[65]['amount'] + \
-                                      it1_lines[66]['amount']
+                                    it1_lines[64]['amount'] + \
+                                    it1_lines[65]['amount'] + \
+                                    it1_lines[66]['amount']
             it1_lines[68]['amount'] = it1_lines[38]['amount'] + it1_lines[67]['amount']
 
             self.env['dgii.reports.it1.line'].create(attachment_a_lines.values())
@@ -2047,4 +2205,8 @@ class DgiiReportsIt1(models.Model):
         ],
         default=False,
         help="Technical field for UX purpose.",
+    )
+    move_line_ids = fields.Many2many(
+        comodel_name='account.move.line',
+        string='Move Lines',
     )
