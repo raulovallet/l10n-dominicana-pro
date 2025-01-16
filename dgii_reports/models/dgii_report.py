@@ -1424,7 +1424,8 @@ class DgiiReport(models.Model):
                         it1_lines[13]['amount'] += tax_base_amount
                     elif invoice_line.tax_line_id.amount == 8.0:
                         it1_lines[14]['amount'] += tax_base_amount
-
+            
+            attachment_a_lines_53_move_line_ids = []
             for purchase_invoice in purchase_invoices:
 
                 # AVIII
@@ -1449,6 +1450,9 @@ class DgiiReport(models.Model):
 
                     else:
                         attachment_a_lines[53]['local_purchase'] += total_itbis_line
+
+                    if total_itbis_line:
+                        attachment_a_lines_53_move_line_ids.append(invoice_line.id)
 
 
             # AII
@@ -1631,7 +1635,8 @@ class DgiiReport(models.Model):
             # AIXc
             attachment_a_lines_53 = rec._get_move_lines_it1('A53')
             attachment_a_lines[53]['imports'] = abs(sum(attachment_a_lines_53.mapped('balance')))
-            attachment_a_lines[53]['move_line_ids'] = [(6, 0, attachment_a_lines_53.ids)] if attachment_a_lines_53 else False
+            attachment_a_lines_53_move_line_ids += attachment_a_lines_53.ids
+            attachment_a_lines[53]['move_line_ids'] = [(6, 0, attachment_a_lines_53_move_line_ids)] if attachment_a_lines_53_move_line_ids else False
             attachment_a_lines[53]['amount'] = attachment_a_lines[53]['local_purchase'] + \
                                             attachment_a_lines[53]['services'] + \
                                             attachment_a_lines[53]['imports']
