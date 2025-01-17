@@ -47,7 +47,8 @@ class AccountInvoice(models.Model):
         'state', 
         'line_ids', 
         'line_ids.balance', 
-        'line_ids.tax_line_id'
+        'line_ids.tax_line_id',
+        'l10n_do_is_subject_to_proportionality'
     )
     def _compute_taxes_fields(self):
         
