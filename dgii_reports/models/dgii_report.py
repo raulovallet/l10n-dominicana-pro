@@ -130,17 +130,17 @@ class DgiiReport(models.Model):
             ])
             for inv in purchase_line_ids:
                 data['purchase_records'] += 1
-                data['service_total_amount'] += inv.service_total_amount
-                data['good_total_amount'] += inv.good_total_amount
-                data['purchase_invoiced_amount'] += inv.invoiced_amount
-                data['purchase_invoiced_itbis'] += inv.invoiced_itbis
-                data['purchase_withholded_itbis'] += inv.withholded_itbis
-                data['cost_itbis'] += inv.cost_itbis
-                data['advance_itbis'] += inv.advance_itbis
-                data['income_withholding'] += inv.income_withholding
-                data['purchase_selective_tax'] += inv.selective_tax
-                data['purchase_other_taxes'] += inv.other_taxes
-                data['purchase_legal_tip'] += inv.legal_tip
+                data['service_total_amount'] += inv.service_total_amount if inv.invoice_id.move_type not in ['in_refund'] else inv.service_total_amount * -1
+                data['good_total_amount'] += inv.good_total_amount if inv.invoice_id.move_type not in ['in_refund'] else inv.service_total_amount * -1
+                data['purchase_invoiced_amount'] += inv.invoiced_amount if inv.invoice_id.move_type not in ['in_refund'] else inv.invoiced_amount * -1
+                data['purchase_invoiced_itbis'] += inv.invoiced_itbis if inv.invoice_id.move_type not in ['in_refund'] else inv.invoiced_itbis * -1
+                data['purchase_withholded_itbis'] += inv.withholded_itbis if inv.invoice_id.move_type not in ['in_refund'] else inv.withholded_itbis * -1
+                data['cost_itbis'] += inv.cost_itbis if inv.invoice_id.move_type not in ['in_refund'] else inv.cost_itbis * -1
+                data['advance_itbis'] += inv.advance_itbis if inv.invoice_id.move_type not in ['in_refund'] else inv.advance_itbis * -1
+                data['income_withholding'] += inv.income_withholding if inv.invoice_id.move_type not in ['in_refund'] else inv.income_withholding * -1
+                data['purchase_selective_tax'] += inv.selective_tax if inv.invoice_id.move_type not in ['in_refund'] else inv.selective_tax * -1
+                data['purchase_other_taxes'] += inv.other_taxes if inv.invoice_id.move_type not in ['in_refund'] else inv.other_taxes * -1
+                data['purchase_legal_tip'] += inv.legal_tip if inv.invoice_id.move_type not in ['in_refund'] else inv.legal_tip * -1
 
             rec.purchase_records = abs(data['purchase_records'])
             rec.service_total_amount = abs(data['service_total_amount'])
@@ -173,13 +173,13 @@ class DgiiReport(models.Model):
             ])
             for inv in sale_line_ids:
                 data['sale_records'] += 1
-                data['sale_invoiced_amount'] += inv.invoiced_amount
-                data['sale_invoiced_itbis'] += inv.invoiced_itbis
-                data['sale_withholded_itbis'] += inv.third_withheld_itbis
-                data['sale_withholded_isr'] += inv.third_income_withholding
-                data['sale_selective_tax'] += inv.selective_tax
-                data['sale_other_taxes'] += inv.other_taxes
-                data['sale_legal_tip'] += inv.legal_tip
+                data['sale_invoiced_amount'] += inv.invoiced_amount if inv.invoice_id.move_type not in ['out_refund'] else inv.invoiced_amount * -1
+                data['sale_invoiced_itbis'] += inv.invoiced_itbis if inv.invoice_id.move_type not in ['out_refund'] else inv.invoiced_itbis * -1
+                data['sale_withholded_itbis'] += inv.third_withheld_itbis if inv.invoice_id.move_type not in ['out_refund'] else inv.third_withheld_itbis * -1
+                data['sale_withholded_isr'] += inv.third_income_withholding if inv.invoice_id.move_type not in ['out_refund'] else inv.third_income_withholding * -1
+                data['sale_selective_tax'] += inv.selective_tax if inv.invoice_id.move_type not in ['out_refund'] else inv.selective_tax * -1
+                data['sale_other_taxes'] += inv.other_taxes if inv.invoice_id.move_type not in ['out_refund'] else inv.other_taxes * -1
+                data['sale_legal_tip'] += inv.legal_tip if inv.invoice_id.move_type not in ['out_refund'] else inv.legal_tip * -1
 
             rec.sale_records = abs(data['sale_records'])
             rec.sale_invoiced_amount = abs(data['sale_invoiced_amount'])
@@ -212,9 +212,9 @@ class DgiiReport(models.Model):
             ])
             for inv in external_line_ids:
                 data['exterior_records'] += 1
-                data['presumed_income'] += inv.presumed_income
-                data['exterior_withholded_isr'] += inv.withholded_isr
-                data['exterior_invoiced_amount'] += inv.invoiced_amount
+                data['presumed_income'] += inv.presumed_income if inv.invoice_id.move_type in ['out_refund', 'in_refund'] else inv.presumed_income * -1
+                data['exterior_withholded_isr'] += inv.withholded_isr if inv.invoice_id.move_type in ['out_invoice', 'in_refund'] else inv.withholded_isr * -1
+                data['exterior_invoiced_amount'] += inv.invoiced_amount if inv.invoice_id.move_type in ['out_invoice', 'in_refund'] else inv.invoiced_amount * -1
 
             rec.exterior_records = abs(data['exterior_records'])
             rec.presumed_income = abs(data['presumed_income'])
