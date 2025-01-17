@@ -89,10 +89,8 @@ class AccountInvoice(models.Model):
                 #     tax_line_ids.filtered(
                 #         lambda tax: tax.tax_line_id.l10n_do_tax_type == 'itbis_cost').mapped('balance')
                 # ))
-                # inv.proportionality_tax = abs(sum(
-                #     tax_line_ids.filtered(
-                #         lambda tax: tax.tax_line_id.l10n_do_tax_type == 'prop').mapped('balance')
-                # ))
+
+                inv.proportionality_tax = inv.invoiced_itbis if inv.l10n_do_is_subject_to_proportionality else 0
                 inv.advance_itbis = inv.invoiced_itbis - inv.cost_itbis
 
     @api.depends(
