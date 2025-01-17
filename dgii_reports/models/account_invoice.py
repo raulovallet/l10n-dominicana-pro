@@ -378,15 +378,15 @@ class AccountInvoice(models.Model):
     l10n_do_is_subject_to_proportionality = fields.Boolean( 
         string='Subject to proportionality',
         help='Indicates if the invoice is subject to proportionality tax.',
-        default=lambda self: self._default_l10n_do_is_subject_to_proportionality()
+        # default=lambda self: self._default_l10n_do_is_subject_to_proportionality()
     )
 
+    @api.onchange('move_type')
     def _default_l10n_do_is_subject_to_proportionality(self):
         """Determines the default value for the field based on the company and move type."""
-        company = self.env.company
-        if company.l10n_do_is_subject_to_proportionality and self.move_type == 'in_invoice':
-            return True
-        return False
+        for record in self:
+            if record.company_id.l10n_do_is_subject_to_proportionality and self.move_type in ('in_invoice', 'out_invoice'):
+                record.l10n_do_is_subject_to_proportionality = True
 
     @api.constrains('l10n_do_is_subject_to_proportionality')
     def l10n_do_is_subject_to_proportionality_constrains(self):
