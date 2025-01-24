@@ -1324,6 +1324,10 @@ class DgiiReport(models.Model):
     def _compute_attachment_a_and_it1_data(self):
 
         self.env['dgii.reports.it1.line'].search([('dgii_report_id', 'in', self.ids)]).unlink()
+        itbis_tax_objs = self.env['account.tax'].search([
+            ('l10n_do_tax_type', '=', 'itbis')
+        ])
+        itbis_repartition_line_tax = itbis_tax_objs.mapped('invoice_repartition_line_ids') + itbis_tax_objs.mapped('refund_repartition_line_ids')
 
         for rec in self:
 
@@ -1433,16 +1437,13 @@ class DgiiReport(models.Model):
                     attachment_a_lines[44]['amount'] += purchase_invoice.invoice_id.amount_untaxed
 
                 # IXc
-                itbis_tax_objs = self.env['account.tax'].search([
-                    ('l10n_do_tax_type', '=', 'itbis')
-                ])
                 for invoice_line in purchase_invoice.filtered(
                     lambda i: i.invoice_id.l10n_do_is_subject_to_proportionality).mapped('invoice_id').mapped('invoice_line_ids'):
 
                     total_itbis_line = sum(
                         tax_values['balance']
                         for tax_key, tax_values in invoice_line.compute_all_tax.items()
-                        if tax_key.get('tax_repartition_line_id', 0) in itbis_tax_objs.ids
+                        if tax_key.get('tax_repartition_line_id', 0) in itbis_repartition_line_tax.ids
                     )
                     
                     if not invoice_line.product_id or invoice_line.product_id.type == 'service':

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-19 19:41+0000\n"
-"PO-Revision-Date: 2024-08-19 15:45-0400\n"
+"POT-Creation-Date: 2025-01-24 01:29+0000\n"
+"PO-Revision-Date: 2025-01-23 20:33-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: dgii_reports
 #: model:ir.model.fields,help:dgii_reports.field_account_bank_statement_line__fiscal_status
@@ -75,9 +75,18 @@ msgid "609 file"
 msgstr "Archivo 609"
 
 #. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.view_res_config_settings_inherit_dgii
+msgid ""
+"<span class=\"fa fa-lg fa-balance-scale\" title=\"Subject to Proportionality\" aria-"
+"label=\"Subject to Proportionality\" role=\"img\"/>"
+msgstr ""
+"<span class=\"fa fa-lg fa-balance-scale\" title=“Sujeto a proporcionalidad” aria-"
+"label=“Sujeto a proporcionalidad” role=\"img\"/>"
+
+#. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_form_view
 msgid "<span class=\"fa fa-lightbulb-o fa-lg\" title=\"Info\" aria-label=\"Info\"/>"
-msgstr ""
+msgstr "<span class=\"fa fa-lightbulb-o fa-lg\" title=\"Info\" aria-label=\"Info\"/>"
 
 #. module: dgii_reports
 #: model_terms:ir.ui.view,arch_db:dgii_reports.dgii_report_regenerate_wizard_form
@@ -337,6 +346,11 @@ msgid "Advanced ITBIS"
 msgstr "ITBIS por Adelantar"
 
 #. module: dgii_reports
+#: model_terms:ir.ui.view,arch_db:dgii_reports.view_res_config_settings_inherit_dgii
+msgid "All purchase invoices will be subject to proportionality."
+msgstr "Todas las facturas de compra estarán sujetas al principio de proporcionalidad."
+
+#. module: dgii_reports
 #. odoo-python
 #: code:addons/dgii_reports/models/account_invoice.py:0
 #, python-format
@@ -567,6 +581,16 @@ msgid "Check / Transfer / Deposit"
 msgstr "Cheque / Transferencia / Depósito"
 
 #. module: dgii_reports
+#: model:ir.model.fields,help:dgii_reports.field_res_config_settings__l10n_do_is_subject_to_proportionality
+msgid "Check this box if the company is subject to proportionality"
+msgstr "Marque esta casilla si la empresa está sujeta a la proporcionalidad"
+
+#. module: dgii_reports
+#: model:ir.model.fields,help:dgii_reports.field_res_company__l10n_do_is_subject_to_proportionality
+msgid "Check this box if the company is subject to proportionality "
+msgstr "Marque esta casilla si la empresa está sujeta a la proporcionalidad"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_invoice_service_type_detail__code
 msgid "Code"
 msgstr "Código"
@@ -580,9 +604,19 @@ msgid "Code must be unique"
 msgstr "El código debe ser único"
 
 #. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__company_id
 msgid "Company"
 msgstr "Compañía"
+
+#. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__csmr_cash
@@ -704,6 +738,7 @@ msgstr "TARJETA DÉBITO / CRÉDITO"
 #. module: dgii_reports
 #: model:ir.ui.menu,name:dgii_reports.dgii_report_menu
 #: model_terms:ir.ui.view,arch_db:dgii_reports.invoice_form_inherited
+#: model_terms:ir.ui.view,arch_db:dgii_reports.view_res_config_settings_inherit_dgii
 msgid "DGII"
 msgstr ""
 
@@ -1547,6 +1582,13 @@ msgid "Income type"
 msgstr "Tipo de ingreso"
 
 #. module: dgii_reports
+#: model:ir.model.fields,help:dgii_reports.field_account_bank_statement_line__l10n_do_is_subject_to_proportionality
+#: model:ir.model.fields,help:dgii_reports.field_account_move__l10n_do_is_subject_to_proportionality
+#: model:ir.model.fields,help:dgii_reports.field_account_payment__l10n_do_is_subject_to_proportionality
+msgid "Indicates if the invoice is subject to proportionality tax."
+msgstr "Indica si la factura está sujeta al impuesto de proporcionalidad."
+
+#. module: dgii_reports
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__service_type__07
 msgid "Insurance Expenses"
 msgstr "Gastos de seguro"
@@ -1643,6 +1685,11 @@ msgid "Is Follower"
 msgstr "Es un seguidor"
 
 #. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_res_company__l10n_do_is_subject_to_proportionality
+msgid "Is Subject to Proportionality"
+msgstr "Está sujeto a proporcionalidad"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_exterior_line__isr_withholding_date
 msgid "Isr Withholding Date"
 msgstr "Tipo de Retención en ISR"
@@ -1661,6 +1708,11 @@ msgstr "Cantidad NCFs Emitidos"
 #: model:ir.model,name:dgii_reports.model_account_move
 msgid "Journal Entry"
 msgstr "Asiento contable"
+
+#. module: dgii_reports
+#: model:ir.model,name:dgii_reports.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
 
 #. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__local_purchase
@@ -1782,6 +1834,11 @@ msgstr "Juegos para móviles"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__modified_invoice_number
 msgid "Modified Invoice Number"
 msgstr "NCF o Documento Modificado"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_it1_line__move_line_ids
+msgid "Move Lines"
+msgstr "Líneas de Movimientos"
 
 #. module: dgii_reports
 #. odoo-python
@@ -2544,6 +2601,19 @@ msgid "Statements"
 msgstr "Extractos"
 
 #. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_res_config_settings__l10n_do_is_subject_to_proportionality
+#: model_terms:ir.ui.view,arch_db:dgii_reports.view_res_config_settings_inherit_dgii
+msgid "Subject to Proportionality"
+msgstr "Sujeto a proporcionalidad"
+
+#. module: dgii_reports
+#: model:ir.model.fields,field_description:dgii_reports.field_account_bank_statement_line__l10n_do_is_subject_to_proportionality
+#: model:ir.model.fields,field_description:dgii_reports.field_account_move__l10n_do_is_subject_to_proportionality
+#: model:ir.model.fields,field_description:dgii_reports.field_account_payment__l10n_do_is_subject_to_proportionality
+msgid "Subject to proportionality"
+msgstr "Sujeto a proporcionalidad"
+
+#. module: dgii_reports
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports_sale_line__swap
 #: model:ir.model.fields.selection,name:dgii_reports.selection__account_move__payment_form__05
 msgid "Swap"
@@ -2958,6 +3028,13 @@ msgstr "Tipo de Rentención"
 #: model_terms:ir.actions.act_window,help:dgii_reports.dgii_report_action
 msgid "You can create your DGII Tax Statements here."
 msgstr "Puedes crear tus declaraciones de la DGII aquí."
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/account_invoice.py:0
+#, python-format
+msgid "You cannot change the proportionality status of a reported invoice."
+msgstr "No se puede modificar el estado de proporcionalidad de una factura reportada."
 
 #. module: dgii_reports
 #. odoo-python
