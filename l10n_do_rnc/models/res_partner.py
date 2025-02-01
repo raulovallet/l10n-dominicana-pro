@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+# Modified by jenrax SRL on 2025-01-30
+# copyright (c) 2025 jenrax SRL
+# All Rights Reserved
+
 from odoo import models, api, _
 from odoo.exceptions import UserError, ValidationError
 
 import logging
 import json
 import re
+import requests
 _logger = logging.getLogger(__name__)
 
 try:
@@ -94,3 +100,31 @@ class Partner(models.Model):
                 return result["name"]
         
         return False
+
+
+
+    def get_name_from_jenrax_l10n_do_rnc_service(self):
+        self.ensure_one()
+
+        rnc = "133195593"  # Puedes hacer este valor dinámico si lo necesitas
+
+        if not rnc:
+            raise UserError(_('Por favor, proporcione un RNC o Cédula válido.'))
+
+        try:
+            # Hacer la solicitud HTTP GET a la API
+            response = requests.get(f'http://localhost:8000/rnc/?rnc={rnc}')
+
+            # Verificar si la respuesta es exitosa (código 200)
+            if response.status_code == 200:
+                data = response.json()
+                _logger.info(f"Respuesta de la API: {data}")
+                raise UserError(f'{data}')
+
+            else:
+                _logger.error(f"Error al consultar la API. Código: {response.status_code} - {response.text}")
+                raise UserError(_('No se pudo obtener información del RNC. Verifique la API.'))
+
+        except requests.RequestException as e:
+            _logger.error(f"Error de conexión con la API: {e}")
+            raise UserError(_('Error de conexión con la API de RNC. Verifique que el servicio está en ejecución.'))
