@@ -2,10 +2,10 @@
 # This file contains the translation of the following modules:
 # 	* l10n_do_rnc
 #
-# Modified by jenrax SRL on 2025-01-30
+# Created by jenrax SRL on 2025-01-30
 # copyright (c) 2025 jenrax SRL
 # All Rights Reserved
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"

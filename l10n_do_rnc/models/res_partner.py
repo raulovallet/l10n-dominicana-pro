@@ -27,10 +27,9 @@ class Partner(models.Model):
         based on the RNC (Dominican Tax ID) provided in the 'vat' or 'name' field.
         """
         for val in vals_list:
-            rnc_value = val.get('vat') or val.get('name')  # Tomar primero de vat, si no de name
+            rnc_value = val.get('vat') or val.get('name')
             rnc_value = rnc_value.replace('-', '') if rnc_value else None
 
-            # Si el RNC se colocó en 'name' y no en 'vat', moverlo a 'vat'
             if rnc_value and rnc_value.isdigit() and not val.get('vat'):
                 val['vat'] = rnc_value
 
@@ -128,7 +127,7 @@ class Partner(models.Model):
         api_key = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.api_key', default=False)
         
         if not api_key:
-            raise UserError(_('API Key is not configured.'))
+            raise UserError(_('API Key is not configured.Please contact your administrator at number XXXXXXXX'))
 
         _logger.info(f"API Key: {api_key}")
 
