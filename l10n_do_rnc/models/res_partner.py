@@ -22,59 +22,72 @@ class Partner(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        """
+        Override the create method to automatically fetch the company name
+        based on the RNC (Dominican Tax ID) provided in the 'vat' or 'name' field.
+        """
         for val in vals_list:
-            is_from_vat = val.get('vat', False)
+            rnc_value = val.get('vat') or val.get('name')  # Tomar primero de vat, si no de name
+            rnc_value = rnc_value.replace('-', '') if rnc_value else None
 
-            rnc = val.get('vat', '') if is_from_vat else val.get('name', '')
-            rnc = rnc.replace('-', '') if rnc else rnc
+            # Si el RNC se colocó en 'name' y no en 'vat', moverlo a 'vat'
+            if rnc_value and rnc_value.isdigit() and not val.get('vat'):
+                val['vat'] = rnc_value
 
-            if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
-                contact_exist = self.env['res.partner'].search([('vat', '=', rnc)], limit=1)
-                
+            if val.get('country_id') == self.env.ref('base.do').id and rnc_value and rnc_value.isdigit():
+                contact_exist = self.env['res.partner'].search([('vat', '=', rnc_value)], limit=1)
                 if contact_exist:
-                    raise UserError(_('The contact %s already exists with the %s: %s.') % (contact_exist.name, _('ID') if len(rnc) == 11 else _('RNC'), rnc))
-                
+                    raise UserError(_('The contact %s already exists with the %s: %s.') % 
+                                    (contact_exist.name, _('ID') if len(rnc_value) == 11 else _('RNC'), rnc_value))
+
                 try:
-                    name = self.get_name_from_dgii(rnc)
-                    
+                    rnc_service = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.rnc_service', default='dgii')
+                    if rnc_service == 'dgii':
+                        name = self.get_name_from_dgii(rnc_value)
+                    elif rnc_service == 'jenrax':
+                        name = self.get_name_from_jenrax(rnc_value)
+                    else:
+                        raise UserError(_('RNC service is not configured correctly.'))
+
                     if name:
-                        val.update({
-                            'name': name,
-                            'vat': rnc
-                        })
-
-                    elif not name and val.get('vat', False):
-
+                        val.update({'name': name, 'vat': rnc_value})
+                    elif not name:
                         raise UserError(_(
-                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
-                            If it is a system search error, enter manually the full company name and the RNC / Cedula \
-                            in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
-                        ) % (rnc))
-                        
+                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number. '
+                            'If it is a system search error, enter manually the full company name and the RNC / Cedula '
+                            'in the field labeled RNC for companies and Cedula for individuals to force create the contact.'
+                        ) % rnc_value)
+
                 except Exception as e:
-                    
-                    if not is_from_vat:
-                        raise ValidationError(e)
-                    
-                    _logger.error(e)
+                    raise ValidationError(e)
 
         res = super(Partner, self).create(vals_list)
-
         res._compute_sale_fiscal_type_id()
-        
         return res
 
-    def write(self, vals):
 
+    def write(self, vals):
+        """
+        Override the write method to automatically update the company name
+        when the 'vat' field is modified.
+        """
         if vals.get('vat', False):
-            dominican_company_parnters = self.filtered(
+            dominican_company_partners = self.filtered(
                 lambda p: p.country_id and p.country_id.code == 'DO' and not p.parent_id)
                 
-            for partner in dominican_company_parnters:
-
+            for partner in dominican_company_partners:
                 try:
-                    name = self.get_name_from_dgii(vals['vat'])
-
+                    # Get the configured service (DGII or Jenrax)
+                    rnc_service = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.rnc_service', default='dgii')
+                    
+                    if rnc_service == 'dgii':
+                        name = self.get_name_from_dgii(vals['vat'])
+                    elif rnc_service == 'jenrax':
+                        name = self.get_name_from_jenrax(vals['vat'])
+                    else:
+                        raise UserError(_('RNC service is not configured correctly.'))
+                    
+                    # If the company name is found, update the 'name' field
                     if name:
                         vals['name'] = name
 
@@ -84,16 +97,21 @@ class Partner(models.Model):
         return super(Partner, self).write(vals)
 
     def get_name_from_dgii(self, vat):
+        """
+        Gets the company name using the DGII service.
+        :param vat: RNC or Cedula to query.
+        :return: Company name or False if not found.
+        """
         if (len(vat) not in [9, 11]):
-            raise UserError(_('Please check the RNC/Cedula, it does not have the appropriate number of digits, only enter numbers (without hyphens), 9 digits for RNC and 11 digits for Cedula.'))
+            raise UserError(_('Please check the RNC/Cedula, it does not have the appropriate number of digits. Only enter numbers (without hyphens), 9 digits for RNC and 11 digits for Cedula.'))
             
         elif (not ((len(vat) == 9 and rnc.is_valid(vat)) or (len(vat) == 11 and cedula.is_valid(vat)))):
-            raise UserError(_('Check RNC/Cedula, seems like it is not correct'))
+            raise UserError(_('Check RNC/Cedula, it seems like it is not correct.'))
         
         else:
             result = rnc.check_dgii(vat)
             if result is not None:
-                # remove all duplicate white space from the name
+                # Remove all duplicate white space from the name
                 result["name"] = " ".join(
                     re.split(r"\s+", result["name"], flags=re.UNICODE))
                 
@@ -101,30 +119,49 @@ class Partner(models.Model):
         
         return False
 
+    def get_name_from_jenrax(self, rnc):
+        """
+        Gets the company name using the Jenrax service.
+        :param rnc: RNC to query.
+        :return: Company name or False if not found.
+        """
+        api_key = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.api_key', default=False)
+        
+        if not api_key:
+            raise UserError(_('API Key is not configured.'))
 
-
-    def get_name_from_jenrax_l10n_do_rnc_service(self):
-        self.ensure_one()
-
-        rnc = "133195593"  # Puedes hacer este valor dinámico si lo necesitas
+        _logger.info(f"API Key: {api_key}")
 
         if not rnc:
-            raise UserError(_('Por favor, proporcione un RNC o Cédula válido.'))
+            raise UserError(_('Please provide a valid RNC or Cedula.'))
 
         try:
-            # Hacer la solicitud HTTP GET a la API
-            response = requests.get(f'http://localhost:8000/rnc/?rnc={rnc}')
+            payload = {'rnc': rnc}
+            
+            headers = {
+                'Authorization': f'{api_key}',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
 
-            # Verificar si la respuesta es exitosa (código 200)
+            _logger.info(f"Sending request to API with payload: {payload} and headers: {headers}")
+
+            response = requests.post('http://localhost:8000/rnc/', 
+                                    data=payload, headers=headers)
+
+            _logger.info(f"API response: {response.status_code} - {response.text}")
+
             if response.status_code == 200:
                 data = response.json()
-                _logger.info(f"Respuesta de la API: {data}")
-                raise UserError(f'{data}')
+                _logger.info(f"Data received: {data}")
+                if data.get('results'):
+                    return data['results'][0].get('name', False)
+                else:
+                    return False
 
             else:
-                _logger.error(f"Error al consultar la API. Código: {response.status_code} - {response.text}")
-                raise UserError(_('No se pudo obtener información del RNC. Verifique la API.'))
+                _logger.error(f"Error querying the API. Code: {response.status_code} - {response.text}")
+                raise UserError(_('Could not retrieve RNC information. Please check the API.'))
 
         except requests.RequestException as e:
-            _logger.error(f"Error de conexión con la API: {e}")
-            raise UserError(_('Error de conexión con la API de RNC. Verifique que el servicio está en ejecución.'))
+            _logger.error(f"API connection error: {e}")
+            raise UserError(_('Error connecting to the RNC API. Please ensure the service is running.'))
