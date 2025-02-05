@@ -2,16 +2,12 @@
 # This file contains the translation of the following modules:
 # 	* l10n_do_rnc
 #
-# Modified by jenrax SRL on 2025-01-30
-# copyright (c) 2025 jenrax SRL
-# All Rights Reserved
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 12:36+0000\n"
-"PO-Revision-Date: 2025-02-04 08:37-0400\n"
+"POT-Creation-Date: 2025-02-05 02:03+0000\n"
+"PO-Revision-Date: 2025-02-04 22:04-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_DO\n"
@@ -91,48 +87,3 @@ msgstr "por ejemplo, Brandom Freeman o Cédula, por ejemplo, NNNNNNNNNNNN"
 #: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
 msgid "e.g. Lumber Inc or RNC e.g. NNNNNNNNN"
 msgstr "por ejemplo, Lumber Inc o RNC, por ejemplo, NNNNNNNNN"
-
-#. module: l10n_do_rnc
-#: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-msgid "This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number. If it is a system search error, enter manually the full company name and the RNC / Cedula in the field labeled RNC for companies and Cedula for individuals to force create the contact."
-msgstr "Este RNC o Cédula (%s) no pudo ser encontrado, por favor confirma el número de RNC o Cédula. Si es un error en la búsqueda del sistema, introduce manualmente el nombre completo de la empresa y el RNC / Cédula en el campo etiquetado como RNC para empresas y Cédula para personas para forzar la creación del contacto."
-
-#. module: l10n_do_rnc
-#: model:ir.model.fields,field_description:l10n_do_rnc.field_res_partner_rnc_cedula
-msgid "RNC / Cedula"
-msgstr "RNC / Cédula"
-
-#. module: l10n_do_rnc
-#: model:ir.model.fields,help:l10n_do_rnc.field_res_partner_rnc_cedula
-msgid "RNC or Cedula of the contact"
-msgstr "RNC o Cédula del contacto"
-
-#. module: l10n_do_rnc
-#: model:ir.model.fields,field_description:l10n_do_rnc.field_res_partner_name
-msgid "Company Name"
-msgstr "Nombre de la empresa"
-
-#. module: l10n_do_rnc
-#: model:ir.model.fields,help:l10n_do_rnc.field_res_partner_name
-msgid "Name of the company"
-msgstr "Nombre de la empresa"
-
-#. module: l10n_do_rnc
-#: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-msgid "Please provide a valid RNC or Cedula."
-msgstr "Por favor, proporcione un RNC o Cédula válido."
-
-#. module: l10n_do_rnc
-#: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-msgid "Could not retrieve RNC information. Please check the API."
-msgstr "No se pudo recuperar la información del RNC. Por favor, revisa la API."
-
-#. module: l10n_do_rnc
-#: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-msgid "Error connecting to the RNC API. Please ensure the service is running."
-msgstr "Error al conectar con la API de RNC. Por favor, asegúrate de que el servicio esté en funcionamiento."
-
-#. module: l10n_do_rnc
-#: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_partner_form
-msgid "API Key is not configured.Please contact your administrator at number XXXXXXXX"
-msgstr "La clave API no está configurada. Por favor, contacte con su administrador al número XXXXXXXX."

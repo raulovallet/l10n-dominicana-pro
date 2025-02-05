@@ -28,27 +28,12 @@ class ResConfigSettings(models.TransientModel):
             string='Service to use',
             help='Service to use to generate the RNC, you can use DGII or Jenrax',
             default='dgii',
+            config_parameter='l10n_do_rnc.rnc_service',
         )
     
     api_key = fields.Char(
         string='API Key',
         help='API Key to use when using Jenrax service',
+        config_parameter='l10n_do_rnc.api_key',
     )
-    
-    def set_values(self):
-        super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].sudo().set_param('l10n_do_rnc.rnc_service', self.rnc_service)
-        self.env['ir.config_parameter'].sudo().set_param('l10n_do_rnc.api_key', self.api_key)
-    
-    def get_values(self):
-        res = super(ResConfigSettings, self).get_values()
-        rnc_service = self.env['ir.config_parameter'].sudo().get_param(
-            'l10n_do_rnc.rnc_service', default=False)
-        api_key = self.env['ir.config_parameter'].sudo().get_param(
-            'l10n_do_rnc.api_key', default=False)
-        res.update(
-            rnc_service=rnc_service,
-            api_key=api_key
-        )
-        return res
         
