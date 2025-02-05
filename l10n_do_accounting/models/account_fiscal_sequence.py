@@ -270,8 +270,10 @@ class AccountFiscalSequence(models.Model):
             if l10n_do_date >= rec.expiration_date:
                 rec.state = "expired"
             else:
-                rec.write({"state": "active", "padding": rec.fiscal_type_id.padding,
-                          "number_next_actual": rec.sequence_start})
+                rec.write({
+                    'state': "active", 
+                    'number_next_actual': rec.sequence_start
+                })
                 return rec.next_fiscal_number
 
     def action_cancel(self):
