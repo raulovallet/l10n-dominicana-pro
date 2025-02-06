@@ -17,61 +17,77 @@ try:
 except (ImportError, IOError) as err:
     _logger.debug(str(err))
 
+
 class Partner(models.Model):
     _inherit = 'res.partner'
 
     @api.model_create_multi
     def create(self, vals_list):
-        """
-        Override the create method to automatically fetch the company name
-        based on the RNC (Dominican Tax ID) provided in the 'vat' or 'name' field.
-        """
         for val in vals_list:
-            rnc_value = val.get('vat') or val.get('name')
-            rnc_value = rnc_value.replace('-', '') if rnc_value else None
+            is_from_vat = val.get('vat', False)
 
-            if rnc_value and rnc_value.isdigit() and not val.get('vat'):
-                val['vat'] = rnc_value
+            rnc = val.get('vat', '') if is_from_vat else val.get('name', '')
+            rnc = rnc.replace('-', '') if rnc else rnc
 
-            if val.get('country_id') == self.env.ref('base.do').id and rnc_value and rnc_value.isdigit():
-                contact_exist = self.env['res.partner'].search([('vat', '=', rnc_value)], limit=1)
+            if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
+                
+                contact_exist = self.env['res.partner'].search_count([
+                    ('vat', '=', rnc),
+                    ('company_id', 'in', (val.get('company_id', False), False))
+                ])
+                
                 if contact_exist:
-                    raise UserError(_('The contact %s already exists with the %s: %s.') % 
-                                    (contact_exist.name, _('ID') if len(rnc_value) == 11 else _('RNC'), rnc_value))
-
+                    raise UserError(_('The contact %s already exists with the %s: %s.') % (contact_exist.name, _('ID') if len(rnc) == 11 else _('RNC'), rnc))
+                
                 try:
-                    name = self.get_name_from_dgii(rnc_value)
+                    name = self.get_name_from_dgii(rnc)
+                    
                     if name:
-                        val.update({'name': name, 'vat': rnc_value})
-                    elif not name:
-                        raise UserError(_(
-                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number. '
-                            'If it is a system search error, enter manually the full company name and the RNC / Cedula '
-                            'in the field labeled RNC for companies and Cedula for individuals to force create the contact.'
-                        ) % rnc_value)
+                        val.update({
+                            'name': name,
+                            'vat': rnc
+                        })
 
+                    elif not name and val.get('vat', False):
+
+                        raise UserError(_(
+                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
+                            If it is a system search error, enter manually the full company name and the RNC / Cedula \
+                            in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
+                        ) % (rnc))
+                        
                 except Exception as e:
-                    raise ValidationError(e)
+                    
+                    if not is_from_vat:
+                        raise ValidationError(e)
+                    
+                    _logger.error(e)
 
         res = super(Partner, self).create(vals_list)
+
         res._compute_sale_fiscal_type_id()
+        
         return res
 
     def write(self, vals):
-        """
-        Override the write method to validate RNC/Cedula when updating the partner.
-        """
-        if 'vat' in vals:
-            rnc_value = vals.get('vat').replace('-', '') if vals.get('vat') else None
-            if rnc_value and rnc_value.isdigit():
-                existing_partner = self.env['res.partner'].search([('vat', '=', rnc_value), ('id', '!=', self.id)], limit=1)
-                if existing_partner:
-                    raise UserError(_('The contact %s already exists with the %s: %s.') % 
-                                    (existing_partner.name, _('ID') if len(rnc_value) == 11 else _('RNC'), rnc_value))
-        
-        res = super(Partner, self).write(vals)
-        return res
-   
+
+        if vals.get('vat', False):
+            dominican_company_parnters = self.filtered(
+                lambda p: p.country_id and p.country_id.code == 'DO' and not p.parent_id)
+                
+            for partner in dominican_company_parnters:
+
+                try:
+                    name = self.get_name_from_dgii(vals['vat'])
+
+                    if name:
+                        vals['name'] = name
+
+                except Exception as e:
+                    _logger.error(e)
+
+        return super(Partner, self).write(vals)
+
     def get_name_from_dgii(self, vat):
         """
         Retrieves the company name based on the configured service (DGII or Jenrax).
@@ -97,31 +113,22 @@ class Partner(models.Model):
             api_key = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.api_key', default=False)
         
             if not api_key:
-                raise UserError(_('API Key is not configured.Please contact your administrator at number XXXXXXXX'))
-
-            _logger.info(f"API Key: {api_key}")
+                raise UserError(
+                    _('API Key is not configured. Please go to https://jenrax.com to get your API Key.'))
 
             if not rnc:
                 raise UserError(_('Please provide a valid RNC or Cedula.'))
-
+                
             try:
-                payload = {'rnc': vat}
-            
+                url = f"https://rnc.jenrax.com/search?rnc={vat}&user_number={self.env.company.vat}"
                 headers = {
-                    'Authorization': f'{api_key}',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'X-API-KEY': api_key
                 }
-
-                _logger.info(f"Sending request to API with payload: {payload} and headers: {headers}")
-
-                response = requests.post('http://localhost:8000/rnc/', 
-                                    data=payload, headers=headers)
-
-                _logger.info(f"API response: {response.status_code} - {response.text}")
+                response = requests.get(url, headers=headers)
 
                 if response.status_code == 200:
                     data = response.json()
-                    _logger.info(f"Data received: {data}")
+                    
                     if data.get('results'):
                         return data['results'][0].get('name', False)
                     else:
@@ -133,6 +140,6 @@ class Partner(models.Model):
 
             except requests.RequestException as e:
                 _logger.error(f"API connection error: {e}")
-                raise UserError(_('Error connecting to the RNC API. Please ensure the service is running.'))
+                raise UserError(_('Error connecting to the RNC API.'))
 
         return False
