@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ##############################################################################
 #
 #    Developed by Jenrax Srl.
@@ -15,25 +13,27 @@
 #
 ##############################################################################
 
-
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
+from odoo import models, fields, _
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    rnc_service = fields.Selection(
-            [('dgii', 'DGII'), ('jenrax', 'Jenrax')],
-            string='Service to use',
-            help='Service to use to generate the RNC, you can use DGII or Jenrax',
-            default='dgii',
-            config_parameter='l10n_do_rnc.rnc_service',
-        )
+    l10n_do_rnc_service = fields.Selection(
+        selection=[
+            ('dgii', 'DGII'), 
+            ('jenrax', 'Jenrax')
+        ],
+        string='Service to use',
+        help='Service to use to generate the RNC, you can use DGII or Jenrax',
+        default='dgii',
+        config_parameter='l10n_do_rnc.l10n_do_rnc_service',
+        required=True
+    )
     
-    api_key = fields.Char(
-        string='API Key',
-        help='API Key to use when using Jenrax service',
-        config_parameter='l10n_do_rnc.api_key',
+    l10n_do_rnc_jenrax_api_key = fields.Char(
+        string='Jenrax RNC API key',
+        help='API key for accessing the Jenrax RNC service',
+        config_parameter='l10n_do_rnc.l10n_do_rnc_jenrax_api_key',
     )
         

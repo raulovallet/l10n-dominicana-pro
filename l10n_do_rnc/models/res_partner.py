@@ -100,7 +100,7 @@ class Partner(models.Model):
         if not ((len(vat) == 9 and rnc.is_valid(vat)) or (len(vat) == 11 and cedula.is_valid(vat))):
             raise UserError(_('The entered RNC/ID is not valid.'))
 
-        rnc_service = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.rnc_service', default='dgii')
+        rnc_service = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.l10n_do_rnc_service', default='dgii')
 
         if rnc_service == 'dgii':
             result = rnc.check_dgii(vat)
@@ -110,19 +110,22 @@ class Partner(models.Model):
 
         elif rnc_service == 'jenrax':
             
-            api_key = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.api_key', default=False)
+            jenrax_api_key = self.env['ir.config_parameter'].sudo().get_param('l10n_do_rnc.l10n_do_rnc_jenrax_api_key', default=False)
         
-            if not api_key:
+            if not jenrax_api_key:
                 raise UserError(
                     _('API Key is not configured. Please go to https://jenrax.com to get your API Key.'))
 
-            if not rnc:
+            if not vat:
                 raise UserError(_('Please provide a valid RNC or Cedula.'))
                 
             try:
-                url = f"https://rnc.jenrax.com/search?rnc={vat}&user_number={self.env.company.vat}"
+                if not self.env.company.vat:
+                    raise UserError(_('Please configure the company VAT in the company settings for %s.') % self.env.company.name)
+
+                url = f"https://rnc.jenrax.com/search?rnc={vat}&user_id={self.env.company.vat}"
                 headers = {
-                    'X-API-KEY': api_key
+                    'X-API-KEY': jenrax_api_key
                 }
                 response = requests.get(url, headers=headers)
 
@@ -136,10 +139,10 @@ class Partner(models.Model):
 
                 else:
                     _logger.error(f"Error querying the API. Code: {response.status_code} - {response.text}")
-                    raise UserError(_('Could not retrieve RNC information. Please check the API.'))
+                    raise UserError(_('Could not retrieve RNC information. Please check the API config.'))
 
             except requests.RequestException as e:
                 _logger.error(f"API connection error: {e}")
-                raise UserError(_('Error connecting to the RNC API.'))
+                raise UserError(_('Error connecting to the Jenrax RNC API.'))
 
         return False
