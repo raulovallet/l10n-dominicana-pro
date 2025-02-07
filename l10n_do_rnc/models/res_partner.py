@@ -31,10 +31,10 @@ class Partner(models.Model):
 
             if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
                 
-                contact_exist = self.env['res.partner'].search_count([
+                contact_exist = self.env['res.partner'].search([
                     ('vat', '=', rnc),
                     ('company_id', 'in', (val.get('company_id', False), False))
-                ])
+                ], limit=1)
                 
                 if contact_exist:
                     raise UserError(_('The contact %s already exists with the %s: %s.') % (contact_exist.name, _('ID') if len(rnc) == 11 else _('RNC'), rnc))
@@ -131,15 +131,12 @@ class Partner(models.Model):
 
                 if response.status_code == 200:
                     data = response.json()
-                    
-                    if data.get('results'):
-                        return data['results'][0].get('name', False)
-                    else:
-                        return False
+
+                    return data.get('name', False)
 
                 else:
                     _logger.error(f"Error querying the API. Code: {response.status_code} - {response.text}")
-                    raise UserError(_('Could not retrieve RNC information. Please check the API config.'))
+                    raise UserError(_('Could not retrieve RNC information from the API.'))
 
             except requests.RequestException as e:
                 _logger.error(f"API connection error: {e}")
