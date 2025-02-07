@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 22:23+0000\n"
-"PO-Revision-Date: 2025-02-06 17:25-0500\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2025-02-07 00:23+0000\n"
+"PO-Revision-Date: 2025-02-06 19:25-0500\n"
+"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
-"Language: es_DO\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,7 +41,7 @@ msgstr "Clave API para acceder al servicio Jenrax RNC"
 #. module: l10n_do_rnc
 #: model:ir.model,name:l10n_do_rnc.model_res_config_settings
 msgid "Config Settings"
-msgstr "Opciones de configuración"
+msgstr "Ajustes de configuración"
 
 #. module: l10n_do_rnc
 #: model:ir.model,name:l10n_do_rnc.model_res_partner
@@ -52,8 +52,8 @@ msgstr "Contacto"
 #. odoo-python
 #: code:addons/l10n_do_rnc/models/res_partner.py:0
 #, python-format
-msgid "Could not retrieve RNC information. Please check the API."
-msgstr "No se ha podido recuperar la información del RNC. Compruebe la API."
+msgid "Could not retrieve RNC information from the API."
+msgstr "No se ha podido recuperar la información del RNC desde la API."
 
 #. module: l10n_do_rnc
 #: model:ir.model.fields.selection,name:l10n_do_rnc.selection__res_config_settings__l10n_do_rnc_service__dgii
@@ -64,8 +64,8 @@ msgstr "DGII"
 #. odoo-python
 #: code:addons/l10n_do_rnc/models/res_partner.py:0
 #, python-format
-msgid "Error connecting to the RNC API."
-msgstr "Error al conectar con la API del RNC."
+msgid "Error connecting to the Jenrax RNC API."
+msgstr "Error al conectar con la API Jenrax RNC."
 
 #. module: l10n_do_rnc
 #: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_config_settings_form_inherit_rnc
@@ -89,6 +89,15 @@ msgstr "Jenrax"
 #: model_terms:ir.ui.view,arch_db:l10n_do_rnc.view_res_config_settings_form_inherit_rnc
 msgid "Jenrax RNC API key"
 msgstr "Clave API Jenrax RNC"
+
+#. module: l10n_do_rnc
+#. odoo-python
+#: code:addons/l10n_do_rnc/models/res_partner.py:0
+#, python-format
+msgid "Please configure the company VAT in the company settings for %s."
+msgstr ""
+"Por favor, configure el RNC de la empresa en los ajustes de la empresa para "
+"%s."
 
 #. module: l10n_do_rnc
 #. odoo-python
