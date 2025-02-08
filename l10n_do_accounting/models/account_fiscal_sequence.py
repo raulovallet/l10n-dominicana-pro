@@ -333,12 +333,17 @@ class AccountFiscalSequence(models.Model):
         return fiscal_sequence_id
 
     def get_fiscal_number(self):
+        self.ensure_one()
+        if not self.fiscal_type_id.assigned_sequence:
+            return False
+        
         if self.sequence_remaining > 0:
             next_actual_sequence = self.number_next_actual + 1
             next_actual_fiscal_number = self.next_fiscal_number
             sequence_already_exists = self.env['account.move'].search_count([
                 ('ref', '=', next_actual_fiscal_number),
-                ('company_id', '=', self.company_id.id)
+                ('company_id', '=', self.company_id.id),
+                ('fiscal_type_id', '=', self.fiscal_type_id.id),
             ], limit=1)
 
             if sequence_already_exists:
