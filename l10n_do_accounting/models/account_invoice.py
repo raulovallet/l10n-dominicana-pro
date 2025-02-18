@@ -131,7 +131,7 @@ class AccountInvoice(models.Model):
             inv.available_fiscal_type_ids = self.env['account.fiscal.type'].search(inv._get_fiscal_domain())
 
     def _get_fiscal_domain(self):
-        return [('type', '=', self.move_type)]
+        return [('type', '=', self.move_type), ('company_id', '=', self.company_id.id)]
 
     @api.depends("state", "journal_id")
     def _compute_is_l10n_do_fiscal_invoice(self):
