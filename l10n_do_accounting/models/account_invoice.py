@@ -128,13 +128,12 @@ class AccountInvoice(models.Model):
     def _compute_available_fiscal_type(self):
         self.available_fiscal_type_ids = False
         for inv in self.filtered(lambda x: x.journal_id and x.is_l10n_do_fiscal_invoice and x.partner_id):
-            inv.available_fiscal_type_ids = self.env['account.fiscal.type'].search(inv._get_fiscal_domain())
+            domain = inv._get_fiscal_domain()
+            inv.available_fiscal_type_ids = self.env['account.fiscal.type'].search(domain)
 
     def _get_fiscal_domain(self):
-        return [
-            ('type', '=', self.move_type), 
-            ('company_id', '=', self.company_id.id)
-        ]
+        self.ensure_one()
+        return [('type', '=', self.move_type)]
 
     @api.depends("state", "journal_id")
     def _compute_is_l10n_do_fiscal_invoice(self):
