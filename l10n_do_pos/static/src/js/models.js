@@ -186,6 +186,12 @@ odoo.define('l10n_do_pos.models', function (require) {
         set_ncf_origin_out(ncf_origin_out) {
             this.ncf_origin_out = ncf_origin_out;
         }
+        set_l10n_do_fiscal_data(fiscal_data){
+            this.ncf = fiscal_data.ncf;
+            this.fiscal_type_id = current_order.fiscal_type.id;
+            this.ncf_expiration_date = fiscal_data.ncf_expiration_date;
+            this.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
+        }
 
     }
     const L10nDoPayment = Payment => class extends Payment {
