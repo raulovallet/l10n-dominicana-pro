@@ -197,7 +197,7 @@
 
     <menuitem
             id="account_fiscal_sequence_menu_parent"
-            name="Fiscal"
+            name="Fiscal Dominican Republic"
             parent="account.menu_finance_configuration"
     />
 
@@ -205,12 +205,15 @@
             id="account_fiscal_sequence_menu"
             action="account_fiscal_sequence_action"
             parent="account_fiscal_sequence_menu_parent"
+            name="Fiscal Sequences"
     />
 
     <menuitem
             id="account_fiscal_type_menu"
             action="account_fiscal_type_action"
             parent="account_fiscal_sequence_menu_parent"
+            name="Fiscal Types"
+            groups="base.group_no_one"
     />
 
 </odoo>
