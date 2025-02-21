@@ -147,16 +147,16 @@ class PosOrder(models.Model):
             self, 
             fiscal_type_id,
             company_id, 
-            payments
+            payments,
+            order_json
         ):
         """
         search active fiscal sequence dependent with fiscal type
         :param order:[fiscal_type_id, company_id, mode, lines,]
         :return: {ncf, expiration date, fiscal sequence}
         """
-        fiscal_type = self.env['account.fiscal.type'].search([
-            ('id', '=', fiscal_type_id)
-        ])
+
+        fiscal_type = self.env['account.fiscal.type'].browse(fiscal_type_id)
 
         if not fiscal_type:
             raise UserError(_('Fiscal type not found'))
@@ -174,7 +174,7 @@ class PosOrder(models.Model):
                     )
 
         fiscal_sequence = self.env['account.fiscal.sequence'].search([
-            ('fiscal_type_id', '=', fiscal_type.id),
+            ('fiscal_type_id', '=', fiscal_type_id),
             ('state', '=', 'active'),
             ('company_id', '=', company_id)
         ], limit=1)
@@ -186,8 +186,16 @@ class PosOrder(models.Model):
                     fiscal_type.name,
             ))
 
+        new_ncf = fiscal_sequence.get_fiscal_number()
+        
+        self.env['pos.order.ncf.log'].sudo().create({
+            'l10n_do_ncf': new_ncf,
+            'order_json': order_json,
+            'company_id': company_id
+        })
+
         return {
-            'ncf': fiscal_sequence.get_fiscal_number(),
+            'ncf': new_ncf,
             'fiscal_sequence_id': fiscal_sequence.id,
             'ncf_expiration_date': fiscal_sequence.expiration_date
         }
@@ -272,3 +280,26 @@ class PosOrder(models.Model):
             return {'ids': ids, 'totalCount': totalCount}
 
         return super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
+
+
+class PosOrderNcfLog(models.Model):
+    _name = 'pos.order.ncf.log'
+    _description = 'Each time an NCF is generated, it is necessary to log the order in JSON so that the client can continue in case of an error.'
+    _rec_name = 'l10n_do_ncf'
+    
+    l10n_do_ncf = fields.Char(
+        string='NCF', 
+        required=True
+    )
+    order_json = fields.Text(
+        string='Order in JSON', 
+        required=True
+    )
+    company_id = fields.Many2one(
+        comodel_name='res.company', 
+        string='Company', 
+        required=True, 
+        default=lambda self: self.env.company
+    )
+
+    # TODO: CREATE METHOD create order FROM order_json

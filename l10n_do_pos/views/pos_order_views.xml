@@ -34,4 +34,50 @@
         </field>
     </record>
 
+    <record id="l10n_do_pos_view_pos_order_ncf_log_tree" model="ir.ui.view">
+        <field name="name">l10n.do.pos.view.pos.order.ncf.log.tree</field>
+        <field name="model">pos.order.ncf.log</field>
+        <field name="arch" type="xml">
+            <tree create="false" delete="false" edit="false">
+                <field name="l10n_do_ncf"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="l10n_do_pos_view_pos_order_ncf_log_form" model="ir.ui.view">
+        <field name="name">l10n.do.pos.view.pos.order.ncf.log.form</field>
+        <field name="model">pos.order.ncf.log</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" edit="false">
+                <group>
+                    <field name="l10n_do_ncf"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="order_json"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record id="l10n_do_pos_view_pos_order_ncf_log_search" model="ir.ui.view">
+        <field name="name">l10n.do.pos.view.pos.order.ncf.log.search</field>
+        <field name="model">pos.order.ncf.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="l10n_do_ncf"/>
+                <field name="company_id"/>
+                <field name="order_json"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pos_order_ncf_log" model="ir.actions.act_window">
+        <field name="name">NCF Logs</field>
+        <field name="res_model">pos.order.ncf.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="l10n_do_pos_view_pos_order_ncf_log_tree"/>
+        <field name="search_view_id" ref="l10n_do_pos_view_pos_order_ncf_log_search"/>
+    </record>
+
+    <menuitem id="menu_pos_order_ncf_log" name="NCF Logs" parent="point_of_sale.menu_point_config_product" action="action_pos_order_ncf_log" groups="base.group_no_one"/>
+
 </odoo>

@@ -51,6 +51,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                     order.fiscal_type.id,
                     this.env.pos.company.id,
                     [],
+                    order.export_as_JSON()
                 ],
             });
         }
