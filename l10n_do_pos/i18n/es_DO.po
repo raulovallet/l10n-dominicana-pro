@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-04 19:16+0000\n"
-"PO-Revision-Date: 2024-12-04 14:18-0500\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2025-02-22 00:14+0000\n"
+"PO-Revision-Date: 2025-02-21 19:15-0500\n"
+"Last-Translator: Raul Ovalle <raulovallet@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -95,9 +95,24 @@ msgid "Card payments cannot exceed the total order"
 msgstr "Los pagos con tarjeta no pueden exceder el total del pedido"
 
 #. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: l10n_do_pos
 #: model:ir.model,name:l10n_do_pos.model_res_config_settings
 msgid "Config Settings"
-msgstr "Opciones de configuración"
+msgstr "Ajustes de configuración"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__create_date
+msgid "Created on"
+msgstr "Creado en"
 
 #. module: l10n_do_pos
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_payment_method__is_credit_note
@@ -151,12 +166,26 @@ msgid "Default partner"
 msgstr "Empresa predeterminado"
 
 #. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: l10n_do_pos
+#: model:ir.model,name:l10n_do_pos.model_pos_order_ncf_log
+msgid ""
+"Each time an NCF is generated, it is necessary to log the order in JSON so "
+"that the client can continue in case of an error."
+msgstr ""
+"Cada vez que se genera un NCF, es necesario registrar la orden en JSON para "
+"que el cliente pueda continuar en caso de error."
+
+#. module: l10n_do_pos
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/js/PaymentScreen.js:0
 #: code:addons/l10n_do_pos/static/src/js/TicketScreen.js:0
 #, python-format
 msgid "Error"
-msgstr ""
+msgstr "Error:"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -251,6 +280,11 @@ msgid "For this sale it is necessary for the customer have ID"
 msgstr "Para este venta es necesario el ID del cliente"
 
 #. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__id
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_do_pos
 #. odoo-javascript
 #: code:addons/l10n_do_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
@@ -285,6 +319,21 @@ msgid "Journal must be empty if is credit note is true."
 msgstr "El diario debe estar vacío si la nota de abono es verdadera."
 
 #. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización en"
+
+#. module: l10n_do_pos
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_config__l10n_do_type_limit_order_history
 #: model:ir.model.fields,field_description:l10n_do_pos.field_res_config_settings__l10n_do_type_limit_order_history
 #: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
@@ -302,9 +351,16 @@ msgstr "Cantidad máxima días"
 #: code:addons/l10n_do_pos/static/src/js/TicketScreen.js:0
 #: code:addons/l10n_do_pos/static/src/xml/TicketScreen.xml:0
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__l10n_do_ncf
 #, python-format
 msgid "NCF"
-msgstr ""
+msgstr "NCF"
+
+#. module: l10n_do_pos
+#: model:ir.actions.act_window,name:l10n_do_pos.action_pos_order_ncf_log
+#: model:ir.ui.menu,name:l10n_do_pos.menu_pos_order_ncf_log
+msgid "NCF Logs"
+msgstr "Registros NCF"
 
 #. module: l10n_do_pos
 #: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order__ncf_expiration_date
@@ -335,7 +391,7 @@ msgstr "Nombre o RNC / Cédula"
 #. module: l10n_do_pos
 #: model:pos.payment.method,name:l10n_do_pos.credit_note
 msgid "Nota de Crédito"
-msgstr ""
+msgstr "Nota de crédito"
 
 #. module: l10n_do_pos
 #. odoo-javascript
@@ -348,6 +404,11 @@ msgstr "Desconectado"
 #: model_terms:ir.ui.view,arch_db:l10n_do_pos.inhertit_res_config_settings_view_form
 msgid "Order history"
 msgstr "Historial de pedidos"
+
+#. module: l10n_do_pos
+#: model:ir.model.fields,field_description:l10n_do_pos.field_pos_order_ncf_log__order_json
+msgid "Order in JSON"
+msgstr "Orden en JSON"
 
 #. module: l10n_do_pos
 #. odoo-javascript
