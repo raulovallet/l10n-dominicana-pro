@@ -209,7 +209,6 @@ odoo.define('l10n_do_pos.models', function (require) {
         }
         
         set_l10n_do_fiscal_data(fiscal_data){
-            console.log('set_l10n_do_fiscal_data', fiscal_data);
             this.ncf = fiscal_data.ncf;
             this.ncf_expiration_date = fiscal_data.ncf_expiration_date;
             this.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
