@@ -1,8 +1,11 @@
 odoo.define('l10n_do_pos.models', function (require) {
     "use strict";
 
+    const { Gui } = require('point_of_sale.Gui');
+    var core = require('web.core');
     var { Order, PosGlobalState, Payment, Orderline} = require('point_of_sale.models');
     var Registries = require('point_of_sale.Registries');
+    var _t = core._t;
 
     const L10nDoPosPosGlobalState = PosGlobalState => class extends PosGlobalState {
         async _processData(loadedData) {
@@ -18,28 +21,33 @@ odoo.define('l10n_do_pos.models', function (require) {
                     res_fiscal_type = fiscal_type;
                 }
             });
+
             if (!res_fiscal_type) {
                 res_fiscal_type = this.get_fiscal_type_by_prefix('B02');
             }
+
             return res_fiscal_type;
         }
 
         get_fiscal_type_by_prefix(prefix) {
             var self = this;
             var res_fiscal_type = false;
+            
             // TODO: try make at best performance
             self.fiscal_types.forEach(function (fiscal_type) {
                 if (fiscal_type.prefix === prefix) {
                     res_fiscal_type = fiscal_type;
                 }
             });
-            if (res_fiscal_type) {
+
+            if (res_fiscal_type)
                 return res_fiscal_type;
-            }
-            self.gui.show_popup('error', {
+    
+            Gui.showPopup('ErrorPopup', {
                 'title': _t('Fiscal type not found'),
-                'body': _t('This fiscal type not exist.'),
+                'body': _.str.sprintf(_t('This fiscal type not exist. (%s)'), prefix),
             });
+
             return false;
         }        
         async get_fiscal_data(order) {
@@ -140,6 +148,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         get_fiscal_type() {
             return this.fiscal_type;
         }
+
         set_partner(partner){
 
             super.set_partner(partner); 
@@ -183,17 +192,31 @@ odoo.define('l10n_do_pos.models', function (require) {
 
             }
         }
+
+        export_for_printing() {
+            var result = super.export_for_printing(...arguments);
+            if (this.pos.config.l10n_do_fiscal_journal) {
+                result.ncf = this.ncf;
+                result.ncf_origin_out = this.ncf_origin_out;
+                result.ncf_expiration_date = this.ncf_expiration_date;
+                result.fiscal_type = this.fiscal_type
+            }
+            return result;
+        }
+        
         set_ncf_origin_out(ncf_origin_out) {
             this.ncf_origin_out = ncf_origin_out;
         }
+        
         set_l10n_do_fiscal_data(fiscal_data){
+            console.log('set_l10n_do_fiscal_data', fiscal_data);
             this.ncf = fiscal_data.ncf;
-            this.fiscal_type_id = current_order.fiscal_type.id;
             this.ncf_expiration_date = fiscal_data.ncf_expiration_date;
             this.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
         }
 
     }
+    
     const L10nDoPayment = Payment => class extends Payment {
         /**
          * @override
