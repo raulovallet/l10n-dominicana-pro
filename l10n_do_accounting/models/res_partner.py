@@ -44,12 +44,13 @@ class Partner(models.Model):
         default=lambda self: self.env.ref('base.do')
     )
 
-    @api.depends('sale_fiscal_type_id')
+    @api.depends('sale_fiscal_type_id', 'country_id', 'parent_id')
     def _compute_is_fiscal_info_required(self):
-        for rec in self:
-            rec.is_fiscal_info_required = rec.sale_fiscal_type_id.prefix in ['B01', 'B14', 'B15'] and \
-            rec.country_id == self.env.ref('base.do') and \
-            not rec.parent_id
+        for partner in self:
+            partner.is_fiscal_info_required = partner.sale_fiscal_type_id and \
+            partner.sale_fiscal_type_id.requires_document and \
+            partner.country_id == self.env.ref('base.do') and \
+            not partner.parent_id
 
     def _get_fiscal_type_domain(self, prefix):
         return self.env['account.fiscal.type'].search([
