@@ -173,6 +173,7 @@ class PosOrder(models.Model):
 
         new_ncf = fiscal_sequence.get_fiscal_number()
         
+        # This is the better way to identify problems with fiscal sequences 
         ncf_log = self.env['pos.order.ncf.log'].sudo().create({
             'l10n_do_ncf': new_ncf,
             'order_json': order_json,

@@ -15,7 +15,7 @@
                             <field name="ncf_expiration_date" readonly="1"/>
                             <field name="fiscal_type_id" readonly="1"/>
                             <field name="ncf_origin_out" attrs="{'invisible':[('ncf_origin_out', '=', '')]}" readonly="1"/>
-                        <group>
+                        </group>
                     </group>
                 </page>
             </xpath>
