@@ -158,21 +158,6 @@ class PosOrder(models.Model):
 
         fiscal_type = self.env['account.fiscal.type'].browse(fiscal_type_id)
 
-        if not fiscal_type:
-            raise UserError(_('Fiscal type not found'))
-
-        for payment in payments:
-            if payment.get('returned_ncf', False):
-                cn_invoice = self.env['account.move'].search([
-                    ('ref', '=', payment['returned_ncf']),
-                    ('type', '=', 'out_refund'),
-                    ('is_l10n_do_fiscal_invoice', '=', True),
-                ])
-                if cn_invoice.residual != cn_invoice.amount_total:
-                    raise UserError(
-                        _('This credit note (%s) has been used' % payment['returned_ncf'])
-                    )
-
         fiscal_sequence = self.env['account.fiscal.sequence'].search([
             ('fiscal_type_id', '=', fiscal_type_id),
             ('state', '=', 'active'),
