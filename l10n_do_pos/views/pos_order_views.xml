@@ -8,12 +8,14 @@
         <field name="arch" type="xml">
 
             <xpath expr="//notebook" position="inside">
-                <page string="Fiscal data" attrs="{'invisible':[('ncf', '=',False)]}">
+                <page string="Fiscal data" attrs="{'invisible':[('ncf', '=',False)]}" id="l10n_do_pos_page_fiscal_data">
                     <group>
-                        <field name="ncf" readonly="1"/>
-                        <field name="ncf_expiration_date" readonly="1"/>
-                        <field name="fiscal_type_id" readonly="1"/>
-                        <field name="ncf_origin_out" attrs="{'invisible':[('ncf_origin_out', '=', '')]}" readonly="1"/>
+                        <group>
+                            <field name="ncf" readonly="1"/>
+                            <field name="ncf_expiration_date" readonly="1"/>
+                            <field name="fiscal_type_id" readonly="1"/>
+                            <field name="ncf_origin_out" attrs="{'invisible':[('ncf_origin_out', '=', '')]}" readonly="1"/>
+                        <group>
                     </group>
                 </page>
             </xpath>
@@ -58,6 +60,7 @@
             </form>
         </field>
     </record>
+    
     <record id="l10n_do_pos_view_pos_order_ncf_log_search" model="ir.ui.view">
         <field name="name">l10n.do.pos.view.pos.order.ncf.log.search</field>
         <field name="model">pos.order.ncf.log</field>

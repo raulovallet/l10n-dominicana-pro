@@ -188,7 +188,7 @@ class PosOrder(models.Model):
 
         new_ncf = fiscal_sequence.get_fiscal_number()
         
-        self.env['pos.order.ncf.log'].sudo().create({
+        ncf_log = self.env['pos.order.ncf.log'].sudo().create({
             'l10n_do_ncf': new_ncf,
             'order_json': order_json,
             'company_id': company_id
@@ -197,7 +197,8 @@ class PosOrder(models.Model):
         return {
             'ncf': new_ncf,
             'fiscal_sequence_id': fiscal_sequence.id,
-            'ncf_expiration_date': fiscal_sequence.expiration_date
+            'ncf_expiration_date': fiscal_sequence.expiration_date,
+            'ncf_log_id': ncf_log.id
         }
 
     def get_credit_note(self, ncf):
