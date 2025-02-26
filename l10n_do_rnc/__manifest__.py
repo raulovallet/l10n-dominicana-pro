@@ -13,12 +13,13 @@
     'website': "https://www.guavana.com",
     'license': 'LGPL-3',
     'category': 'Localization',
-    'version': '16.0.1.0.10',
+    'version': '16.0.1.1.0',
     'depends': [
         'base',
         'contacts',
         'l10n_do',
         'l10n_do_accounting',
+        'base_vat'
     ],
     "data": [
         "views/res_partner_views.xml",

@@ -20,6 +20,11 @@ except (ImportError, IOError) as err:
 
 class Partner(models.Model):
     _inherit = 'res.partner'
+    
+    def check_vat_do(self, vat):
+        if self.is_company:
+            return stdnum.util.get_cc_module('do', 'rnc').is_valid(vat)
+        return stdnum.util.get_cc_module('do', 'cedula').is_valid(vat)
 
     @api.model_create_multi
     def create(self, vals_list):
