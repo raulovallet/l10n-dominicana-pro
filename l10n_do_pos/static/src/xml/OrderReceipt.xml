@@ -32,7 +32,7 @@
                 <div t-if="receipt.ncf">
                     <br/>
                     <div class="pos-receipt-contact">
-                        Autorized by DGII
+                        Authorized by DGII
                     </div>
                     <br/>
                     <div class="pos-receipt-font-75">
@@ -51,8 +51,8 @@
                         <div>
                             NCF: <t t-esc="receipt.ncf"/>
                         </div>
-                        <div>
-                            Expiration date NCF: <t t-esc="receipt.ncf_expiration_date"/>
+                        <div t-if="receipt.ncf_expiration_date">
+                            Expiration date NCF: <t t-esc="receipt.ncf_expiration_date.localestring"/>
                         </div>
                         <div t-if="receipt.ncf_origin_out">
                             Affect: <t t-esc="receipt.ncf_origin_out"/>

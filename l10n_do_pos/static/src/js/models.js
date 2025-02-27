@@ -203,6 +203,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                 result.ncf_origin_out = this.ncf_origin_out;
                 result.ncf_expiration_date = this.ncf_expiration_date;
                 result.fiscal_type = this.fiscal_type;
+                result.l10n_do_fiscal_journal = this.pos.config.l10n_do_fiscal_journal;
             }
 
             return result;
