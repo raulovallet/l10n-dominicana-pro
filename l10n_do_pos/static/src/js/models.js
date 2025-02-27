@@ -110,12 +110,13 @@ odoo.define('l10n_do_pos.models', function (require) {
         constructor(obj, options) {
             super(...arguments); 
 
-            if (!options.json) {
-                this.ncf = '';
-                this.ncf_origin_out = '';
-                this.ncf_expiration_date = '';
-                this.fiscal_type_id = false;
-                this.fiscal_sequence_id = false;
+            if (this.pos.config.l10n_do_fiscal_journal){
+
+                this.ncf = this.ncf || '';
+                this.ncf_origin_out = this.ncf_origin_out || '';
+                this.ncf_expiration_date = this.ncf_expiration_date = '';
+                this.fiscal_type_id = this.fiscal_type || false;
+                this.fiscal_sequence_id = this.fiscal_sequence_id || false;
 
                 var partner = this.get_partner();
 
@@ -135,6 +136,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         set_fiscal_type(fiscal_type) {
             this.fiscal_type = fiscal_type;
             this.fiscal_type_id = fiscal_type.id;
+
             if (fiscal_type && fiscal_type.fiscal_position_id){
                 this.set_fiscal_position(_.find(this.pos.fiscal_positions, function(fp) {
                     return fp.id === fiscal_type.fiscal_position_id[0];
@@ -163,21 +165,21 @@ odoo.define('l10n_do_pos.models', function (require) {
         //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
-
-            if (this.pos.config.l10n_do_fiscal_journal){
+            if(this.pos.config.l10n_do_fiscal_journal){
                 json.ncf = this.ncf;
                 json.ncf_origin_out = this.ncf_origin_out;
                 json.ncf_expiration_date = this.ncf_expiration_date;
                 json.fiscal_type_id = this.fiscal_type_id;
                 json.fiscal_sequence_id = this.fiscal_sequence_id;
             }
-
             return json;
         }
 
         init_from_JSON(json) {
             super.init_from_JSON(...arguments);
+
             if (this.pos.config.l10n_do_fiscal_journal){
+
                 this.ncf = json.ncf || '';
                 this.ncf_origin_out = json.ncf_origin_out || '';
                 this.ncf_expiration_date = json.ncf_expiration_date || '';
@@ -195,12 +197,14 @@ odoo.define('l10n_do_pos.models', function (require) {
 
         export_for_printing() {
             var result = super.export_for_printing(...arguments);
-            if (this.pos.config.l10n_do_fiscal_journal) {
+            
+            if(this.pos.config.l10n_do_fiscal_journal){
                 result.ncf = this.ncf;
                 result.ncf_origin_out = this.ncf_origin_out;
                 result.ncf_expiration_date = this.ncf_expiration_date;
-                result.fiscal_type = this.fiscal_type
+                result.fiscal_type = this.fiscal_type;
             }
+
             return result;
         }
         
