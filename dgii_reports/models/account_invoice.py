@@ -379,6 +379,13 @@ class AccountInvoice(models.Model):
         help='Indicates if the invoice is subject to proportionality tax.',
         # default=lambda self: self._default_l10n_do_is_subject_to_proportionality()
     )
+    
+    @api.constrains('journal_id','payment_form')
+    def check_payment_form(self):
+        for rec in self:
+            if rec.journal_id.company_id.country_id.code == 'DO' and  rec.journal_id.type in ['cash', 'bank']:
+                if not rec.payment_form:
+                    raise ValidationError(_('You must define a payment form for a cash or bank journal.'))
 
     @api.onchange('move_type')
     def _default_l10n_do_is_subject_to_proportionality(self):
@@ -430,3 +437,4 @@ class AccountMoveLine(models.Model):
                 
                 if len(set(isr_taxes)) > 1:
                     raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))
+                
