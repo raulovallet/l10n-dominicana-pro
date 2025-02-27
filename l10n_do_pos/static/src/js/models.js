@@ -198,15 +198,14 @@ odoo.define('l10n_do_pos.models', function (require) {
 
         export_for_printing() {
             var result = super.export_for_printing(...arguments);
-            
+            result.l10n_do_fiscal_journal = this.pos.config.l10n_do_fiscal_journal;
+
             if(this.pos.config.l10n_do_fiscal_journal){
                 result.ncf = this.ncf;
                 result.ncf_origin_out = this.ncf_origin_out;
                 result.ncf_expiration_date = this.ncf_expiration_date ? 
                     field_utils.format.date(field_utils.parse.date(this.ncf_expiration_date, {}, {isUTC: true})): '';
                 result.fiscal_type = this.fiscal_type;
-                result.l10n_do_fiscal_journal = this.pos.config.l10n_do_fiscal_journal;
-
             }
 
             return result;

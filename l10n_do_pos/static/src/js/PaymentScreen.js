@@ -113,7 +113,8 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                 var current_order = this.env.pos.get_order();
                 if (this.env.pos.config.l10n_do_fiscal_journal && !current_order.to_invoice && !current_order.ncf) {
-
+                    this.env.services.ui.block();
+                    
                     try {
 
                         var fiscal_data = await this.env.pos.get_fiscal_data(current_order);        
@@ -121,11 +122,14 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         current_order.set_l10n_do_fiscal_data(fiscal_data);
 
                     } catch (error) {
-
+                        this.env.services.ui.unblock();
                         throw error;
                     } 
 
                     this.env.pos.set_order(current_order);
+
+                    this.env.services.ui.unblock();
+                    
                     await super._finalizeValidation();
 
                 } else {
