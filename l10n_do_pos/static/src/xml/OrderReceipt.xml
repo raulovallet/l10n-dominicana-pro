@@ -52,7 +52,7 @@
                             NCF: <t t-esc="receipt.ncf"/>
                         </div>
                         <div t-if="receipt.ncf_expiration_date">
-                            Expiration date NCF: <t t-esc="receipt.ncf_expiration_date.localestring"/>
+                            Expiration date NCF: <t t-esc="receipt.ncf_expiration_date"/>
                         </div>
                         <div t-if="receipt.ncf_origin_out">
                             Affect: <t t-esc="receipt.ncf_origin_out"/>

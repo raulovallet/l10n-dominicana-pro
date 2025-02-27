@@ -1,6 +1,7 @@
 odoo.define('l10n_do_pos.models', function (require) {
     "use strict";
-
+    
+    var field_utils = require('web.field_utils');
     const { Gui } = require('point_of_sale.Gui');
     var core = require('web.core');
     var { Order, PosGlobalState, Payment, Orderline} = require('point_of_sale.models');
@@ -201,9 +202,11 @@ odoo.define('l10n_do_pos.models', function (require) {
             if(this.pos.config.l10n_do_fiscal_journal){
                 result.ncf = this.ncf;
                 result.ncf_origin_out = this.ncf_origin_out;
-                result.ncf_expiration_date = this.ncf_expiration_date;
+                result.ncf_expiration_date = this.ncf_expiration_date ? 
+                    field_utils.format.date(field_utils.parse.date(this.ncf_expiration_date, {}, {isUTC: true})): '';
                 result.fiscal_type = this.fiscal_type;
                 result.l10n_do_fiscal_journal = this.pos.config.l10n_do_fiscal_journal;
+
             }
 
             return result;
