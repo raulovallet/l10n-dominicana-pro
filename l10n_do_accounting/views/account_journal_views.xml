@@ -12,7 +12,10 @@
                        widget="boolean_toggle"
                        attrs="{'invisible':[('type', 'in', ('cash','bank','general'))]}"/>
                 <field name="payment_form"
-                       attrs="{'invisible':[('type', 'in', ('sale','purchase','general'))]}"/>
+                       attrs="{'invisible':[('type', 'in', ('sale','purchase','general'))],
+                               'required': [('company_id.country_id.code', '=', 'DO'), ('type', 'in', ('cash', 'bank'))]
+                       }"/>
+
 
             </xpath>
 
