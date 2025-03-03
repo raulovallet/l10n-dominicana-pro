@@ -539,11 +539,11 @@ class AccountInvoice(models.Model):
             return action
                 
 
-    def button_cancel(self, force_cancel=False):
+    def button_cancel(self):
 
         if self.is_sale_document() and \
             self.journal_id.l10n_do_fiscal_journal and \
-            force_cancel == False:
+            self.env.context.get('skip_cancel_wizard', False) == False:
             return self.action_invoice_cancel()
             
         else:
