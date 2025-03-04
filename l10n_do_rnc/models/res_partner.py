@@ -5,9 +5,14 @@
 
 from odoo import models, api, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.base_vat.models.res_partner import _ref_vat
+
+if _ref_vat:
+    _ref_vat.update({
+        'do': _("Example: '22400504056' or '133195593' (format: 9 digits for RNC or 11 Digits for Cedula, all numbers.)"),
+    })
 
 import logging
-import json
 import re
 import requests
 _logger = logging.getLogger(__name__)
@@ -18,13 +23,12 @@ except (ImportError, IOError) as err:
     _logger.debug(str(err))
 
 
+
 class Partner(models.Model):
     _inherit = 'res.partner'
     
     def check_vat_do(self, vat):
-        if self.is_company:
-            return stdnum.util.get_cc_module('do', 'rnc').is_valid(vat)
-        return stdnum.util.get_cc_module('do', 'cedula').is_valid(vat)
+        return rnc.is_valid(vat) or cedula.is_valid(vat)
 
     @api.model_create_multi
     def create(self, vals_list):
