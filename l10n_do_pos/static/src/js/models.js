@@ -211,8 +211,8 @@ odoo.define('l10n_do_pos.models', function (require) {
             return result;
         }
         
-        set_ncf_origin_out(ncf_origin_out) {
-            this.ncf_origin_out = ncf_origin_out;
+        set_ncf_origin_out(origin_order) {
+            this.ncf_origin_out = origin_order.ncf;
         }
         
         set_l10n_do_fiscal_data(fiscal_data){

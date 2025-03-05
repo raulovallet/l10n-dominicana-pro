@@ -72,12 +72,18 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
         async _onCloseScreen() {
             var new_order = this.env.pos.get_order();
             const order = this.getSelectedSyncedOrder();
-            if (new_order && this.env.pos.config.l10n_do_fiscal_journal && new_order._isRefundAndSaleOrder() && order.ncf){
+            
+            if (new_order && 
+                order &&
+                this.env.pos.config.l10n_do_fiscal_journal && 
+                new_order._isRefundAndSaleOrder() && 
+                order.ncf
+            ){
                 
                 try {
                     const refund_fiscal_type = this.env.pos.get_fiscal_type_by_prefix('B04');
                     const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
-                    new_order.set_ncf_origin_out(order.ncf);
+                    new_order.set_ncf_origin_out(order);
                     new_order.set_fiscal_type(refund_fiscal_type);
                     // Convert the date string to a Date object
                     const orderDate = new Date(order.validation_date);
