@@ -7,6 +7,10 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//button[@name='refund']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('ncf', '!=', False), '|', ('state', '=', 'draft'), ('has_refundable_lines', '=', False)]}</attribute>
+            </xpath>
+
             <xpath expr="//notebook" position="inside">
                 <page string="Fiscal data" attrs="{'invisible':[('ncf', '=', False)]}" id="l10n_do_pos_page_fiscal_data">
                     <group>
