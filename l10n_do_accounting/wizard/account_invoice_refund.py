@@ -31,13 +31,13 @@ class AccountMoveReversal(models.TransientModel):
     def _get_refund_method_selection(self):
         if self._context.get("debit_note", False):
             return [
-                ('refund', 'Partial Debit note'),
-                ('cancel', 'Full Debit note'),
+                ('refund', _('Partial Debit note')),
+                ('cancel', _('Full Debit note')),
             ]
         return [
-            ('refund', 'Partial Refund'),
-            ('cancel', 'Full Refund'),
-            ('modify', 'Full refund and new draft invoice')
+            ('refund', _('Partial Refund')),
+            ('cancel', _('Full Refund')),
+            ('modify', _('Full refund and new draft invoice'))
         ]
 
     refund_method = fields.Selection(
