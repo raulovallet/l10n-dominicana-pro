@@ -1532,3 +1532,24 @@ msgstr ""
 #, python-format
 msgid "vendor"
 msgstr "Proveedor"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/_get_refund_method_selection.py:0
+#, python-format
+msgid "Partial Refund"
+msgstr "Reembolso parcial"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/_get_refund_method_selection.py:0
+#, python-format
+msgid "Full Refund"
+msgstr "Reembolso completo"
+
+#. module: l10n_do_accounting
+#. odoo-python
+#: code:addons/l10n_do_accounting/models/_get_refund_method_selection.py:0
+#, python-format
+msgid "Full refund and new draft invoice"
+msgstr "Reembolso completo y nuevo borrador de factura"
