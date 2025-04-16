@@ -445,7 +445,7 @@
                                         <group style="display: flex; align-items: center;">
                                             <field name="csmr_bank" readonly="1" style="width: 50px;"/>
                                         </group>
-                                        <group style="display: flex; align-items: center;">
+                                        <group style="display: flex; align-items: center; margin-top: 11px;">
                                             <button 
                                                 name="action_copy_to_clipboard"
                                                 string=""
@@ -457,7 +457,7 @@
                                         <group style="display: flex; align-items: center;">
                                             <field name="csmr_card" readonly="1" style="width: 50px;"/>
                                         </group>
-                                        <group style="display: flex; align-items: center; margin-top: 11px;">
+                                        <group style="display: flex; align-items: center;">
                                             <button 
                                                 name="action_copy_to_clipboard"
                                                 string=""
