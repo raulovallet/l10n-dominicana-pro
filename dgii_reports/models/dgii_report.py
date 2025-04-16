@@ -2231,8 +2231,12 @@ class DgiiReportsIt1(models.Model):
         string='Move Lines',
     )
     
-    def action_copy(self):
+    def action_copy(self, field_name):
         for rec in self:
-            pyperclip.copy(str(rec.amount))
+            if field_name == "coefficient":
+                value = rec.coefficient * 100
+            else:
+                value = getattr(rec, field_name, "")
+            pyperclip.copy(str(value))
         return True
 
