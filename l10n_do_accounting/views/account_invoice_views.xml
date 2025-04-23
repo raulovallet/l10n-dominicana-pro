@@ -52,19 +52,25 @@
 
             <xpath expr="//field[@name='partner_id']" position="after">
 
-                <field name="fiscal_type_id" domain="[('id', 'in', available_fiscal_type_ids)]" attrs="{
-                    'invisible':[
-                        '|', 
-                        ('move_type', 'not in', ('in_invoice', 'out_invoice', 'in_refund', 'out_refund')), 
-                        ('is_l10n_do_fiscal_invoice', '=', False), 
-                    ],
-                    'required': [
-                        ('is_l10n_do_fiscal_invoice','=',True)
-                    ],
-                    'readonly': [
-                        ('state','!=','draft')
-                    ]
-                }"/>
+                    <field 
+                        name="fiscal_type_id" 
+                        options="{'no_create': True, 'no_create_edit': True}" 
+                        domain="[('id', 'in', available_fiscal_type_ids)]" 
+                        attrs="{
+                            'invisible':['|', 
+                                ('move_type', 'not in', ('in_invoice', 'out_invoice', 'in_refund', 'out_refund')), 
+                                ('is_l10n_do_fiscal_invoice', '=', False), 
+                            ],
+                            'required': [
+                                ('is_l10n_do_fiscal_invoice','=',True)
+                            ],
+                            'readonly': [
+                                '|',
+                                ('state','!=','draft'),
+                                ('ref','!=',False)
+                            ]
+                        }"
+                    />
                 <field name="income_type" attrs="{
                     'invisible':[
                         '|', 
