@@ -10,14 +10,14 @@ from datetime import datetime as dt, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-try:
-    import pycountry
+
+try :
+    import pyperclip
 except ImportError:
     raise ImportError(
-        _("This module needs pycountry to get 609 ISO 3166 "
-          "country codes. Please install pycountry on your system. "
+        _("This module needs pyperclip to copy data to clipboard. "
+          "Please install pyperclip on your system. "
           "(See requirements file)"))
-
 
 class DgiiReport(models.Model):
     _name = 'dgii.reports'
@@ -2002,6 +2002,12 @@ class DgiiReport(models.Model):
                 self.env.ref('dgii_reports.dgii_exterior_report_line_tree').id,
             'domain': [('dgii_report_id', '=', self.id)]
         }
+        
+    def action_copy_to_clipboard(self, field_name):
+        for rec in self:
+            value = getattr(rec, field_name, "")
+            pyperclip.copy(str(value))
+        return True
 
 
 class DgiiReportPurchaseLine(models.Model):
@@ -2222,3 +2228,13 @@ class DgiiReportsIt1(models.Model):
         comodel_name='account.move.line',
         string='Move Lines',
     )
+    
+    def action_copy(self, field_name):
+        for rec in self:
+            if field_name == "coefficient":
+                value = rec.coefficient * 100
+            else:
+                value = getattr(rec, field_name, "")
+            pyperclip.copy(str(value))
+        return True
+
