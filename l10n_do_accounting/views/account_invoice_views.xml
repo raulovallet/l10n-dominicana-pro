@@ -16,6 +16,18 @@
                 <field name="available_fiscal_type_ids" invisible="1"/>
             </xpath>
 
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="attrs">
+                    {
+                        'readonly': [
+                            '|',
+                            ('state', '!=', 'draft'),
+                            ('ref', '!=', False)
+                        ]
+                    }
+                </attribute>
+            </xpath>
+
             <xpath expr="//form/sheet/div/span" position="after">
                 <span class="o_form_label" attrs="{'invisible': ['|',('state','=','draft'), ('is_debit_note','=',False)]}">Debit Note</span>
             </xpath>
@@ -65,7 +77,9 @@
                                 ('is_l10n_do_fiscal_invoice','=',True)
                             ],
                             'readonly': [
-                                ('state','!=','draft'),
+                                '|',
+                                ('state', '!=', 'draft'),
+                                ('ref', '!=', False)
                             ]
                         }"
                     />
