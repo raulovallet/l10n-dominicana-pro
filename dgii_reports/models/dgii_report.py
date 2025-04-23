@@ -10,14 +10,7 @@ from datetime import datetime as dt, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-try:
-    import pycountry
-except ImportError:
-    raise ImportError(
-        _("This module needs pycountry to get 609 ISO 3166 "
-          "country codes. Please install pycountry on your system. "
-          "(See requirements file)"))
-    
+
 try :
     import pyperclip
 except ImportError:
@@ -25,7 +18,6 @@ except ImportError:
         _("This module needs pyperclip to copy data to clipboard. "
           "Please install pyperclip on your system. "
           "(See requirements file)"))
-          
 
 class DgiiReport(models.Model):
     _name = 'dgii.reports'
@@ -1327,9 +1319,35 @@ class DgiiReport(models.Model):
             domain += [('move_id.l10n_do_is_subject_to_proportionality', '=', False)]
 
         return self.env['account.move.line'].search(domain)
+    
+    def get_ncf_type_dic(self):
+        return {
+            'B01': 1,
+            'E31': 1,
+            'B02': 2,
+            'B03': 3,
+            'B04': 4,
+            'E34': 4,
+            'B12': 5,
+            'B14': 6,
+            'B15': 7,
+            'B16': 8,
+        }
+
+    def get_income_type_dic(self):
+        return{
+            '01': 20,
+            '02': 21,
+            '03': 22,
+            '04': 23,
+            '05': 24,
+            '06': 25
+        }
 
     # IT1
     def _compute_attachment_a_and_it1_data(self):
+        box_ncf_type = self.get_ncf_type_dic()
+        box_income_type = self.get_income_type_dic()
 
         self.env['dgii.reports.it1.line'].search([('dgii_report_id', 'in', self.ids)]).unlink()
         itbis_tax_objs = self.env['account.tax'].search([
@@ -1343,26 +1361,6 @@ class DgiiReport(models.Model):
             it1_lines = rec._get_it1_dictionary()
             sale_invoices = self.env['dgii.reports.sale.line'].search([('dgii_report_id', '=', rec.id)])
             purchase_invoices = self.env['dgii.reports.purchase.line'].search([('dgii_report_id', '=', rec.id)])
-            box_ncf_type = {
-                'B01': 1,
-                'E31': 1,
-                'B02': 2,
-                'B03': 3,
-                'B04': 4,
-                'E34': 4,
-                'B12': 5,
-                'B14': 6,
-                'B15': 7,
-                'B16': 8,
-            }
-            box_income_type = {
-                '01': 20,
-                '02': 21,
-                '03': 22,
-                '04': 23,
-                '05': 24,
-                '06': 25
-            }
             month = rec.start_date.month - 1
             year = rec.start_date.year
 

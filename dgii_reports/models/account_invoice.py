@@ -430,3 +430,4 @@ class AccountMoveLine(models.Model):
                 
                 if len(set(isr_taxes)) > 1:
                     raise ValidationError(_('An invoice cannot have multiple withholding taxes.'))
+                
