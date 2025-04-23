@@ -65,9 +65,7 @@
                                 ('is_l10n_do_fiscal_invoice','=',True)
                             ],
                             'readonly': [
-                                '|',
                                 ('state','!=','draft'),
-                                ('ref','!=',False)
                             ]
                         }"
                     />
