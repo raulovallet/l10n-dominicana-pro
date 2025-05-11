@@ -14,8 +14,7 @@
                             attrs="{'invisible':['|', ('state','!=','draft'), ('can_be_queue', '=', False)]}"/>
                     <button name="action_cancel" string="Cancel" type="object"
                             attrs="{'invisible':[('state','in', ('cancelled', 'draft'))]}"/>
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="active,depleted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,depleted"/>
                 </header>
                 <sheet>
                     <field name="can_be_queue" invisible="1"/>
@@ -58,8 +57,8 @@
                                    attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
                             <field name="type" invisible="1"/>
                             <field name="sequence_id" invisible="1"/>
-                            <field name="company_id"
-                                   groups="base.group_multi_company"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id" invisible="1"/>
                         </group>
                     </group>
                 </sheet>
