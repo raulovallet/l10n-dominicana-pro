@@ -126,25 +126,18 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in [11]">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="quantity"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['quantity']"
-                                        icon="fa-regular fa-copy"
+                                    <field name="quantity" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
                                     />
-                                    <field name="amount"/>
+                                    <field 
+                                        name="amount" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
+                                    />
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['amount']"
-                                        icon="fa-regular fa-copy"
-                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -161,17 +154,13 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (19, 26, 33)">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="amount"/>
+                                    <field name="amount" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
+                                    />
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        args="['amount']"
-                                        icon="fa-regular fa-copy"
-                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -188,26 +177,19 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (37, 38, 41, 42)">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="local_purchase" string="TOTAL INVOICED" attrs="{'invisible':[('sequence', 'in', ())]}"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        icon="fa-regular fa-copy"
-                                        args="['local_purchase']"
-                                        attrs="{'invisible':[('sequence', 'in', ())]}"
+                                    <field 
+                                        name="local_purchase" 
+                                        string="TOTAL INVOICED"
+                                        widget="CopyClipboardNumber"
+                                        attrs="{'invisible':[('sequence', 'in', ())]}"/>
+                                    <field 
+                                        name="amount" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
                                     />
-                                    <field name="amount"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['amount']"
-                                        icon="fa-regular fa-copy"
-                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -225,25 +207,19 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="quantity"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['quantity']"
-                                        icon="fa-regular fa-copy"
+                                    <field 
+                                        name="quantity" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
                                     />
-                                    <field name="amount"/>
+                                    <field 
+                                        name="amount" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
+                                    />
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['amount']"
-                                        icon="fa-regular fa-copy"
-                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -260,48 +236,34 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (48, 52, 54, 55, 56)">
                                     <field name="sequence" string="Box"/>
                                     <field name="name" style="max-width: 480px !important;"/>
-                                    <field name="local_purchase" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        icon="fa-regular fa-copy"
-                                        args="['local_purchase']"
+                                    <field 
+                                        name="local_purchase"
+                                        widget="CopyClipboardNumber"
+                                        readonly="1" 
                                         attrs="{'invisible':[('sequence','=', 54)]}"
                                     />
-                                    <field name="services" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        icon="fa-regular fa-copy"
-                                        args="['services']"
+                                    <field 
+                                        name="services" 
+                                        widget="CopyClipboardNumber"
+                                        readonly="1"
                                         attrs="{'invisible':[('sequence','=', 54)]}"
                                     />
-                                    <field name="imports" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        icon="fa-regular fa-copy"
-                                        args="['imports']"
+                                    <field 
+                                        name="imports"
+                                        widget="CopyClipboardNumber"
+                                        readonly="1" 
                                         attrs="{'invisible':[('sequence','=', 54)]}"
                                     />
-                                    <field name="amount" string="TOTAL" attrs="{'invisible':[('sequence','=', 54)]}"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object"
-                                        args="['amount']"
-                                        icon="fa-regular fa-copy"
+                                    <field 
+                                        name="amount"
+                                        widget="CopyClipboardNumber"
+                                        readonly="1"
+                                        string="TOTAL" attrs="{'invisible':[('sequence','=', 54)]}"
                                     />
-                                    <field name="coefficient" style="max-width: 45px !important;"   widget="percentage" attrs="{'invisible':[('sequence','!=', 54)]}"/>
-                                    <button
-                                        name="action_copy"
-                                        string=""
-                                        type="object"
-                                        args="['coefficient']"
-                                        icon="fa-regular fa-copy"
+                                    <field 
+                                        name="coefficient" 
+                                        style="max-width: 45px !important;"   
+                                        widget="CopyClipboardPercentage"
                                         attrs="{'invisible':[('sequence','!=', 54)]}"
                                     />
                                     <field name="currency_id" invisible="1"/>
@@ -329,17 +291,14 @@
                                 <tree create="false" edit="false" decoration-success="amount &gt; 0" decoration-danger="amount &lt; 0" decoration-bf="sequence in (9, 10, 21, 25, 26, 27, 28, 33, 34, 38, 41, 46, 49, 55, 58, 59, 60, 62, 63, 67, 68)" limit="80">
                                     <field name="sequence" string="Box"/>
                                     <field name="name"/>
-                                    <field name="amount"/>
+                                    <field 
+                                        name="amount" 
+                                        widget="CopyClipboardNumber" 
+                                        readonly="1"
+                                    />
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>
-                                    <button 
-                                        name="action_copy" 
-                                        string="" 
-                                        type="object" 
-                                        icon="fa-regular fa-copy"
-                                        args="['amount']"
-                                    />
                                 </tree>
                                 <form>
                                     <group>
@@ -355,165 +314,22 @@
                         </page>
                             <page name="consumer" string="Consumer Invoices Summary">
                                 <group string="General Summary of Consumer Invoices">
-                                    <group col="2">
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_ncf_qty" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_qty']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;" >
-                                            <field name="csmr_ncf_total_amount" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_total_amount']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_ncf_total_itbis" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_total_itbis']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_ncf_total_isc" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_total_isc']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_ncf_total_other" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_total_other']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_ncf_total_lgl_tip" readonly="1" style="width: 100px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_ncf_total_lgl_tip']"
-                                            />
-                                        </group>
+                                    <group col="3">
+                                        <field name="csmr_ncf_qty" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_ncf_total_amount" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_ncf_total_itbis" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_ncf_total_isc" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_ncf_total_other" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_ncf_total_lgl_tip" readonly="1" widget="CopyClipboardNumber"/>
                                     </group>
-                                    <group col="2">
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_cash" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_cash']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_bank" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center; margin-top: 11px;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_bank']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_card" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_card']"
-                                            /> 
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_credit" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_credit']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;" >
-                                            <field name="csmr_bond" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center; margin-top: 11px;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_bond']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_swap" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_swap']"
-                                            />
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <field name="csmr_others" readonly="1" style="width: 50px;"/>
-                                        </group>
-                                        <group style="display: flex; align-items: center;">
-                                            <button 
-                                                name="action_copy_to_clipboard"
-                                                string=""
-                                                icon="fa-regular fa-copy"
-                                                type="object"
-                                                args="['csmr_others']"
-                                            />
-                                        </group>
+                                    <group col="3">
+                                        <field name="csmr_cash" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_bank" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_card" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_credit" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_bond" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_swap" readonly="1" widget="CopyClipboardNumber"/>
+                                        <field name="csmr_others" readonly="1" widget="CopyClipboardNumber"/>
                                     </group>
                                 </group>
                             </page>
