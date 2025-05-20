@@ -16,7 +16,7 @@ export class CopyClipboardPercentageField extends Component {
 
         try {
             const value = this.props.value || 0;
-            const percentageText = `${(value * 100).toFixed(2)}%`;
+            const percentageText = (value * 100).toFixed(2);
             await navigator.clipboard.writeText(percentageText);
             this.copyText = this.successText;
             this.render();

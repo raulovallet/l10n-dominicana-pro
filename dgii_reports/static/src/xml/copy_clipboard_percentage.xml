@@ -2,7 +2,7 @@
 <templates xml:space="preserve" inherit_id="web.assets_backend">
     <t t-name="dgii_reports.CopyClipboardPercentageField" owl="1">
         <div class="d-flex align-items-center gap-2">
-            <span><t t-esc="(props.value * 100).toFixed(2)"/>%</span>
+            <span><t t-esc="(props.value * 100)"/>%</span>
             <button t-on-click.prevent.stop="copyToClipboard" class="btn btn-outline-secondary btn-sm">
                 <i class="fa fa-copy"/>
             </button>
