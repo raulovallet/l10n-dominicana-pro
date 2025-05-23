@@ -33,14 +33,12 @@ class AccountFiscalSequence(models.Model):
         string="Authorization number",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     expiration_date = fields.Date(
         string="Expiration Date",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=datetime.strptime(
             str(int(str(fields.Date.today())[0:4]) + 1) + "-12-31", "%Y-%m-%d"
@@ -51,7 +49,6 @@ class AccountFiscalSequence(models.Model):
         comodel_name="account.fiscal.type",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     type = fields.Selection(
@@ -62,7 +59,6 @@ class AccountFiscalSequence(models.Model):
         string="Start",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
@@ -71,7 +67,6 @@ class AccountFiscalSequence(models.Model):
         string="End",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
@@ -119,7 +114,6 @@ class AccountFiscalSequence(models.Model):
         default=lambda self: self.env.company,
         readonly=True,
         required=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
 

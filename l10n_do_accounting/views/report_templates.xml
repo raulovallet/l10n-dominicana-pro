@@ -64,7 +64,7 @@
                 <t t-call="l10n_do_accounting.fiscal_info"/>
             </t>
         </xpath>
-        <xpath expr="//li[@t-if='forced_vat']" position="after">
+        <xpath expr="//ul/li[last()]" position="after">
             <t t-if="l10n_do_fiscal_invoice">
                 <li t-if="not forced_vat and company.vat" class="first-page">
                     <strong>

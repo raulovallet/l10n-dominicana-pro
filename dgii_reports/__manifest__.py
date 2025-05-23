@@ -14,7 +14,7 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     "category": "Localization",
-    'version': '16.0.1.4.2',
+    'version': '17.0.0.0.0',
     # any module necessary for this one to work correctly
     'depends': [
         'web',

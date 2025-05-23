@@ -13,7 +13,7 @@
     'website': "https://www.guavana.com",
     'license': 'LGPL-3',
     'category': 'Localization',
-    'version': '16.0.1.1.1',
+    'version': '17.0.0.0.0',
     'depends': [
         'base',
         'contacts',
