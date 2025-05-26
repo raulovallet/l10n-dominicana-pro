@@ -72,8 +72,9 @@
                 <attribute name="column_invisible"/>
             </xpath>
 
-            <xpath expr="//field[@name='partner_id']" position="after">
+            <xpath expr="//group[@id='header_left_group']//div[@class='o_col']" position="after">
 
+                
                 <field name="fiscal_type_id" domain="[('id', 'in', available_fiscal_type_ids)]" invisible="move_type not in ('in_invoice', 'out_invoice', 'in_refund', 'out_refund') or not is_l10n_do_fiscal_invoice" required="is_l10n_do_fiscal_invoice" readonly="state != 'draft'"/>
                 <field name="income_type" invisible="move_type not in ['out_invoice', 'out_refund'] or not is_l10n_do_fiscal_invoice" required="is_l10n_do_fiscal_invoice and move_type in ['out_invoice', 'out_refund']" readonly="state != 'draft'"/>
                 <field name="expense_type" invisible="move_type not in ['in_invoice', 'in_refund'] or not is_l10n_do_fiscal_invoice" required="is_l10n_do_fiscal_invoice and move_type in ['in_invoice', 'in_refund']" readonly="state != 'draft'"/>

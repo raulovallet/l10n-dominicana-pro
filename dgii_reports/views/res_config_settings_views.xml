@@ -5,7 +5,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="account.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@data-key='account']" position="inside">
+            <xpath expr="//block[@name='fiscal_localization_setting_container']" position="after">
                 <h2>DGII</h2>
                 <div class="row mt16 o_settings_container" name="default_taxes_setting_container">
                     <div class="col-12 col-lg-6 o_setting_box" id="l10n_do_is_subject_to_proportionality" title="Subject to Proportionality" groups="account.group_account_user">

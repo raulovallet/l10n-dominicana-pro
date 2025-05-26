@@ -404,11 +404,11 @@ class AccountInvoice(models.Model):
         """
         active_ids = self._context.get("active_ids")
         invoice_ids = self.browse(active_ids)
-        for k, v in self.fields_get().items():
-            if v.get("store") and v.get("depends"):
-                self.env.add_todo(self._fields[k], invoice_ids)
+        for field_name, field_data in self.fields_get().items():
+            if field_data.get("store") and field_data.get("compute"):
+                self.env.add_to_compute(self._fields[field_name], invoice_ids)
 
-        self.recompute()
+        self.env._recompute_all()
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
