@@ -113,22 +113,23 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                 var current_order = this.env.pos.get_order();
                 if (this.env.pos.config.l10n_do_fiscal_journal && !current_order.to_invoice && !current_order.ncf) {
-
+                    this.env.services.ui.block();
+                    
                     try {
 
                         var fiscal_data = await this.env.pos.get_fiscal_data(current_order);        
                         console.log('NCF Generated', fiscal_data);
-                        current_order.ncf = fiscal_data.ncf;
-                        current_order.fiscal_type_id = current_order.fiscal_type.id;
-                        current_order.ncf_expiration_date = fiscal_data.ncf_expiration_date;
-                        current_order.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
+                        current_order.set_l10n_do_fiscal_data(fiscal_data);
 
                     } catch (error) {
-
+                        this.env.services.ui.unblock();
                         throw error;
                     } 
 
                     this.env.pos.set_order(current_order);
+
+                    this.env.services.ui.unblock();
+                    
                     await super._finalizeValidation();
 
                 } else {
@@ -261,6 +262,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                 var current_order = this.env.pos.get_order();
                 var total_in_bank = 0;
+                var total_in_pay_later = 0;
                 var has_cash = false;
                 var payment_lines = current_order.get_paymentlines();
                 var total = current_order.get_total_with_tax();
@@ -271,6 +273,10 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                 for (let payment_line of payment_lines) {
                     if (payment_line.payment_method.type === 'bank') {
                         total_in_bank = +Number(payment_line.amount);
+                    }
+
+                    if(payment_line.payment_method.type === 'pay_later' && !payment_line.payment_method.is_credit_note){
+                        total_in_pay_later = +Number(payment_line.amount);
                     }
 
                     if (payment_line.payment_method.type === 'cash') {
@@ -304,6 +310,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 title: _t('Error in credit note'),
                                 body: _t('The credit note has no residual amount, please delete the payment of the credit note and enter it again.'),
                             });
+                            return false;
                         }
 
                         if (credit_note.residual_amount < payment_line.amount) {
@@ -312,6 +319,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 body: _t(
                                     'The amount of the credit note is less than the amount entered, please delete the payment of the credit note and enter it again.'),
                             });
+                            return false;
                         }
 
                         // TODO: Check if this is necessary
@@ -338,6 +346,28 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                     return false;
                 }
+                
+                if (Math.abs(Math.round(Math.abs(total) * 100) / 100) <
+                    Math.round(Math.abs(total_in_pay_later) * 100) / 100) {
+
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Pay later payment'),
+                        body: _t('Pay later payment cannot exceed the total order'),
+                    });
+
+                    return false;
+                }
+
+                if (Math.abs(Math.round(Math.abs(total) * 100) / 100) <
+                    Math.round(Math.abs(total_in_pay_later+total_in_bank) * 100) / 100) {
+
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Card and pay later payment'),
+                        body: _t('The sum for Card and Pay Later payment cannot exceed the total order.'),
+                    });
+
+                    return false;
+                }
 
                 if (Math.round(Math.abs(total_in_bank) * 100) / 100 ===
                     Math.round(Math.abs(total) * 100) / 100 && has_cash) {
@@ -353,6 +383,21 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                     return false;
                 }
 
+
+                if (Math.round(Math.abs(total_in_pay_later) * 100) / 100 ===
+                    Math.round(Math.abs(total) * 100) / 100 && total_in_pay_later && has_cash) {
+
+                    this.showPopup('ErrorPopup', {
+                        title: _t('Pay later and cash payment'),
+                        body: _t('The total payment with the pay later is ' +
+                            'sufficient to pay the order, please eliminate the ' +
+                            'payment in cash or reduce the amount to be paid by ' +
+                            'pay later'),
+                    });
+
+                    return false;
+                }
+                
                 
                 // TODO: Check if this is necessary
                 // if (!payment_and_return_mount_equals) {

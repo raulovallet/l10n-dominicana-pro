@@ -1,8 +1,12 @@
 odoo.define('l10n_do_pos.models', function (require) {
     "use strict";
-
-    var { Order, PosGlobalState, Payment } = require('point_of_sale.models');
+    
+    var field_utils = require('web.field_utils');
+    const { Gui } = require('point_of_sale.Gui');
+    var core = require('web.core');
+    var { Order, PosGlobalState, Payment, Orderline} = require('point_of_sale.models');
     var Registries = require('point_of_sale.Registries');
+    var _t = core._t;
 
     const L10nDoPosPosGlobalState = PosGlobalState => class extends PosGlobalState {
         async _processData(loadedData) {
@@ -18,28 +22,33 @@ odoo.define('l10n_do_pos.models', function (require) {
                     res_fiscal_type = fiscal_type;
                 }
             });
+
             if (!res_fiscal_type) {
                 res_fiscal_type = this.get_fiscal_type_by_prefix('B02');
             }
+
             return res_fiscal_type;
         }
 
         get_fiscal_type_by_prefix(prefix) {
             var self = this;
             var res_fiscal_type = false;
+            
             // TODO: try make at best performance
             self.fiscal_types.forEach(function (fiscal_type) {
                 if (fiscal_type.prefix === prefix) {
                     res_fiscal_type = fiscal_type;
                 }
             });
-            if (res_fiscal_type) {
+
+            if (res_fiscal_type)
                 return res_fiscal_type;
-            }
-            self.gui.show_popup('error', {
+    
+            Gui.showPopup('ErrorPopup', {
                 'title': _t('Fiscal type not found'),
-                'body': _t('This fiscal type not exist.'),
+                'body': _.str.sprintf(_t('This fiscal type not exist. (%s)'), prefix),
             });
+
             return false;
         }        
         async get_fiscal_data(order) {
@@ -51,6 +60,7 @@ odoo.define('l10n_do_pos.models', function (require) {
                     order.fiscal_type.id,
                     this.env.pos.company.id,
                     [],
+                    order.export_as_JSON()
                 ],
             });
         }
@@ -101,12 +111,13 @@ odoo.define('l10n_do_pos.models', function (require) {
         constructor(obj, options) {
             super(...arguments); 
 
-            if (!options.json) {
-                this.ncf = '';
-                this.ncf_origin_out = '';
-                this.ncf_expiration_date = '';
-                this.fiscal_type_id = false;
-                this.fiscal_sequence_id = false;
+            if (this.pos.config.l10n_do_fiscal_journal){
+
+                this.ncf = this.ncf || '';
+                this.ncf_origin_out = this.ncf_origin_out || '';
+                this.ncf_expiration_date = this.ncf_expiration_date = '';
+                this.fiscal_type_id = this.fiscal_type || false;
+                this.fiscal_sequence_id = this.fiscal_sequence_id || false;
 
                 var partner = this.get_partner();
 
@@ -126,6 +137,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         set_fiscal_type(fiscal_type) {
             this.fiscal_type = fiscal_type;
             this.fiscal_type_id = fiscal_type.id;
+
             if (fiscal_type && fiscal_type.fiscal_position_id){
                 this.set_fiscal_position(_.find(this.pos.fiscal_positions, function(fp) {
                     return fp.id === fiscal_type.fiscal_position_id[0];
@@ -139,6 +151,7 @@ odoo.define('l10n_do_pos.models', function (require) {
         get_fiscal_type() {
             return this.fiscal_type;
         }
+
         set_partner(partner){
 
             super.set_partner(partner); 
@@ -153,27 +166,26 @@ odoo.define('l10n_do_pos.models', function (require) {
         //@override
         export_as_JSON() {
             const json = super.export_as_JSON(...arguments);
-
-            if (this.pos.config.l10n_do_fiscal_journal){
+            if(this.pos.config.l10n_do_fiscal_journal){
                 json.ncf = this.ncf;
                 json.ncf_origin_out = this.ncf_origin_out;
                 json.ncf_expiration_date = this.ncf_expiration_date;
                 json.fiscal_type_id = this.fiscal_type_id;
                 json.fiscal_sequence_id = this.fiscal_sequence_id;
             }
-
             return json;
         }
 
         init_from_JSON(json) {
             super.init_from_JSON(...arguments);
+
             if (this.pos.config.l10n_do_fiscal_journal){
+
                 this.ncf = json.ncf || '';
                 this.ncf_origin_out = json.ncf_origin_out || '';
                 this.ncf_expiration_date = json.ncf_expiration_date || '';
                 this.fiscal_type_id = json.fiscal_type_id || false;
                 this.fiscal_sequence_id = json.fiscal_sequence_id || false;
-                console.log('init_from_JSON', json.fiscal_type_id)
 
                 if(json.fiscal_type_id)
                     this.set_fiscal_type(this.pos.get_fiscal_type_by_id(json.fiscal_type_id));
@@ -183,11 +195,34 @@ odoo.define('l10n_do_pos.models', function (require) {
 
             }
         }
-        set_ncf_origin_out(ncf_origin_out) {
-            this.ncf_origin_out = ncf_origin_out;
+
+        export_for_printing() {
+            var result = super.export_for_printing(...arguments);
+            result.l10n_do_fiscal_journal = this.pos.config.l10n_do_fiscal_journal;
+
+            if(this.pos.config.l10n_do_fiscal_journal){
+                result.ncf = this.ncf;
+                result.ncf_origin_out = this.ncf_origin_out;
+                result.ncf_expiration_date = this.ncf_expiration_date ? 
+                    field_utils.format.date(field_utils.parse.date(this.ncf_expiration_date, {}, {isUTC: true})): '';
+                result.fiscal_type = this.fiscal_type;
+            }
+
+            return result;
+        }
+        
+        set_ncf_origin_out(origin_order) {
+            this.ncf_origin_out = origin_order.ncf;
+        }
+        
+        set_l10n_do_fiscal_data(fiscal_data){
+            this.ncf = fiscal_data.ncf;
+            this.ncf_expiration_date = fiscal_data.ncf_expiration_date;
+            this.fiscal_sequence_id = fiscal_data.fiscal_sequence_id;
         }
 
     }
+    
     const L10nDoPayment = Payment => class extends Payment {
         /**
          * @override
@@ -217,8 +252,31 @@ odoo.define('l10n_do_pos.models', function (require) {
         }
     }
 
+    const L10nDoPosOrderLine = Orderline => class extends Orderline {
+        export_for_printing (){
+            let res = super.export_for_printing();
+            res.l10n_do_itbis = this.get_itbis();
+
+            return res;
+        }
+
+        get_itbis() {
+            let itbis = 0;
+            const tax_details = this.get_tax_details();
+            
+            for (const tax_id in tax_details) {
+                if (this.pos.taxes_by_id[tax_id].tax_group_id[1] === 'ITBIS') {
+                    itbis += tax_details[tax_id].amount;
+                }
+            }
+
+            return itbis;
+        }
+    }
+
     Registries.Model.extend(PosGlobalState, L10nDoPosPosGlobalState);
     Registries.Model.extend(Order, L10nDoPosOrder);
+    Registries.Model.extend(Orderline, L10nDoPosOrderLine);
     Registries.Model.extend(Payment, L10nDoPayment);
 
 });

@@ -1,23 +1,45 @@
-odoo.define('dgii_report.dgii_report_widget', function (require) {
-    "use strict";
+/** @odoo-module **/
 
-    var field_registry = require('web.field_registry');
-    var basic_fields = require('web.basic_fields');
+import { registry } from "@web/core/registry";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { Component, xml } from "@odoo/owl";
 
-    var UrlDgiiReportsWidget = basic_fields.UrlWidget.extend({
-        _renderReadonly: function () {
-            console.log('UrlDgiiReportsWidget')
-            this.$el.text(this.attrs.text || this.value)
-                .addClass('o_form_uri o_text_overflow')
-                .attr('target', '_blank')
-                .attr('href', "dgii_reports/"+this.value);
-        },
-    });
+console.log("=== DGII Widget Loading ===");
 
-    field_registry.add('dgii_reports_url', UrlDgiiReportsWidget);
-
-    return {
-        UrlDgiiReportsWidget: UrlDgiiReportsWidget,
+class DgiiUrlWidget extends Component {
+    
+    static props = {
+        ...standardFieldProps,
     };
 
-});
+    setup() {
+
+    }
+
+    get fieldValue() {
+        if (!this.props?.name || !this.props?.record?.data) {
+            return "";
+        }
+        const value = this.props.record.data[this.props.name];
+        return value || "";
+    }
+
+    get displayText() {
+        const text = this.fieldValue || "";
+        return text;
+    }
+
+    onClick() {
+        if (this.fieldValue && this.fieldValue !== "") {
+            const url = `dgii_reports/${this.fieldValue}`;
+            console.log("Opening URL:", url);
+            window.open(url, '_blank');
+        }
+    }
+}
+
+DgiiUrlWidget.template = "dgii_reports.DgiiUrlWidget";
+
+export const UrlWidget = {component: DgiiUrlWidget};
+
+registry.category("fields").add("dgii_reports_url", UrlWidget);
