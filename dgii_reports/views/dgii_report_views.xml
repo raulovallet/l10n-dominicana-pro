@@ -211,7 +211,7 @@
                                     <field name="services" widget="CopyClipboardNumber" readonly="1" invisible="sequence == 54"/>
                                     <field name="imports" widget="CopyClipboardNumber" readonly="1" invisible="sequence == 54"/>
                                     <field name="amount" widget="CopyClipboardNumber" readonly="1" string="TOTAL" invisible="sequence == 54"/>
-                                    <field name="coefficient" style="max-width: 45px !important;" widget="CopyClipboardPercentage" invisible="sequence != 54"/>
+                                    <field name="coefficient" widget="CopyClipboardPercentage" style="max-width: 45px !important;" invisible="sequence != 54"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="dgii_report_id" invisible="1"/>
                                     <field name="display_type" invisible="1"/>

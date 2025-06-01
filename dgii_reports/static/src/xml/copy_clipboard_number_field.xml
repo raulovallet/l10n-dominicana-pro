@@ -3,8 +3,8 @@
     
     <t t-name="dgii_reports.CopyClipboardNumberField" owl="1">
         <div class="d-flex align-items-center gap-2">
-            <span><t t-esc="props.value"/></span>
-            <button t-on-click.prevent.stop="copyToClipboard" class="btn btn-outline-secondary btn-sm">
+            <span><t t-esc="value"/></span>
+            <button t-on-click.prevent.stop="copyToClipboard" t-att-class="getButtonClass()">
                 <i class="fa fa-copy"/>
             </button>
         </div>

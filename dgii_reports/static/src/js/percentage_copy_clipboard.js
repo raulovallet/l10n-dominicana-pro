@@ -3,38 +3,68 @@
 import { registry } from "@web/core/registry";
 import { Component } from "@odoo/owl";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { _t } from "@web/core/l10n/translation";
 
-export class CopyClipboardPercentageField extends Component {
+class CopyClipboardPercentageField extends Component {
+
+    static props = {
+        ...standardFieldProps,
+    };
+
     setup() {
-        this.copyText = this.env._t("Copy");
-        this.successText = this.env._t("Copied");
+        this.CopyText = "";
+        this.value = this.props.record.data[this.props.name]?.toString() || "";
+        this.resetOthers = () => {
+            this.copyText = _t("Copy");
+            this.render();
+        };
+        document.addEventListener('copy-reset', this.resetOthers);
     }
 
-    async copyToClipboard(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
 
+
+    getButtonClass() {
+        return this.copyText === _t('Copied') ? 'btn btn-success btn-sm' : 'btn btn-outline-secondary btn-sm';
+    }
+    
+    async copyToClipboard() {
         try {
-            const value = this.props.value || 0;
-            const percentageText = `${(value * 100).toFixed(2)}%`;
+            if (!this.props?.name || !this.props?.record?.data) {
+                return;
+            }
+            
+            document.dispatchEvent(new CustomEvent('copy-reset'));
+
+            const percentageText = `${(this.value * 100).toFixed(2)}%`;
             await navigator.clipboard.writeText(percentageText);
-            this.copyText = this.successText;
+
+            this.copyText = _t("Copied");
             this.render();
+
             setTimeout(() => {
-                this.copyText = this.env._t("Copy");
+                this.copyText = _t("Copy");
                 this.render();
-            }, 1000);
-        } catch (e) {
-            console.error("Copy failed:", e);
-            this.copyText = this.env._t("Error");
+            }, 10000);
+            
+        } catch (error) {
+            console.error("Clipboard copy failed:", error);
+            this.copyText = _t("Error");
             this.render();
         }
     }
+
+    willUnmount() {
+        document.removeEventListener('copy-reset', this.resetOthers);
+    }
 }
+
 CopyClipboardPercentageField.template = "dgii_reports.CopyClipboardPercentageField";
-CopyClipboardPercentageField.props = {
-    ...standardFieldProps,
+
+
+export const CopyClipboardPercentage = {
+    component: CopyClipboardPercentageField
 };
 
-registry.category("fields").add("CopyClipboardPercentage", CopyClipboardPercentageField);
+registry.category("fields").add("CopyClipboardPercentage", CopyClipboardPercentage);
+
 
