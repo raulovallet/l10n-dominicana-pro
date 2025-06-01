@@ -4,8 +4,6 @@ import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { Component, xml } from "@odoo/owl";
 
-console.log("=== DGII Widget Loading ===");
-
 class DgiiUrlWidget extends Component {
     
     static props = {
@@ -32,7 +30,6 @@ class DgiiUrlWidget extends Component {
     onClick() {
         if (this.fieldValue && this.fieldValue !== "") {
             const url = `dgii_reports/${this.fieldValue}`;
-            console.log("Opening URL:", url);
             window.open(url, '_blank');
         }
     }
