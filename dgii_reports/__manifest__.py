@@ -47,9 +47,9 @@
             'dgii_reports/static/src/scss/dgii_reports.scss',
             'dgii_reports/static/src/js/widget.js',
             'dgii_reports/static/src/js/custom_clipboard_value.js',
-            # 'dgii_reports/static/src/js/percentage_copy_clipboard.js',
+            'dgii_reports/static/src/js/percentage_copy_clipboard.js',
             'dgii_reports/static/src/xml/copy_clipboard_number_field.xml',
-            # 'dgii_reports/static/src/xml/copy_clipboard_percentage.xml',
+            'dgii_reports/static/src/xml/copy_clipboard_percentage.xml',
             'dgii_reports/static/src/xml/dgii_reports_widget_template.xml',
         ]
     },
