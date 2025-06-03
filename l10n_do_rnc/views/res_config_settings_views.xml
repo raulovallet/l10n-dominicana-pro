@@ -48,13 +48,13 @@
                                             </div>
                                         </div>
                                         <!-- Field api_key -->
-                                        <div class="col-8" attrs="{'invisible': [('l10n_do_rnc_service', '!=', 'jenrax')]}" name="jenrax_api_key">
+                                        <div class="col-8" invisible="l10n_do_rnc_service != 'jenrax'" name="jenrax_api_key">
                                             <div class="row align-items-baseline">
                                                 <div class="col-8">
                                                     <label for="l10n_do_rnc_jenrax_api_key" string="Jenrax RNC API key" class="o_light_label"/>
                                                 </div>
                                                 <div class="col-4">
-                                                    <field name="l10n_do_rnc_jenrax_api_key" class="oe_inline" attrs="{'required':[('l10n_do_rnc_service', '=', 'jenrax')]}"/>
+                                                    <field name="l10n_do_rnc_jenrax_api_key" class="oe_inline" required="l10n_do_rnc_service == 'jenrax'"/>
                                                 </div>
                                                 <div class="col-12">
                                                     <a href="https://jenrax.com" target="_blank">Get your API Key</a>
