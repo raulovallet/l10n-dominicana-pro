@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <t t-name="dgii_reports.DgiiUrlWidget">
+        <span t-on-click="onClick"
+              class="text-primary"
+              style="cursor: pointer; text-decoration: underline;">
+            <t t-esc="displayText"/>
+        </span>
+    </t>
+</templates>

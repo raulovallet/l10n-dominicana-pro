@@ -81,7 +81,7 @@
         <field name="requires_document" eval="True"/>
     </record>
     <record id="fiscal_type_purchase_electronic_credit_note" model="account.fiscal.type">
-        <field name="name">Nota de Crédito Compras Fiscales Electronicas</field>
+        <field name="name">Nota de Crédito Compras Fiscales Electrónicas</field>
         <field name="prefix">E34</field>
         <field name="type">in_refund</field>
         <field name="sequence">10</field>
@@ -101,7 +101,7 @@
         <field name="requires_document" eval="True"/>
     </record>
     <record id="fiscal_type_fiscal_electronic_purchase" model="account.fiscal.type">
-        <field name="name">Compras Fiscales Electronicas</field>
+        <field name="name">Compras Fiscales Electrónicas</field>
         <field name="prefix">E31</field>
         <field name="type">in_invoice</field>
         <field name="sequence">12</field>

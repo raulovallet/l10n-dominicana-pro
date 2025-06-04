@@ -1,8 +1,7 @@
-import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.osv.expression import AND
-_logger = logging.getLogger(__name__)
+from datetime import timedelta
 
 
 class PosOrder(models.Model):
@@ -34,11 +33,13 @@ class PosOrder(models.Model):
 
     def _export_for_ui(self, order):
         result = super(PosOrder, self)._export_for_ui(order)
+        
         result['ncf'] = order.ncf
         result['ncf_origin_out'] = order.ncf_origin_out
         result['ncf_expiration_date'] = order.ncf_expiration_date
         result['fiscal_type_id'] = order.fiscal_type_id.id if order.fiscal_type_id else False
         result['fiscal_sequence_id'] = order.fiscal_sequence_id.id if order.fiscal_sequence_id else False
+
         return result
 
     @api.model
@@ -47,12 +48,12 @@ class PosOrder(models.Model):
         Prepare the dict of values to create the new pos order.
         """
         fields = super(PosOrder, self)._order_fields(ui_order)
-        if ui_order.get('ncf', False):
-            fields['ncf'] = ui_order['ncf']
-            fields['ncf_origin_out'] = ui_order['ncf_origin_out']
-            fields['ncf_expiration_date'] = ui_order['ncf_expiration_date']
-            fields['fiscal_type_id'] = ui_order['fiscal_type_id']
-            fields['fiscal_sequence_id'] = ui_order['fiscal_sequence_id']
+        
+        fields['ncf'] = ui_order.get('ncf', False)
+        fields['ncf_origin_out'] = ui_order.get('ncf_origin_out', False)
+        fields['ncf_expiration_date'] = ui_order.get('ncf_expiration_date', False)
+        fields['fiscal_type_id'] = ui_order.get('fiscal_type_id', False)
+        fields['fiscal_sequence_id'] = ui_order.get('fiscal_sequence_id', False)
 
         return fields
 
@@ -148,34 +149,19 @@ class PosOrder(models.Model):
             self, 
             fiscal_type_id,
             company_id, 
-            payments
+            payments,
+            order_json
         ):
         """
         search active fiscal sequence dependent with fiscal type
         :param order:[fiscal_type_id, company_id, mode, lines,]
         :return: {ncf, expiration date, fiscal sequence}
         """
-        fiscal_type = self.env['account.fiscal.type'].search([
-            ('id', '=', fiscal_type_id)
-        ])
 
-        if not fiscal_type:
-            raise UserError(_('Fiscal type not found'))
-
-        for payment in payments:
-            if payment.get('returned_ncf', False):
-                cn_invoice = self.env['account.move'].search([
-                    ('ref', '=', payment['returned_ncf']),
-                    ('type', '=', 'out_refund'),
-                    ('is_l10n_do_fiscal_invoice', '=', True),
-                ])
-                if cn_invoice.residual != cn_invoice.amount_total:
-                    raise UserError(
-                        _('This credit note (%s) has been used' % payment['returned_ncf'])
-                    )
+        fiscal_type = self.env['account.fiscal.type'].browse(fiscal_type_id)
 
         fiscal_sequence = self.env['account.fiscal.sequence'].search([
-            ('fiscal_type_id', '=', fiscal_type.id),
+            ('fiscal_type_id', '=', fiscal_type_id),
             ('state', '=', 'active'),
             ('company_id', '=', company_id)
         ], limit=1)
@@ -187,10 +173,20 @@ class PosOrder(models.Model):
                     fiscal_type.name,
             ))
 
+        new_ncf = fiscal_sequence.get_fiscal_number()
+        
+        # This is the better way to identify problems with fiscal sequences 
+        ncf_log = self.env['pos.order.ncf.log'].sudo().create({
+            'l10n_do_ncf': new_ncf,
+            'order_json': order_json,
+            'company_id': company_id
+        })
+
         return {
-            'ncf': fiscal_sequence.get_fiscal_number(),
+            'ncf': new_ncf,
             'fiscal_sequence_id': fiscal_sequence.id,
-            'ncf_expiration_date': fiscal_sequence.expiration_date
+            'ncf_expiration_date': fiscal_sequence.expiration_date,
+            'ncf_log_id': ncf_log.id
         }
 
     def get_credit_note(self, ncf):
@@ -246,16 +242,53 @@ class PosOrder(models.Model):
     @api.model
     def search_paid_order_ids(self, config_id, domain, limit, offset):
         """Search for 'paid' orders that satisfy the given domain, limit and offset."""
+        pos_config = self.env['pos.config'].browse(config_id)
         
-        if self.env['pos.config'].browse(config_id).invoice_journal_id.l10n_do_fiscal_journal:
-            config_ids = self.env['pos.config'].search([
-                ('invoice_journal_id.l10n_do_fiscal_journal', '=', True),
-            ]).ids
+        if pos_config.invoice_journal_id.l10n_do_fiscal_journal:
+            config_ids = self.env['pos.config'].search([('invoice_journal_id.l10n_do_fiscal_journal', '=', True)]).ids 
 
-            default_domain = ['&', '&', ('config_id', '=', config_ids), ('ncf', 'not like', '%B04%'), '!', '|', ('state', '=', 'draft'), ('state', '=', 'cancelled')]
+            default_domain = [
+                '&', '&', '&',
+                ('config_id', 'in', config_ids), 
+                ('ncf', '!=', False),
+                ('amount_total', '>', 0),
+                '!', '|', 
+                ('state', '=', 'draft'), 
+                ('state', '=', 'cancelled')
+            ]
+            
+            if pos_config.l10n_do_type_limit_order_history == 'days':
+                default_domain.insert(3, '&')
+                default_domain.insert(4, 
+                    ('create_date', '>=', fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=pos_config.l10n_do_type_limit_order_history_days))))
+
             real_domain = AND([domain, default_domain])
             ids = self.search(AND([domain, default_domain]), limit=limit, offset=offset).ids
             totalCount = self.search_count(real_domain)
+            
             return {'ids': ids, 'totalCount': totalCount}
 
         return super(PosOrder, self).search_paid_order_ids(config_id, domain, limit, offset)
+
+
+class PosOrderNcfLog(models.Model):
+    _name = 'pos.order.ncf.log'
+    _description = 'Each time an NCF is generated, it is necessary to log the order in JSON so that the client can continue in case of an error.'
+    _rec_name = 'l10n_do_ncf'
+    
+    l10n_do_ncf = fields.Char(
+        string='NCF', 
+        required=True
+    )
+    order_json = fields.Text(
+        string='Order in JSON', 
+        required=True
+    )
+    company_id = fields.Many2one(
+        comodel_name='res.company', 
+        string='Company', 
+        required=True, 
+        default=lambda self: self.env.company
+    )
+
+    # TODO: CREATE METHOD create order FROM order_json

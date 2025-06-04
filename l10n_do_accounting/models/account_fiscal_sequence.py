@@ -33,13 +33,12 @@ class AccountFiscalSequence(models.Model):
         string="Authorization number",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     expiration_date = fields.Date(
+        string="Expiration Date",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=datetime.strptime(
             str(int(str(fields.Date.today())[0:4]) + 1) + "-12-31", "%Y-%m-%d"
@@ -50,7 +49,6 @@ class AccountFiscalSequence(models.Model):
         comodel_name="account.fiscal.type",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
     )
     type = fields.Selection(
@@ -58,17 +56,17 @@ class AccountFiscalSequence(models.Model):
         store=True,
     )
     sequence_start = fields.Integer(
+        string="Start",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
     )
     sequence_end = fields.Integer(
+        string="End",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         tracking=True,
         default=1,
         copy=False,
@@ -78,7 +76,9 @@ class AccountFiscalSequence(models.Model):
         compute="_compute_sequence_remaining",
     )
     sequence_id = fields.Many2one(
-        "ir.sequence", string="Internal Sequence", copy=False,
+        comodel_name="ir.sequence",
+        string="Internal Sequence",
+        copy=False,
     )
     warning_gap = fields.Integer(compute="_compute_warning_gap",)
     remaining_percentage = fields.Float(
@@ -88,13 +88,13 @@ class AccountFiscalSequence(models.Model):
         "warning notifications.",
     )
     number_next_actual = fields.Integer(
-        string="Next Number",
-        help="Next number of this sequence",
-        related="sequence_id.number_next_actual",
+        string="Next Number", help="Next number of this sequence",
     )
-    next_fiscal_number = fields.Char(compute="_compute_next_fiscal_number",)
+    next_fiscal_number = fields.Char(
+        compute="_compute_next_fiscal_number",
+    )
     state = fields.Selection(
-        [
+        selection=[
             ("draft", "Draft"),
             ("queue", "Queue"),
             ("active", "Active"),
@@ -106,12 +106,14 @@ class AccountFiscalSequence(models.Model):
         tracking=True,
         copy=False,
     )
-    can_be_queue = fields.Boolean(compute="_compute_can_be_queue",)
+    can_be_queue = fields.Boolean(
+        compute="_compute_can_be_queue",
+    )
     company_id = fields.Many2one(
-        "res.company",
-        default=lambda self: self.env.user.company_id,
+        comodel_name="res.company",
+        default=lambda self: self.env.company,
         readonly=True,
-        states={"draft": [("readonly", False)]},
+        required=True,
         tracking=True,
     )
 
@@ -141,18 +143,17 @@ class AccountFiscalSequence(models.Model):
                 rec.remaining_percentage / 100
             )
 
-    @api.depends("sequence_end", "sequence_id.number_next")
+    @api.depends("sequence_end", "number_next_actual")
     def _compute_sequence_remaining(self):
         for rec in self:
-            rec.sequence_remaining = \
-                (rec.sequence_end - rec.sequence_id.number_next_actual + 1) if rec.sequence_id else 0
+            rec.sequence_remaining = rec.sequence_end - rec.number_next_actual + 1
 
-    @api.depends("fiscal_type_id.prefix", "sequence_id.padding", "sequence_id.number_next_actual")
+    @api.depends("fiscal_type_id.prefix", "fiscal_type_id.padding", "number_next_actual")
     def _compute_next_fiscal_number(self):
         for seq in self:
             seq.next_fiscal_number = "%s%s" % (
                 seq.fiscal_type_id.prefix,
-                str(seq.sequence_id.number_next_actual).zfill(seq.sequence_id.padding),
+                str(seq.number_next_actual).zfill(seq.fiscal_type_id.padding),
             )
 
     @api.onchange("fiscal_type_id")
@@ -257,30 +258,17 @@ class AccountFiscalSequence(models.Model):
 
     def _action_confirm(self):
         for rec in self:
-
             # Use DR local time
             l10n_do_date = get_l10n_do_datetime().date()
 
             if l10n_do_date >= rec.expiration_date:
                 rec.state = "expired"
             else:
-                # Creates a new sequence of this Fiscal Sequence
-                sequence_id = self.env["ir.sequence"].create(
-                    {
-                        "name": _("%s %s Sequence")
-                        % (rec.fiscal_type_id.name, rec.name[-9:]),
-                        "implementation": "standard",
-                        "padding": rec.fiscal_type_id.padding,
-                        "number_increment": 1,
-                        "number_next_actual": rec.sequence_start,
-                        "number_next": rec.sequence_start,
-                        "use_date_range": False,
-                        "company_id": rec.company_id.id,
-                    }
-                )
-                rec.write(
-                    {"state": "active", "sequence_id": sequence_id.id}
-                )
+                rec.write({
+                    'state': "active", 
+                    'number_next_actual': rec.sequence_start
+                })
+                return rec.next_fiscal_number
 
     def action_cancel(self):
         self.ensure_one()
@@ -304,7 +292,9 @@ class AccountFiscalSequence(models.Model):
             if rec.sequence_id:
                 # *-*-*-*-*- Remove this comment *-*-*-*-*-*
                 # Preserve internal sequence just for audit purpose.
-                rec.sequence_id.active = False
+                rec.sequence_id.sudo().write({
+                    "active": False,
+                })
 
     def action_queue(self):
         for rec in self:
@@ -337,30 +327,42 @@ class AccountFiscalSequence(models.Model):
         return fiscal_sequence_id
 
     def get_fiscal_number(self):
-
+        self.ensure_one()
         if not self.fiscal_type_id.assigned_sequence:
             return False
-
+        
         if self.sequence_remaining > 0:
-            sequence_next = self.sequence_id._next()
+            next_actual_sequence = self.number_next_actual + 1
+            next_actual_fiscal_number = self.next_fiscal_number
+            sequence_already_exists = self.env['account.move'].search_count([
+                ('ref', '=', next_actual_fiscal_number),
+                ('company_id', '=', self.company_id.id),
+                ('fiscal_type_id', '=', self.fiscal_type_id.id),
+            ], limit=1)
 
-            # After consume a sequence, evaluate if sequence
-            # is depleted and set state to depleted
+            if sequence_already_exists:
+                raise ValidationError(
+                    _("The fiscal number %s already exists") % next_actual_fiscal_number)
+
             if (self.sequence_remaining - 1) < 1:
                 self.state = "depleted"
                 queue_sequence_id = self._get_queued_fiscal_sequence()
                 if queue_sequence_id:
                     queue_sequence_id._action_confirm()
 
-            return "%s%s" % (
-                self.fiscal_type_id.prefix,
-                str(sequence_next).zfill(self.sequence_id.padding),
-            )
+            self.write({'number_next_actual': next_actual_sequence})
+            return next_actual_fiscal_number
         else:
             raise ValidationError(
                 _("No Fiscal Sequence available for this type of document.")
             )
 
+
+    @api.model
+    def _update_sequences(self):
+        for rec in self.search([]):
+            if rec.sequence_id and rec.number_next_actual <=0:
+                rec.write({'number_next_actual': rec.sequence_id.number_next_actual})
 
 class AccountFiscalType(models.Model):
     _name = "account.fiscal.type"
@@ -369,7 +371,7 @@ class AccountFiscalType(models.Model):
 
     name = fields.Char(
         string="Name",
-        required=True, 
+        required=True,
         copy=False,
     )
     active = fields.Boolean(
@@ -404,18 +406,20 @@ class AccountFiscalType(models.Model):
     journal_type = fields.Selection(
         string="Journal Type",
         selection=[
-            ("sale", "Sale"), 
+            ("sale", "Sale"),
             ("purchase", "Purchase")
-        ], 
+        ],
         compute="_compute_journal_type"
     )
     fiscal_position_id = fields.Many2one(
         comodel_name="account.fiscal.position",
-        string="Fiscal Position"
+        string="Fiscal Position",
+        company_dependent=True,
     )
     journal_id = fields.Many2one(
-        comodel_name="account.journal", 
-        string="Journal"
+        comodel_name="account.journal",
+        string="Journal",
+        company_dependent=True,
     )
     assigned_sequence = fields.Boolean(
         string="Assigned Sequence",
@@ -446,42 +450,46 @@ class AccountFiscalType(models.Model):
 
         if not fiscal_number:
             raise ValidationError(_('Fiscal number can not be blank'))
-        
+
         if len(fiscal_number) < 3:
-            raise ValidationError(_('This origin fiscal number must have more than 3 characters'))
-        
+            raise ValidationError(
+                _('This origin fiscal number must have more than 3 characters'))
+
         fiscal_type = self
         message = ''
-        
+
         if not self:
             fiscal_type = self.search([
-                ('prefix', '=', fiscal_number[0:3]), 
+                ('prefix', '=', fiscal_number[0:3]),
                 ('type', '=', type)
             ])
 
         if not fiscal_type:
             if type in ('in_refund', 'out_refund'):
-                message = _('The fiscal number type (%s) is not a credit note.') % fiscal_number[0:3]
+                message = _(
+                    'The fiscal number type (%s) is not a credit note.') % fiscal_number[0:3]
 
             raise ValidationError(
-                _('This document type (%s) does not exist.' % fiscal_number[0:3]) if not message else message
+                _('This document type (%s) does not exist.' %
+                  fiscal_number[0:3]) if not message else message
             )
 
-        origin_out_padding = len(fiscal_number) - len(fiscal_type.prefix) if fiscal_type.prefix else len(fiscal_number)
-        
+        origin_out_padding = len(
+            fiscal_number) - len(fiscal_type.prefix) if fiscal_type.prefix else len(fiscal_number)
 
         if origin_out_padding != fiscal_type.padding:
             raise ValidationError(
-                _('The document type (%s) has (%s) digits. You are trying to input (%s) digits.') % 
+                _('The document type (%s) has (%s) digits. You are trying to input (%s) digits.') %
                 (fiscal_type.name, fiscal_type.padding, origin_out_padding)
             )
-        
+
         if not re.match('^[0-9]+$', fiscal_number[3:]):
             raise ValidationError(
                 _('After the document type, all characters must be digits from 0 to 9.')
             )
-        
+
         if fiscal_type.prefix and fiscal_number[0:3] != fiscal_type.prefix:
             raise ValidationError(
-                _('The document type (%s) must start with (%s)') % (fiscal_type.name, fiscal_type.prefix)
+                _('The document type (%s) must start with (%s)') % (
+                    fiscal_type.name, fiscal_type.prefix)
             )
