@@ -795,3 +795,10 @@ msgstr "confirmar"
 #, python-format
 msgid "You can't delete this partner."
 msgstr "No puedes eliminar este cliente."
+
+#. module: l10n_do_pos
+#. odoo-python
+#: code:addons/l10n_do_pos/models/account_fiscal_type.py:0
+#, python-format
+msgid "You cannot archive a fiscal type"
+msgstr "No puedes archivar un tipo fiscal hay una sesión de punto de venta abierta"
