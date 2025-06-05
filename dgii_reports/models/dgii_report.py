@@ -1373,6 +1373,9 @@ class DgiiReport(models.Model):
 
                 # AII                    
                 ncf_type = sale_invoice.invoice_id.fiscal_type_id.prefix
+                
+                if ncf_type not in box_ncf_type:
+                    raise ValidationError(_("The NCF type doesn't exist"))
                 attachment_a_lines[box_ncf_type[ncf_type]]['quantity'] += 1
                 attachment_a_lines[box_ncf_type[ncf_type]]['amount'] += \
                     sale_invoice.invoice_id.amount_untaxed_signed

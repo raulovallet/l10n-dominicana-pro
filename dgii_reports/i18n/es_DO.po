@@ -3053,3 +3053,9 @@ msgstr "sección"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__state
 msgid "state"
 msgstr "Estado"
+
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "The NCF type doesn't exist"
+msgstr "El tipo de comprobante fiscal (NCF) no existe"
