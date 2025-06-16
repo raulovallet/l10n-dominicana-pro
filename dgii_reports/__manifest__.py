@@ -46,8 +46,6 @@
         'web.assets_backend': [
             '/dgii_reports/static/src/scss/dgii_reports.scss',
             '/dgii_reports/static/src/js/widget.js',
-            '/dgii_reports/static/src/js/clipboard.js',
-            '/dgii_reports/static/src/xml/clipboard.xml',
         ]
     },
 
