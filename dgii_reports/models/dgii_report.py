@@ -1373,6 +1373,11 @@ class DgiiReport(models.Model):
 
                 # AII                    
                 ncf_type = sale_invoice.invoice_id.fiscal_type_id.prefix
+                
+                if ncf_type not in box_ncf_type:
+                    raise ValidationError(_("""The NCF type '%s' for fiscal type '%s' is not configured in box_ncf_type. 
+                                            Please check your configuration.") % (ncf_type, fiscal_type_name)""")
+    )
                 attachment_a_lines[box_ncf_type[ncf_type]]['quantity'] += 1
                 attachment_a_lines[box_ncf_type[ncf_type]]['amount'] += \
                     sale_invoice.invoice_id.amount_untaxed_signed
