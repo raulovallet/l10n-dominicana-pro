@@ -1437,8 +1437,9 @@ class DgiiReport(models.Model):
 
                 # AIV
                 attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['amount'] += \
-                    sale_invoice.invoiced_amount
-
+                    sale_invoice.invoiced_amount * sign_for_AII
+                attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
                 # AVIII
                 if sale_invoice.invoice_id.move_type == 'out_refund':
 
