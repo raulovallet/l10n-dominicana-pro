@@ -1394,9 +1394,8 @@ class DgiiReport(models.Model):
                     if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.others * -1
 
                 # AIV
-                if sale_invoice.invoice_id.move_type != 'out_refund':
-                    attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['amount'] += \
-                        sale_invoice.invoiced_amount
+                attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['amount'] += \
+                    sale_invoice.invoiced_amount
 
                 # AVIII
                 if sale_invoice.invoice_id.move_type == 'out_refund':
@@ -1405,7 +1404,7 @@ class DgiiReport(models.Model):
 
                     origin = self.env['account.move'].search([
                         ('ref', '=', sale_invoice.invoice_id.origin_out),
-                        ('date', '<', date_30_days_before)
+                        ('invoice_date', '<', date_30_days_before)
                     ], limit=1)
 
                     attachment_a_lines[43]['amount'] += abs(sale_invoice.invoiced_amount) if origin else 0
@@ -1468,8 +1467,6 @@ class DgiiReport(models.Model):
             attachment_a_lines[11]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(1, 11)])
             attachment_a_lines[11]['quantity'] = sum([attachment_a_lines[box]['quantity'] for box in range(1, 11)])
             
-            attachment_a_lines[20]['amount'] = attachment_a_lines[11]['amount']
-
             # AIII
             attachment_a_lines[19]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(12, 19)])
 
