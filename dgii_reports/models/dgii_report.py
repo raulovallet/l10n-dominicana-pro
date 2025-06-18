@@ -538,9 +538,10 @@ class DgiiReport(models.Model):
 
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
+                'fiscal_status': 'blocked'
+            }) 
             for inv in invoice_ids:
-                inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                    inv.fiscal_status
                 line += 1
                 rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
@@ -726,15 +727,17 @@ class DgiiReport(models.Model):
             csmr_dict = self._get_csmr_vals_dict()
 
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
+                'fiscal_status': 'blocked'
+            }) 
             for inv in invoice_ids:
                 income_dict = self._process_income_dict(income_dict, inv)
-                inv.fiscal_status = \
-                    'blocked' if not inv.fiscal_status else inv.fiscal_status
                 rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.prefix != 'B12' \
                     else self.formatted_rnc_cedula(inv.company_id.vat)
                 payments = self._get_sale_payments_forms(inv)
+                inv_sign = -1 if inv.move_type == 'out_refund' else 1
                 values = {
                     'dgii_report_id': rec.id,
                     'line': line,
@@ -760,20 +763,13 @@ class DgiiReport(models.Model):
                     'invoice_partner_id': inv.partner_id.id,
                     'invoice_id': inv.id,
                     'credit_note': True if inv.move_type == 'out_refund' else False,
-                    'cash': payments.get('cash') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('cash'),
-                    'bank': payments.get('bank') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('bank'),
-                    'card': payments.get('card') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('card'),
-                    'credit': payments.get('credit') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('credit'),
-                    'swap': payments.get('swap') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('swap'),
-                    'bond': payments.get('bond') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('bond'),
-                    'others': payments.get('others') * -1 if
-                    inv.move_type == 'out_refund' else payments.get('others')
+                    'cash': payments.get('cash', 0) * inv_sign,
+                    'bank': payments.get('bank', 0) * inv_sign,
+                    'card': payments.get('card', 0) * inv_sign,
+                    'credit': payments.get('credit', 0) * inv_sign,
+                    'swap': payments.get('swap', 0) * inv_sign,
+                    'bond': payments.get('bond', 0) * inv_sign,
+                    'others': payments.get('others', 0) * inv_sign
                 }
 
                 if str(values['fiscal_invoice_number'])[-10:-8] == '02':
@@ -851,10 +847,11 @@ class DgiiReport(models.Model):
             )
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
+                'fiscal_status': 'blocked'
+            }) 
             for inv in invoice_ids:
                 if inv.ref:
-                    inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                        inv.fiscal_status
                     line += 1
                     values = {
                         'dgii_report_id': rec.id,
@@ -929,9 +926,10 @@ class DgiiReport(models.Model):
                                     (inv.fiscal_type_id.prefix == 'B17'))
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
+                'fiscal_status': 'blocked'
+            }) 
             for inv in invoice_ids:
-                inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                    inv.fiscal_status
                 line += 1
                 values = {
                     'dgii_report_id': rec.id,
