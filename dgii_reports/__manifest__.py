@@ -14,7 +14,7 @@
     'author': "Indexa, SRL, Iterativo SRL",
     'license': 'LGPL-3',
     "category": "Localization",
-    'version': '16.0.1.4.4',
+    'version': '16.0.1.4.7',
     # any module necessary for this one to work correctly
     'depends': [
         'web',
@@ -46,10 +46,6 @@
         'web.assets_backend': [
             '/dgii_reports/static/src/scss/dgii_reports.scss',
             '/dgii_reports/static/src/js/widget.js',
-            '/dgii_reports/static/src/js/custom_clipboard_value.js',
-            '/dgii_reports/static/src/js/percentage_copy_clipboard.js',
-            '/dgii_reports/static/src/xml/copy_clipboard_number_field.xml',
-            '/dgii_reports/static/src/xml/copy_clipboard_percentage.xml',
         ]
     },
 
