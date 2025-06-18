@@ -611,7 +611,7 @@ class DgiiReport(models.Model):
 
         return True if (p_date.year <= i_date.year) and (
             p_date.month <= i_date.month) else False
-
+    
     def _get_sale_payments_forms(self, invoice_id):
         # TODO: TRY REFACTORING _convert_to_user_currency THIS IS NOT ACCURATE
         
@@ -708,7 +708,7 @@ class DgiiReport(models.Model):
             'sale_filename': file_path.replace('/tmp/', ''),
             'sale_binary': base64.b64encode(open(file_path, 'rb').read())
         })
-
+    
     def _compute_607_data(self):
         for rec in self:
             SaleLine = self.env['dgii.reports.sale.line']
@@ -1046,6 +1046,7 @@ class DgiiReport(models.Model):
                     'services': 0,
                     'imports': 0,
                     'amount': 0,
+                    'invoice_ids': [(6, 0, [])],
                 }
             })
 
@@ -1375,28 +1376,66 @@ class DgiiReport(models.Model):
                 ncf_type = sale_invoice.invoice_id.fiscal_type_id.prefix
                 
                 if ncf_type not in box_ncf_type:
-                    raise ValidationError(_("""The NCF type '%s' for fiscal type '%s' is not configured in box_ncf_type. 
-                                            Please check your configuration.") % (ncf_type, fiscal_type_name)""")
-    )
+                    raise ValidationError(
+                        _("""The NCF type '%s' for fiscal type '%s' is not configured in box_ncf_type. 
+                            Please check your configuration.") % (ncf_type, fiscal_type_name)"""))
+                
                 attachment_a_lines[box_ncf_type[ncf_type]]['quantity'] += 1
                 attachment_a_lines[box_ncf_type[ncf_type]]['amount'] += \
                     sale_invoice.invoice_id.amount_untaxed_signed
+                attachment_a_lines[box_ncf_type[ncf_type]]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
 
                 # AIII
-                attachment_a_lines[12]['amount'] += sale_invoice.cash \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.cash * -1
-                attachment_a_lines[13]['amount'] += sale_invoice.bank \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bank * -1
-                attachment_a_lines[14]['amount'] += sale_invoice.card \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.card * -1
-                attachment_a_lines[15]['amount'] += sale_invoice.credit \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.credit * -1
-                attachment_a_lines[16]['amount'] += sale_invoice.bond \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bond * -1
-                attachment_a_lines[17]['amount'] += sale_invoice.swap \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.swap * -1
-                attachment_a_lines[18]['amount'] += sale_invoice.others \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.others * -1
+                sign_for_AII = 1 if sale_invoice.invoice_id.move_type != 'out_refund' else -1
+                
+                attachment_a_line_12_amount = sale_invoice.cash * sign_for_AII
+                
+                if attachment_a_line_12_amount != 0:
+                    attachment_a_lines[12]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[12]['amount'] += attachment_a_line_12_amount
+                    
+                attachment_a_line_13_amount = sale_invoice.bank * sign_for_AII
+                
+                if attachment_a_line_13_amount != 0:
+                    attachment_a_lines[13]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[13]['amount'] += attachment_a_line_13_amount
+
+                attachment_a_line_14_amount = sale_invoice.card * sign_for_AII
+                
+                if attachment_a_line_14_amount != 0:
+                    attachment_a_lines[14]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[14]['amount'] += attachment_a_line_14_amount
+
+                attachment_a_line_15_amount = sale_invoice.credit * sign_for_AII
+                
+                if attachment_a_line_15_amount != 0:
+                    attachment_a_lines[15]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[15]['amount'] += attachment_a_line_15_amount
+
+                attachment_a_line_16_amount = sale_invoice.bond * sign_for_AII
+                
+                if attachment_a_line_16_amount != 0:
+                    attachment_a_lines[16]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[16]['amount'] += attachment_a_line_16_amount
+
+                attachment_a_line_17_amount = sale_invoice.swap * sign_for_AII
+                
+                if attachment_a_line_17_amount != 0:
+                    attachment_a_lines[17]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[17]['amount'] += attachment_a_line_17_amount
+
+                attachment_a_line_18_amount = sale_invoice.others * sign_for_AII
+                
+                if attachment_a_line_18_amount != 0:
+                    attachment_a_lines[18]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[18]['amount'] += attachment_a_line_18_amount
 
                 # AIV
                 attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['amount'] += \
@@ -2004,7 +2043,11 @@ class DgiiReportPurchaseLine(models.Model):
     _description = "DGII Reports Purchase Line"
     _order = 'line asc'
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True,
+    )
     line = fields.Integer()
 
     rnc_cedula = fields.Char(size=11)
@@ -2050,9 +2093,12 @@ class DgiiReportSaleLine(models.Model):
     _name = 'dgii.reports.sale.line'
     _description = "DGII Reports Sale Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True
+    )
     line = fields.Integer()
-
     rnc_cedula = fields.Char(size=11)
     identification_type = fields.Char(size=1)
     fiscal_invoice_number = fields.Char(size=19)
@@ -2098,7 +2144,11 @@ class DgiiCancelReportLine(models.Model):
     _name = 'dgii.reports.cancel.line'
     _description = "DGII Reports Cancel Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True
+    )
     line = fields.Integer()
 
     fiscal_invoice_number = fields.Char(size=19)
@@ -2123,7 +2173,11 @@ class DgiiExteriorReportLine(models.Model):
     _name = 'dgii.reports.exterior.line'
     _description = "DGII Reports Exterior Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True,
+    )
     line = fields.Integer()
 
     legal_name = fields.Char()
@@ -2216,5 +2270,9 @@ class DgiiReportsIt1(models.Model):
     move_line_ids = fields.Many2many(
         comodel_name='account.move.line',
         string='Move Lines',
+    )
+    invoice_ids = fields.Many2many(
+        comodel_name='account.move',
+        string='Invoices',
     )
 
