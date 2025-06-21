@@ -4,7 +4,7 @@
     <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
 
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
-            <t t-if="env.pos.config.l10n_do_fiscal_journal">
+            <t t-if="receipt.l10n_do_fiscal_journal">
                 <div class="pos-receipt-font-75" t-if="receipt.partner">
                     <br/>
                     <div>
@@ -29,10 +29,10 @@
                         <t t-esc="receipt.partner.country_id[1]"/>
                     </div>
                 </div>
-                <div t-if="_receiptEnv.order.ncf">
+                <div t-if="receipt.ncf">
                     <br/>
                     <div class="pos-receipt-contact">
-                        Autorized by DGII
+                        Authorized by DGII
                     </div>
                     <br/>
                     <div class="pos-receipt-font-75">
@@ -49,13 +49,13 @@
                             </t>
                         </div>
                         <div>
-                            NCF: <t t-esc="_receiptEnv.order.ncf"/>
+                            NCF: <t t-esc="receipt.ncf"/>
                         </div>
-                        <div>
-                            Expiration date NCF: <t t-esc="_receiptEnv.order.ncf_expiration_date"/>
+                        <div t-if="receipt.ncf_expiration_date">
+                            Expiration date NCF: <t t-esc="receipt.ncf_expiration_date"/>
                         </div>
-                        <div t-if="_receiptEnv.order.ncf_origin_out">
-                            Affect: <t t-esc="_receiptEnv.order.ncf_origin_out"/>
+                        <div t-if="receipt.ncf_origin_out">
+                            Affect: <t t-esc="receipt.ncf_origin_out"/>
                         </div>
                     </div>
                 </div>
@@ -63,27 +63,48 @@
         </xpath>
         
         <xpath expr="//div[hasclass('orderlines')]" position="before">
-            <t t-if="env.pos.config.l10n_do_fiscal_journal">
-                <div class="pos-receipt-fiscal-type-name" t-if="_receiptEnv.order.ncf">
-                    <t t-esc="_receiptEnv.order.fiscal_type.name"/>
+            <t t-if="receipt.l10n_do_fiscal_journal">
+                <div class="pos-receipt-fiscal-type-name" t-if="receipt.ncf">
+                    <t t-esc="receipt.fiscal_type.name"/>
                 </div>
-                <div class="pos-receipt-titles">
-                    <span>
-                        DESCRIPTION
-                    </span>
-                    <span class="pos-receipt-right-align">
-                        Value
-                    </span>
+                <div class="do-pos-receipt-titles">
+                    <div>DESCRIPTION</div>
+                    <div class="right">ITBIS</div>
+                    <div class="right">VALUE</div>
                 </div>
             </t>
         </xpath>
         
         <xpath expr="//div[@class='pos-receipt-right-align' and text()='--------']" position="replace">
-            <div t-if="!env.pos.config.l10n_do_fiscal_journal" class="pos-receipt-right-align">--------</div>
-            <div t-if="env.pos.config.l10n_do_fiscal_journal" class="pos-receipt-fiscal-type-name"></div>
+            <div t-if="!receipt.l10n_do_fiscal_journal" class="pos-receipt-right-align">--------</div>
+            <div t-if="receipt.l10n_do_fiscal_journal" class="pos-receipt-fiscal-type-name"></div>
         </xpath>
-        
+
     </t>
+    
+    <t t-name="OrderLinesReceipt" t-inherit="point_of_sale.OrderLinesReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-receipt-qty-per-price')]" position="attributes">
+            <attribute name="t-if">!receipt.l10n_do_fiscal_journal</attribute>
+        </xpath>
+
+        <xpath expr="//div[hasclass('pos-receipt-qty-per-price')]" position="after">
+            <div class="do-pos-receipt-lines" t-if="receipt.l10n_do_fiscal_journal">
+                <div>
+                    <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
+                    <t t-if="!line.is_in_unit" t-esc="line.unit_name" />
+                    x
+                    <t t-esc="env.pos.format_currency(line.price_display_one)" />
+                </div>
+                <div class="price_display right">
+                    <t t-esc="env.pos.format_currency_no_symbol(line.l10n_do_itbis)" />
+                </div>
+                <span class="price_display right">
+                    <t t-esc="env.pos.format_currency_no_symbol(line.price_display)" />
+                </span>
+            </div>
+        </xpath>
+    </t>
+    
 
     <!--TODO: this part is for use posbox-->
     <!--<t t-extend="XmlReceipt">-->

@@ -14,8 +14,7 @@
                             attrs="{'invisible':['|', ('state','!=','draft'), ('can_be_queue', '=', False)]}"/>
                     <button name="action_cancel" string="Cancel" type="object"
                             attrs="{'invisible':[('state','in', ('cancelled', 'draft'))]}"/>
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="active,depleted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,depleted"/>
                 </header>
                 <sheet>
                     <field name="can_be_queue" invisible="1"/>
@@ -51,15 +50,17 @@
                                 <field name="remaining_percentage"/>
                                 <span>%</span>
                             </div>
-                            <field name="number_next_actual" invisible="1"/>
+                            <field name="number_next_actual" groups="base.group_no_one"/>
                             <field name="sequence_remaining"
                                    attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
-                            <field name="next_fiscal_number"
-                                   attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
+                            <field 
+                                name="next_fiscal_number"
+                                attrs="{'invisible': [('state', 'in', ('draft', 'cancelled', 'depleted'))]}"
+                            />
                             <field name="type" invisible="1"/>
                             <field name="sequence_id" invisible="1"/>
-                            <field name="company_id"
-                                   groups="base.group_multi_company"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id" invisible="1"/>
                         </group>
                     </group>
                 </sheet>
@@ -197,7 +198,7 @@
 
     <menuitem
             id="account_fiscal_sequence_menu_parent"
-            name="Fiscal"
+            name="Fiscal Dominican Republic"
             parent="account.menu_finance_configuration"
     />
 
@@ -205,12 +206,15 @@
             id="account_fiscal_sequence_menu"
             action="account_fiscal_sequence_action"
             parent="account_fiscal_sequence_menu_parent"
+            name="Fiscal Sequences"
     />
 
     <menuitem
             id="account_fiscal_type_menu"
             action="account_fiscal_type_action"
             parent="account_fiscal_sequence_menu_parent"
+            name="Fiscal Types"
+            groups="base.group_no_one"
     />
 
 </odoo>

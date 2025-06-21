@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+        <!-- Rule for allowing users to read their company's pos.order.ncf.log records -->
+        <record id="pos_order_ncf_log_rule_user" model="ir.rule">
+            <field name="name">pos.order.ncf.log multi-company</field>
+            <field name="model_id" ref="model_pos_order_ncf_log"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

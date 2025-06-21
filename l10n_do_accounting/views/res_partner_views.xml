@@ -10,19 +10,14 @@
             </xpath>
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="is_fiscal_info_required" invisible="1"/>
-                <field name="vat" placeholder="ej. NNNNNNNNN" string="RNC" attrs="{
+                <field name="vat" placeholder="EXP.... NNNNNNNNN or NNNNNNNNNNN" string="RNC / Cedula" attrs="{
                     'readonly': [('parent_id','!=',False)],
-                    'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', False)],
-                    'required': [('is_fiscal_info_required','=',True)]
-                }"/>
-                <field name="vat" placeholder="ej. NNNNNNNNNNN" string="Cédula" attrs="{
-                    'readonly': [('parent_id','!=',False)],
-                    'invisible': ['|', ('country_id', '!=', %(base.do)s), ('is_company', '=', True)],
+                    'invisible': [('country_id', '!=', %(base.do)s)],
                     'required': [('is_fiscal_info_required','=',True)]
                 }"/>
             </xpath>
             <group name="sale" position ="inside">
-                <field name="sale_fiscal_type_id"/>
+                <field name="sale_fiscal_type_id" attrs="{'readonly': [('parent_id','!=', False)]}" />
             </group>
             <group name="purchase" position ="inside">
                 <field name="expense_type"/>
@@ -30,7 +25,6 @@
             </group>
         </field>
     </record>
-
 
     <!-- Inherit Form View to Modify it -->
     <record id="view_res_partner_filter" model="ir.ui.view">

@@ -38,6 +38,6 @@ class AccountInvoiceCancel(models.TransientModel):
                     _("Selected invoice(s) cannot be cancelled as they are "
                       "already in 'Cancelled' or 'Paid' state."))
             record.annulation_type = self.annulation_type
-            record.button_cancel(force_cancel=True)
+            record.with_context(skip_cancel_wizard=True).button_cancel()
 
         return {'type': 'ir.actions.act_window_close'}

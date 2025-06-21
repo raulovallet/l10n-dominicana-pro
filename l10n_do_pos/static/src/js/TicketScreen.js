@@ -3,8 +3,15 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
 
     const TicketScreen = require('point_of_sale.TicketScreen');
     const Registries = require('point_of_sale.Registries');
+    const NumberBuffer = require('point_of_sale.NumberBuffer');
+    const { useListener } = require("@web/core/utils/hooks");
 
     const L10nDoPosTicketScreen = TicketScreen => class extends TicketScreen {
+        setup() {
+            super.setup();
+            useListener('refund-all-order', this._returnAllOrder);
+        }
+
         async _onDoRefund() {
             const order = this.getSelectedSyncedOrder();
 
@@ -65,12 +72,18 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
         async _onCloseScreen() {
             var new_order = this.env.pos.get_order();
             const order = this.getSelectedSyncedOrder();
-            if (new_order && this.env.pos.config.l10n_do_fiscal_journal && new_order._isRefundAndSaleOrder() && order.ncf){
+            
+            if (new_order && 
+                order &&
+                this.env.pos.config.l10n_do_fiscal_journal && 
+                new_order._isRefundAndSaleOrder() && 
+                order.ncf
+            ){
                 
                 try {
                     const refund_fiscal_type = this.env.pos.get_fiscal_type_by_prefix('B04');
                     const credit_note_payment_method = this.env.pos.get_credit_note_payment_method();
-                    new_order.set_ncf_origin_out(order.ncf);
+                    new_order.set_ncf_origin_out(order);
                     new_order.set_fiscal_type(refund_fiscal_type);
                     // Convert the date string to a Date object
                     const orderDate = new Date(order.validation_date);
@@ -127,11 +140,22 @@ odoo.define('l10n_do_pos.TicketScreen', function (require) {
         }
         _prepareRefundOrderlineOptions(orderline) {
             var new_order_line = super._prepareRefundOrderlineOptions(orderline);
-            console.log('new_order_line', new_order_line)
-            console.log('orderline', orderline)
-            console.log('this', this)
-            console.log('test', Object.values(this.env.pos.toRefundLines))
             return new_order_line;
+        }
+        _returnAllOrder(){
+
+            const order = this.getSelectedSyncedOrder();
+            
+            if (!order) return NumberBuffer.reset();
+
+            for (const orderline of order.orderlines) {
+                const toRefundDetail = this._getToRefundDetail(orderline);
+                const refundableQty = toRefundDetail.orderline.qty - toRefundDetail.orderline.refundedQty;
+                if (refundableQty > 0) {
+                    toRefundDetail.qty = refundableQty;
+                }
+            }
+        
         }
 
     }
