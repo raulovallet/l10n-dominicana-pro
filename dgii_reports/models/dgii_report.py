@@ -442,9 +442,9 @@ class DgiiReport(models.Model):
             ('company_id', '=', self.company_id.id),
             ('is_l10n_do_fiscal_invoice', '=', True),
             ('state', 'in', states),
-            ('move_type', 'in', types)
-        ], order='invoice_date asc').filtered(
-            lambda inv: inv.fiscal_type_id.prefix != False)
+            ('move_type', 'in', types),
+            ('fiscal_type_id.prefix', '!=', False),
+        ], order='invoice_date asc')
         
         # Append pending invoices (fiscal_status = Partial, state = Paid)
         invoice_ids |= self._get_pending_invoices(types, states)
@@ -538,9 +538,11 @@ class DgiiReport(models.Model):
 
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
+                'fiscal_status': 'blocked'
+            })
+            dgii_report_purchase_line = [] 
             for inv in invoice_ids:
-                inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                    inv.fiscal_status
                 line += 1
                 rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
@@ -579,8 +581,10 @@ class DgiiReport(models.Model):
                     'invoice_id': inv.id,
                     'credit_note': True if inv.move_type == 'in_refund' else False
                 }
-                PurchaseLine.create(values)
+                dgii_report_purchase_line.append(values)
                 report_data += self.process_606_report_data(values) + '\n'
+                
+            PurchaseLine.create(dgii_report_purchase_line)
             self._generate_606_txt(report_data, line)
 
     def _get_payments_dict(self):
@@ -611,7 +615,7 @@ class DgiiReport(models.Model):
 
         return True if (p_date.year <= i_date.year) and (
             p_date.month <= i_date.month) else False
-
+    
     def _get_sale_payments_forms(self, invoice_id):
         # TODO: TRY REFACTORING _convert_to_user_currency THIS IS NOT ACCURATE
         
@@ -708,7 +712,7 @@ class DgiiReport(models.Model):
             'sale_filename': file_path.replace('/tmp/', ''),
             'sale_binary': base64.b64encode(open(file_path, 'rb').read())
         })
-
+    
     def _compute_607_data(self):
         for rec in self:
             SaleLine = self.env['dgii.reports.sale.line']
@@ -724,17 +728,20 @@ class DgiiReport(models.Model):
             payment_dict = self._get_payments_dict()
             income_dict = self._get_income_type_dict()
             csmr_dict = self._get_csmr_vals_dict()
+            dgii_report_sale_line = []
 
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
+                'fiscal_status': 'blocked'
+            }) 
             for inv in invoice_ids:
                 income_dict = self._process_income_dict(income_dict, inv)
-                inv.fiscal_status = \
-                    'blocked' if not inv.fiscal_status else inv.fiscal_status
                 rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.prefix != 'B12' \
                     else self.formatted_rnc_cedula(inv.company_id.vat)
                 payments = self._get_sale_payments_forms(inv)
+                inv_sign = -1 if inv.move_type == 'out_refund' else 1
                 values = {
                     'dgii_report_id': rec.id,
                     'line': line,
@@ -760,20 +767,13 @@ class DgiiReport(models.Model):
                     'invoice_partner_id': inv.partner_id.id,
                     'invoice_id': inv.id,
                     'credit_note': True if inv.move_type == 'out_refund' else False,
-                    'cash': payments.get('cash') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('cash'),
-                    'bank': payments.get('bank') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('bank'),
-                    'card': payments.get('card') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('card'),
-                    'credit': payments.get('credit') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('credit'),
-                    'swap': payments.get('swap') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('swap'),
-                    'bond': payments.get('bond') * -1 if
-                        inv.move_type == 'out_refund' else payments.get('bond'),
-                    'others': payments.get('others') * -1 if
-                    inv.move_type == 'out_refund' else payments.get('others')
+                    'cash': payments.get('cash', 0) * inv_sign,
+                    'bank': payments.get('bank', 0) * inv_sign,
+                    'card': payments.get('card', 0) * inv_sign,
+                    'credit': payments.get('credit', 0) * inv_sign,
+                    'swap': payments.get('swap', 0) * inv_sign,
+                    'bond': payments.get('bond', 0) * inv_sign,
+                    'others': payments.get('others', 0) * inv_sign
                 }
 
                 if str(values['fiscal_invoice_number'])[-10:-8] == '02':
@@ -795,7 +795,7 @@ class DgiiReport(models.Model):
 
                 line += 1
                 values.update({'line': line})
-                SaleLine.create(values)
+                dgii_report_sale_line.append(values)
                 if str(values.get('fiscal_invoice_number'))[-10:-8] == \
                         '02' and abs(inv.amount_untaxed_signed) < 250000:
                     excluded_line += 1
@@ -808,7 +808,8 @@ class DgiiReport(models.Model):
                 for k in payment_dict:
                     payment_dict[k] += payments[k] * -1 if inv.move_type == \
                         'out_refund' else payments[k]
-            
+                        
+            SaleLine.create(dgii_report_sale_line)
             self._set_csmr_fields_vals(csmr_dict)
             self._generate_607_txt(report_data, line - excluded_line)
 
@@ -851,10 +852,12 @@ class DgiiReport(models.Model):
             )
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
+                'fiscal_status': 'blocked'
+            })
+            dgii_report_cancel_line = []
             for inv in invoice_ids:
                 if inv.ref:
-                    inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                        inv.fiscal_status
                     line += 1
                     values = {
                         'dgii_report_id': rec.id,
@@ -865,9 +868,10 @@ class DgiiReport(models.Model):
                         'annulation_type': inv.annulation_type,
                         'invoice_id': inv.id
                     }
-                    CancelLine.create(values)
+                    dgii_report_cancel_line.append(values)
                     report_data += self.process_608_report_data(values) + '\n'
-
+                    
+            CancelLine.create(dgii_report_cancel_line)
             self._generate_608_txt(report_data, line)
 
     def process_609_report_data(self, values):
@@ -929,9 +933,11 @@ class DgiiReport(models.Model):
                                     (inv.fiscal_type_id.prefix == 'B17'))
             line = 0
             report_data = ''
+            invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
+                'fiscal_status': 'blocked'
+            }) 
+            dgii_report_exterior_line = []
             for inv in invoice_ids:
-                inv.fiscal_status = 'blocked' if not inv.fiscal_status else \
-                    inv.fiscal_status
                 line += 1
                 values = {
                     'dgii_report_id': rec.id,
@@ -951,9 +957,10 @@ class DgiiReport(models.Model):
                     'withholded_isr': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'invoice_id': inv.id
                 }
-                ExteriorLine.create(values)
+                dgii_report_exterior_line.append(values)
                 report_data += self.process_609_report_data(values) + '\n'
 
+            ExteriorLine.create(dgii_report_exterior_line)
             self._generate_609_txt(report_data, line)
     
     def _get_section_attachment_a_report(self, key):
@@ -1046,6 +1053,7 @@ class DgiiReport(models.Model):
                     'services': 0,
                     'imports': 0,
                     'amount': 0,
+                    'invoice_ids': [(6, 0, [])],
                 }
             })
 
@@ -1336,6 +1344,7 @@ class DgiiReport(models.Model):
         }
 
     # IT1
+    
     def _compute_attachment_a_and_it1_data(self):
         box_ncf_type = self.get_ncf_type_dic()
         box_income_type = self.get_income_type_dic()
@@ -1373,30 +1382,74 @@ class DgiiReport(models.Model):
 
                 # AII                    
                 ncf_type = sale_invoice.invoice_id.fiscal_type_id.prefix
+                
+                if ncf_type not in box_ncf_type:
+                    raise ValidationError(
+                        _("""The NCF type '%s' for fiscal type '%s' is not configured in box_ncf_type. 
+                            Please check your configuration.") % (ncf_type, fiscal_type_name)"""))
+                
                 attachment_a_lines[box_ncf_type[ncf_type]]['quantity'] += 1
                 attachment_a_lines[box_ncf_type[ncf_type]]['amount'] += \
                     sale_invoice.invoice_id.amount_untaxed_signed
+                attachment_a_lines[box_ncf_type[ncf_type]]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
 
                 # AIII
-                attachment_a_lines[12]['amount'] += sale_invoice.cash \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.cash * -1
-                attachment_a_lines[13]['amount'] += sale_invoice.bank \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bank * -1
-                attachment_a_lines[14]['amount'] += sale_invoice.card \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.card * -1
-                attachment_a_lines[15]['amount'] += sale_invoice.credit \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.credit * -1
-                attachment_a_lines[16]['amount'] += sale_invoice.bond \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.bond * -1
-                attachment_a_lines[17]['amount'] += sale_invoice.swap \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.swap * -1
-                attachment_a_lines[18]['amount'] += sale_invoice.others \
-                    if sale_invoice.invoice_id.move_type != 'out_refund' else sale_invoice.others * -1
+                sign_for_AII = 1 if sale_invoice.invoice_id.move_type != 'out_refund' else -1
+                
+                attachment_a_line_12_amount = sale_invoice.cash * sign_for_AII
+                
+                if attachment_a_line_12_amount != 0:
+                    attachment_a_lines[12]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[12]['amount'] += attachment_a_line_12_amount
+                    
+                attachment_a_line_13_amount = sale_invoice.bank * sign_for_AII
+                
+                if attachment_a_line_13_amount != 0:
+                    attachment_a_lines[13]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[13]['amount'] += attachment_a_line_13_amount
+
+                attachment_a_line_14_amount = sale_invoice.card * sign_for_AII
+                
+                if attachment_a_line_14_amount != 0:
+                    attachment_a_lines[14]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[14]['amount'] += attachment_a_line_14_amount
+
+                attachment_a_line_15_amount = sale_invoice.credit * sign_for_AII
+                
+                if attachment_a_line_15_amount != 0:
+                    attachment_a_lines[15]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
+                attachment_a_lines[15]['amount'] += attachment_a_line_15_amount
+
+                attachment_a_line_16_amount = sale_invoice.bond * sign_for_AII
+                
+                if attachment_a_line_16_amount != 0:
+                    attachment_a_lines[16]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[16]['amount'] += attachment_a_line_16_amount
+
+                attachment_a_line_17_amount = sale_invoice.swap * sign_for_AII
+                
+                if attachment_a_line_17_amount != 0:
+                    attachment_a_lines[17]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[17]['amount'] += attachment_a_line_17_amount
+
+                attachment_a_line_18_amount = sale_invoice.others * sign_for_AII
+                
+                if attachment_a_line_18_amount != 0:
+                    attachment_a_lines[18]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                    
+                attachment_a_lines[18]['amount'] += attachment_a_line_18_amount
 
                 # AIV
                 attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['amount'] += \
-                    sale_invoice.invoiced_amount
-
+                    sale_invoice.invoiced_amount * sign_for_AII
+                attachment_a_lines[box_income_type[sale_invoice.invoice_id.income_type]]['invoice_ids'][0][2].append(sale_invoice.invoice_id.id)
+                
                 # AVIII
                 if sale_invoice.invoice_id.move_type == 'out_refund':
 
@@ -1404,7 +1457,7 @@ class DgiiReport(models.Model):
 
                     origin = self.env['account.move'].search([
                         ('ref', '=', sale_invoice.invoice_id.origin_out),
-                        ('date', '<', date_30_days_before)
+                        ('invoice_date', '<', date_30_days_before)
                     ], limit=1)
 
                     attachment_a_lines[43]['amount'] += abs(sale_invoice.invoiced_amount) if origin else 0
@@ -1466,7 +1519,7 @@ class DgiiReport(models.Model):
             
             attachment_a_lines[11]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(1, 11)])
             attachment_a_lines[11]['quantity'] = sum([attachment_a_lines[box]['quantity'] for box in range(1, 11)])
-
+            
             # AIII
             attachment_a_lines[19]['amount'] = sum([attachment_a_lines[box]['amount'] for box in range(12, 19)])
 
@@ -1999,7 +2052,11 @@ class DgiiReportPurchaseLine(models.Model):
     _description = "DGII Reports Purchase Line"
     _order = 'line asc'
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True,
+    )
     line = fields.Integer()
 
     rnc_cedula = fields.Char(size=11)
@@ -2045,9 +2102,12 @@ class DgiiReportSaleLine(models.Model):
     _name = 'dgii.reports.sale.line'
     _description = "DGII Reports Sale Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True
+    )
     line = fields.Integer()
-
     rnc_cedula = fields.Char(size=11)
     identification_type = fields.Char(size=1)
     fiscal_invoice_number = fields.Char(size=19)
@@ -2093,7 +2153,11 @@ class DgiiCancelReportLine(models.Model):
     _name = 'dgii.reports.cancel.line'
     _description = "DGII Reports Cancel Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True
+    )
     line = fields.Integer()
 
     fiscal_invoice_number = fields.Char(size=19)
@@ -2118,7 +2182,11 @@ class DgiiExteriorReportLine(models.Model):
     _name = 'dgii.reports.exterior.line'
     _description = "DGII Reports Exterior Line"
 
-    dgii_report_id = fields.Many2one('dgii.reports', ondelete='cascade')
+    dgii_report_id = fields.Many2one(
+        comodel_name='dgii.reports', 
+        ondelete='cascade', 
+        index=True,
+    )
     line = fields.Integer()
 
     legal_name = fields.Char()
@@ -2211,5 +2279,9 @@ class DgiiReportsIt1(models.Model):
     move_line_ids = fields.Many2many(
         comodel_name='account.move.line',
         string='Move Lines',
+    )
+    invoice_ids = fields.Many2many(
+        comodel_name='account.move',
+        string='Invoices',
     )
 

@@ -16,7 +16,6 @@ class AccountJournal(models.Model):
             ("card", "Credit Card"),
             ("credit", "Credit"),
             ("swap", "Swap"),
-            ("bond", "Bonds or Gift Certificate"),
             ("others", "Other Sale Type"),
         ],
     )

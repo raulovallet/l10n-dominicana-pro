@@ -3053,3 +3053,10 @@ msgstr "sección"
 #: model:ir.model.fields,field_description:dgii_reports.field_dgii_reports__state
 msgid "state"
 msgstr "Estado"
+
+#. module: dgii_reports
+#. odoo-python
+#: code:addons/dgii_reports/models/dgii_report.py:0
+#, python-format
+msgid "The NCF type '%s' for fiscal type '%s' is not configured in box_ncf_type. Please check your configuration."
+msgstr "El tipo de NCF '%s' para el tipo fiscal '%s' no está configurado en box_ncf_type. Por favor, revise su configuración."

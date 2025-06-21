@@ -490,7 +490,8 @@ class AccountInvoice(models.Model):
                         ('ref', '=', inv.origin_out), 
                         ('state', '=', 'posted'),
                         ('is_l10n_do_fiscal_invoice', '=', True),
-                        ('move_type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice')
+                        ('move_type', '=', 'in_invoice' if inv.move_type == 'in_refund' else 'out_invoice'),
+                        ('company_id', '=', inv.company_id.id)
                     ], limit=1)
                     
                     if not origin_invoice:
@@ -499,12 +500,21 @@ class AccountInvoice(models.Model):
                             ).format(inv.origin_out, inv.partner_id.name)
                         )
                     
+                    if not inv.invoice_date:
+                        raise UserError(_('The this credit note does not have a date.'))
+                    
                     delta_time = inv.invoice_date - origin_invoice.invoice_date
 
                     if delta_time.days > 30 and inv.line_ids.filtered(lambda l: l.tax_line_id and 'itbis' in l.tax_line_id.name.lower()):
                         raise UserError(_(
                                 'The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed.'
                             ).format(inv.origin_out, delta_time.days)
+                        )
+                    
+                    if inv.amount_total > origin_invoice.amount_total:
+                        raise UserError(_(
+                                'The amount of the credit note ({}) cannot be greater than the amount of the invoice ({}) to which it refers.'
+                            ).format(inv.amount_total, origin_invoice.amount_total)
                         )
 
         res = super(AccountInvoice, self)._post(soft)
