@@ -442,9 +442,9 @@ class DgiiReport(models.Model):
             ('company_id', '=', self.company_id.id),
             ('is_l10n_do_fiscal_invoice', '=', True),
             ('state', 'in', states),
-            ('move_type', 'in', types)
-        ], order='invoice_date asc').filtered(
-            lambda inv: inv.fiscal_type_id.prefix != False)
+            ('move_type', 'in', types),
+            ('fiscal_type_id.prefix', '!=', False),
+        ], order='invoice_date asc')
         
         # Append pending invoices (fiscal_status = Partial, state = Paid)
         invoice_ids |= self._get_pending_invoices(types, states)
@@ -540,7 +540,8 @@ class DgiiReport(models.Model):
             report_data = ''
             invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
                 'fiscal_status': 'blocked'
-            }) 
+            })
+            dgii_report_purchase_line = [] 
             for inv in invoice_ids:
                 line += 1
                 rnc_ced = self.formatted_rnc_cedula(
@@ -580,8 +581,10 @@ class DgiiReport(models.Model):
                     'invoice_id': inv.id,
                     'credit_note': True if inv.move_type == 'in_refund' else False
                 }
-                PurchaseLine.create(values)
+                dgii_report_purchase_line.append(values)
                 report_data += self.process_606_report_data(values) + '\n'
+                
+            PurchaseLine.create(dgii_report_purchase_line)
             self._generate_606_txt(report_data, line)
 
     def _get_payments_dict(self):
@@ -725,6 +728,7 @@ class DgiiReport(models.Model):
             payment_dict = self._get_payments_dict()
             income_dict = self._get_income_type_dict()
             csmr_dict = self._get_csmr_vals_dict()
+            dgii_report_sale_line = []
 
             report_data = ''
             invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
@@ -791,7 +795,7 @@ class DgiiReport(models.Model):
 
                 line += 1
                 values.update({'line': line})
-                SaleLine.create(values)
+                dgii_report_sale_line.append(values)
                 if str(values.get('fiscal_invoice_number'))[-10:-8] == \
                         '02' and abs(inv.amount_untaxed_signed) < 250000:
                     excluded_line += 1
@@ -804,7 +808,8 @@ class DgiiReport(models.Model):
                 for k in payment_dict:
                     payment_dict[k] += payments[k] * -1 if inv.move_type == \
                         'out_refund' else payments[k]
-            
+                        
+            SaleLine.create(dgii_report_sale_line)
             self._set_csmr_fields_vals(csmr_dict)
             self._generate_607_txt(report_data, line - excluded_line)
 
@@ -849,7 +854,8 @@ class DgiiReport(models.Model):
             report_data = ''
             invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
                 'fiscal_status': 'blocked'
-            }) 
+            })
+            dgii_report_cancel_line = []
             for inv in invoice_ids:
                 if inv.ref:
                     line += 1
@@ -862,9 +868,10 @@ class DgiiReport(models.Model):
                         'annulation_type': inv.annulation_type,
                         'invoice_id': inv.id
                     }
-                    CancelLine.create(values)
+                    dgii_report_cancel_line.append(values)
                     report_data += self.process_608_report_data(values) + '\n'
-
+                    
+            CancelLine.create(dgii_report_cancel_line)
             self._generate_608_txt(report_data, line)
 
     def process_609_report_data(self, values):
@@ -929,6 +936,7 @@ class DgiiReport(models.Model):
             invoice_ids.filtered(lambda inv: not inv.fiscal_status).write({
                 'fiscal_status': 'blocked'
             }) 
+            dgii_report_exterior_line = []
             for inv in invoice_ids:
                 line += 1
                 values = {
@@ -949,9 +957,10 @@ class DgiiReport(models.Model):
                     'withholded_isr': inv.income_withholding if self.is_applicable_for_withholding(inv) else 0,
                     'invoice_id': inv.id
                 }
-                ExteriorLine.create(values)
+                dgii_report_exterior_line.append(values)
                 report_data += self.process_609_report_data(values) + '\n'
 
+            ExteriorLine.create(dgii_report_exterior_line)
             self._generate_609_txt(report_data, line)
     
     def _get_section_attachment_a_report(self, key):
@@ -1335,6 +1344,7 @@ class DgiiReport(models.Model):
         }
 
     # IT1
+    
     def _compute_attachment_a_and_it1_data(self):
         box_ncf_type = self.get_ncf_type_dic()
         box_income_type = self.get_income_type_dic()
