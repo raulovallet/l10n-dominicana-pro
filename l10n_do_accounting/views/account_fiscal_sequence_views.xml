@@ -53,8 +53,10 @@
                             <field name="number_next_actual" groups="base.group_no_one"/>
                             <field name="sequence_remaining"
                                    attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
-                            <field name="next_fiscal_number"
-                                   attrs="{'invisible': [('state', 'in', ('draft', 'cancelled'))]}"/>
+                            <field 
+                                name="next_fiscal_number"
+                                attrs="{'invisible': [('state', 'in', ('draft', 'cancelled', 'depleted'))]}"
+                            />
                             <field name="type" invisible="1"/>
                             <field name="sequence_id" invisible="1"/>
                             <field name="company_id" groups="base.group_multi_company"/>
