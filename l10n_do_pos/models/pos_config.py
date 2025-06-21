@@ -31,11 +31,6 @@ class PosConfig(models.Model):
         string='Days',
         default=30,
     )
-    
-    l10n_do_fiscal_type_id = fields.Many2one(
-        'account.fiscal.type',
-        string='Tipo Fiscal',
-    )
 
     @api.constrains('l10n_do_type_limit_order_history_days')
     def _check_l10n_do_type_limit_order_history(self):
