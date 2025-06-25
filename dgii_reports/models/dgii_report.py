@@ -2,10 +2,13 @@
 # See LICENSE file for full copyright and licensing details.
 # © 2018 José López <jlopez@indexa.do>
 # © 2018 Gustavo Valverde <gustavo@iterativo.do>
+# © 2025 Raul Ovalle <raul.ovalle@jenrax.com>
 
 import calendar
 import base64
 from datetime import datetime as dt, timedelta
+import re
+import pycountry
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
@@ -598,18 +601,9 @@ class DgiiReport(models.Model):
             'others': 0
         }
 
-    def _convert_to_user_currency(self, base_currency, amount, date):
-        context = dict(self._context or {})
-        user_currency_id = self.env.company.currency_id
-        base_currency_id = base_currency
-        ctx = context.copy()
-        return base_currency_id.with_context(ctx)._convert(
-            amount, user_currency_id, self.company_id, date)
-
     @staticmethod
     def include_payment(invoice_id, payment_id):
         """ Returns True if payment date is on or before current period """
-
         p_date = payment_id.date
         i_date = invoice_id.invoice_date
 
@@ -617,37 +611,27 @@ class DgiiReport(models.Model):
             p_date.month <= i_date.month) else False
     
     def _get_sale_payments_forms(self, invoice_id):
-        # TODO: TRY REFACTORING _convert_to_user_currency THIS IS NOT ACCURATE
-        
         payments_dict = self._get_payments_dict()
-        Payment = self.env['account.payment']
 
         if invoice_id.move_type == 'out_invoice':
-            for payment in invoice_id._get_invoice_payment_widget():
+            payments = invoice_id._get_invoice_payment_widget()
+            for payment in payments:
                 payment_id = payment.get('account_payment_id', False)
-
+                amount_company_currency = float(re.sub(r'[^\d.]', '', payment.get('amount_company_currency', '0.0')))
+                
                 if payment_id:
-                    payment_obj = Payment.browse(payment_id)
+                    payment_obj = self.env['account.payment'].browse(payment_id)
                     key = payment_obj.journal_id.payment_form
-
+                    
                     if self.include_payment(invoice_id, payment_obj):
-                        payments_dict[key] += self._convert_to_user_currency(
-                            invoice_id.currency_id,
-                            payment['amount'],
-                            invoice_id.invoice_date,
-                        )
+                        payments_dict[key] += amount_company_currency
 
                     else:
-
-                        payments_dict['credit'] += self._convert_to_user_currency(
-                            invoice_id.currency_id,
-                            payment['amount'],
-                            invoice_id.invoice_date,
-                        )
+                        payments_dict['credit'] += amount_company_currency
+                        
                 else:
 
-                    payments_dict['others'] += self._convert_to_user_currency(
-                        invoice_id.currency_id, payment['amount'], invoice_id.invoice_date)
+                    payments_dict['others'] += amount_company_currency
 
             payments_dict['credit'] += abs(invoice_id.amount_residual_signed)
 
