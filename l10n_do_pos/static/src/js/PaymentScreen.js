@@ -16,21 +16,22 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
              */
             async validateOrder(isForceValidate) {
 
-                var current_order = this.env.pos.get_order();
-                var client = current_order.get_partner();
-                var total = current_order.get_total_with_tax();
-                var fiscal_type = current_order.get_fiscal_type();
 
-                if (total === 0) {
-                    this.showPopup('ErrorPopup', {
-                        title: _t('Sale in'),
-                        body: _t('You cannot make sales in 0, please add a product with value'),
-                    });
-                    return false;
-                }
-    
     
                 if (this.env.pos.config.l10n_do_fiscal_journal) {
+                    var current_order = this.env.pos.get_order();
+                    var client = current_order.get_partner();
+                    var total = current_order.get_total_with_tax();
+                    var fiscal_type = current_order.get_fiscal_type();
+                    
+                    if (total === 0) {
+                        this.showPopup('ErrorPopup', {
+                            title: _t('Sale in'),
+                            body: _t('You cannot make sales in 0, please add a product with value'),
+                        });
+                        return false;
+                    }
+        
     
                     if (!await this.analyze_payment_methods()) {
                         return false;
@@ -45,8 +46,8 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
 
                         return false;
                     }
-                  
-                    if (current_order.fiscal_type.requires_document && !client) {
+
+                    if (fiscal_type.requires_document && !client) {
     
                         this.showPopup('ErrorPopup', {
                             title: _t('Required document (RNC/Cedula)'),
@@ -84,7 +85,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         return false;
                     }
 
-                    if (current_order.get_fiscal_type().prefix === 'B14'){
+                    if (['B14', 'E14'].includes(fiscal_type.code)) {
                         var has_taxes = false;
 
                         current_order.get_orderlines().forEach(function (orderline) {
@@ -94,6 +95,7 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                                 }
                             });
                         });
+
                         if(has_taxes){
                             this.showPopup('ErrorPopup', {
                                 title: _.str.sprintf(_t('Error with Fiscal Type %s'), fiscal_type.name),
@@ -102,6 +104,32 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                             });
                             return false;
                         }
+                    }
+
+                    if(fiscal_type.type == 'out_refund'){
+                        if (total > 0){
+                            this.showPopup('ErrorPopup', {
+                                title: _.str.sprintf(_t('Error with Fiscal Type %s'), fiscal_type.name),
+                                body: _.str.sprintf(
+                                    _t('You cannot pay order of Fiscal Type %s with amount greater than 0. Please select delete the order and create a new one'), fiscal_type.name)
+                            });
+                            return false;
+                        }
+                    }
+
+                    const orderlines = current_order.get_orderlines();
+                    const zeroQuantityProducts = orderlines
+                        .filter(line => line.quantity === 0)
+                        .map(line => line.product.display_name);
+
+                    if (zeroQuantityProducts.length > 0) {
+                        this.showPopup('ErrorPopup', {
+                            title: _t('Zero Quantity Products'),
+                            body: _t('The following products have zero quantity in the order: ') +
+                                zeroQuantityProducts.join(', ') +
+                                _t('. Please remove them or set a valid quantity.'),
+                        });
+                        return false;
                     }
     
                 }
