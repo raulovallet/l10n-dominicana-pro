@@ -600,39 +600,20 @@ class DgiiReport(models.Model):
             'bond': 0,
             'others': 0
         }
-
-    @staticmethod
-    def include_payment(invoice_id, payment_id):
-        """ Returns True if payment date is on or before current period """
-        p_date = payment_id.date
-        i_date = invoice_id.invoice_date
-
-        return True if (p_date.year <= i_date.year) and (
-            p_date.month <= i_date.month) else False
     
-    def _get_sale_payments_forms(self, invoice_id):
+    def _get_sale_payments_forms(self, invoice_id, payments):
         payments_dict = self._get_payments_dict()
 
         if invoice_id.move_type == 'out_invoice':
-            payments = invoice_id._get_invoice_payment_widget()
             for payment in payments:
-                payment_id = payment.get('account_payment_id', False)
-                amount_company_currency = float(re.sub(r'[^\d.]', '', payment.get('amount_company_currency', '0.0')))
-                
-                if payment_id:
-                    payment_obj = self.env['account.payment'].browse(payment_id)
-                    key = payment_obj.journal_id.payment_form
-                    
-                    if self.include_payment(invoice_id, payment_obj):
-                        payments_dict[key] += amount_company_currency
-
+                if self.start_date <= payment['payment_date'] <= self.end_date:
+                    if payment['payment_form'] not in payments_dict:
+                        payments_dict['others'] += payment['amount_company']
                     else:
-                        payments_dict['credit'] += amount_company_currency
-                        
+                        payments_dict[payment['payment_form']] += payment['amount_company']
                 else:
-
-                    payments_dict['others'] += amount_company_currency
-
+                    payments_dict['credit'] += payment['amount_company']
+                    
             payments_dict['credit'] += abs(invoice_id.amount_residual_signed)
 
         return payments_dict
@@ -696,6 +677,45 @@ class DgiiReport(models.Model):
             'sale_filename': file_path.replace('/tmp/', ''),
             'sale_binary': base64.b64encode(open(file_path, 'rb').read())
         })
+        
+    def quick_payments_for_invoices(self, invoice_ids):
+        """
+        Args:
+            env          – an Odoo environment (self.env)
+            invoice_ids  – iterable of account.move IDs (invoices)
+
+        Returns:
+            {invoice_id: [ {payment_form, amount_company, payment_date}, … ] }
+        """
+        invoice_ids = list(map(int, invoice_ids))           # cast to ints, use list so psycopg2 builds an ARRAY
+
+        self.env.cr.execute("""
+            SELECT
+                inv.move_id                     AS invoice_id,
+                j.payment_form                  AS payment_form,
+                pr.amount                       AS amount_company,
+                pay_mv.date                     AS payment_date
+            FROM   account_move_line inv
+            JOIN   account_partial_reconcile pr ON inv.id IN (pr.debit_move_id, pr.credit_move_id)
+            JOIN   account_move_line pay_ml     ON pay_ml.id = CASE
+                                                                WHEN inv.id = pr.debit_move_id
+                                                                THEN pr.credit_move_id
+                                                                ELSE pr.debit_move_id
+                                                             END
+            JOIN   account_move pay_mv          ON pay_mv.id = pay_ml.move_id
+            JOIN   account_journal j            ON j.id = pay_mv.journal_id
+            WHERE  inv.move_id = ANY(%s::int[]);
+        """, [invoice_ids])
+
+        from collections import defaultdict
+        result = defaultdict(list)
+        for inv_id, form, amt, date in self.env.cr.fetchall():
+            result[inv_id].append({
+                "payment_form":   form,   # journal.payment_form
+                "amount_company": amt,    # company-currency amount
+                "payment_date":   date,   # payment move date
+            })
+        return result
     
     def _compute_607_data(self):
         for rec in self:
@@ -718,13 +738,15 @@ class DgiiReport(models.Model):
             invoice_ids.filtered(lambda inv: not inv.fiscal_status and inv.ref).write({
                 'fiscal_status': 'blocked'
             }) 
+            payments_map = self.quick_payments_for_invoices(invoice_ids.ids)
             for inv in invoice_ids:
                 income_dict = self._process_income_dict(income_dict, inv)
                 rnc_ced = self.formatted_rnc_cedula(
                     inv.partner_id.vat
                 ) if inv.fiscal_type_id.prefix != 'B12' \
                     else self.formatted_rnc_cedula(inv.company_id.vat)
-                payments = self._get_sale_payments_forms(inv)
+                inv_payments_list = payments_map.get(inv.id, [])
+                payments = self._get_sale_payments_forms(inv, inv_payments_list)
                 inv_sign = -1 if inv.move_type == 'out_refund' else 1
                 values = {
                     'dgii_report_id': rec.id,
