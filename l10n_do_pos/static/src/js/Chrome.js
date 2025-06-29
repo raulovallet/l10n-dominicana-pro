@@ -8,7 +8,10 @@ odoo.define('l10n_do_pos.chrome', function (require) {
         class extends Chrome {
             /**
              * @override
-             * `FloorScreen` is the start screen if there are floors.
+             * This method overrides the startScreen property to change the
+             * initial screen based on the POS state.
+             * If the POS is in credit note mode, it will return the PaymentScreen.
+             * Otherwise, it will return the default start screen.
              */
             get startScreen() {
                 if (this.env.pos.isCreditNoteMode()) {
