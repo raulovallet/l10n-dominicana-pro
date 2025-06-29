@@ -117,6 +117,17 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         }
                     }
 
+                    if(fiscal_type.type == 'out_invoice'){
+                        if (total < 0){
+                            this.showPopup('ErrorPopup', {
+                                title: _.str.sprintf(_t('Error with Fiscal Type %s'), fiscal_type.name),
+                                body: _.str.sprintf(
+                                    _t('You cannot pay order of Fiscal Type %s with amount less than 0. Please select delete the order and create a new one'), fiscal_type.name)
+                            });
+                            return false;
+                        }
+                    }
+
                     const orderlines = current_order.get_orderlines();
                     const zeroQuantityProducts = orderlines
                         .filter(line => line.quantity === 0)
