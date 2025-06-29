@@ -16,8 +16,6 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
              */
             async validateOrder(isForceValidate) {
 
-
-    
                 if (this.env.pos.config.l10n_do_fiscal_journal) {
                     var current_order = this.env.pos.get_order();
                     var client = current_order.get_partner();
