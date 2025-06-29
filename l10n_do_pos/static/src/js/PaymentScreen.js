@@ -131,6 +131,17 @@ odoo.define('l10n_do_pos.PaymentScreen', function (require) {
                         });
                         return false;
                     }
+
+                    const paymentLines = current_order.get_paymentlines();
+                    for (let line of paymentLines) {
+                        if (line.credit_note_partner_id && client && line.credit_note_partner_id !== client.id) {
+                            this.showPopup('ErrorPopup', {
+                                title: _t('Credit Note Partner Mismatch'),
+                                body: _t('The customer associated with the credit note does not match the customer on the order. Please select the correct customer.'),
+                            });
+                            return false;
+                        }
+                    }
     
                 }
 
