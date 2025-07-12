@@ -511,7 +511,7 @@ class AccountInvoice(models.Model):
                             ).format(inv.origin_out, delta_time.days)
                         )
                     
-                    if inv.amount_total > origin_invoice.amount_total:
+                    if round(inv.amount_total, 2) > round(origin_invoice.amount_total, 2):
                         raise UserError(_(
                                 'The amount of the credit note ({}) cannot be greater than the amount of the invoice ({}) to which it refers.'
                             ).format(inv.amount_total, origin_invoice.amount_total)
