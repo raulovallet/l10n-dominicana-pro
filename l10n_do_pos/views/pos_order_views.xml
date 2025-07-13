@@ -46,7 +46,9 @@
         <field name="arch" type="xml">
             <tree create="false" delete="false" edit="false">
                 <field name="l10n_do_ncf"/>
+                <field name="order_uid"/>
                 <field name="company_id" groups="base.group_multi_company"/>
+                <field name="create_date"/>
             </tree>
         </field>
     </record>
@@ -57,7 +59,9 @@
         <field name="arch" type="xml">
             <form create="false" delete="false" edit="false">
                 <group>
-                    <field name="l10n_do_ncf"/>
+                    <field name="l10n_do_ncf" readonly="1"/>
+                    <field name="order_uid" readonly="1"/>
+                    <field name="create_date" readonly="1"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="order_json"/>
                 </group>

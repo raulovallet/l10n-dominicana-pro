@@ -2,6 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.osv.expression import AND
 from datetime import timedelta
+import json
 
 
 class PosOrder(models.Model):
@@ -172,15 +173,27 @@ class PosOrder(models.Model):
                     fiscal_type.name,
                     fiscal_type.name,
             ))
-
-        new_ncf = fiscal_sequence.get_fiscal_number()
+            
+        order_uid = order_json.get('order_uid', False)
+        sequence_log = False
+        
+        if order_uid:
+            #TODO: IM NOT SURE IF THIS IS THE BEST WAY TO HANDLE THIS
+            # If order_uid is provided, search for an existing sequence log
+            # to avoid generating a new NCF if it already exists
+            sequence_log = self.env['pos.order.ncf.log'].sudo().search([
+                ('order_uid', '=', order_uid),
+                ('company_id', '=', company_id),
+            ], limit=1)
+            
+        new_ncf = fiscal_sequence.get_fiscal_number() if not sequence_log else sequence_log.l10n_do_ncf
         
         # This is the better way to identify problems with fiscal sequences 
         ncf_log = self.env['pos.order.ncf.log'].sudo().create({
             'l10n_do_ncf': new_ncf,
             'order_json': order_json,
             'company_id': company_id
-        })
+        }) if not sequence_log else sequence_log
 
         return {
             'ncf': new_ncf,
@@ -289,6 +302,10 @@ class PosOrderNcfLog(models.Model):
         string='Company', 
         required=True, 
         default=lambda self: self.env.company
+    )
+    order_uid = fields.Char(
+        string='Order UID', 
+        help='Unique identifier for the order, used to track the order in case of issues.'
     )
 
     # TODO: CREATE METHOD create order FROM order_json
