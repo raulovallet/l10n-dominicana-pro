@@ -174,7 +174,7 @@ class PosOrder(models.Model):
                     fiscal_type.name,
             ))
             
-        order_uid = order_json.get('order_uid', False)
+        order_uid = order_json.get('uid', False)
         sequence_log = False
         
         if order_uid:
@@ -192,7 +192,8 @@ class PosOrder(models.Model):
         ncf_log = self.env['pos.order.ncf.log'].sudo().create({
             'l10n_do_ncf': new_ncf,
             'order_json': order_json,
-            'company_id': company_id
+            'company_id': company_id,
+            'order_uid': order_uid
         }) if not sequence_log else sequence_log
 
         return {
