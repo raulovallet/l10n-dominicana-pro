@@ -103,7 +103,7 @@
                 <field name="ref" string="NCF" readonly="1" attrs="{
                     'invisible': [
                         '|', 
-                        ('ref', 'not in', (False, ''), 
+                        ('ref', 'not in', (False, '')), 
                         ('assigned_sequence', '=', False)
                     ]
                 }"/>
