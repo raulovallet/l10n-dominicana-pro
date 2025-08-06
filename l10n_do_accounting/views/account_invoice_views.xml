@@ -67,7 +67,7 @@
                             'readonly': [
                                 '|',
                                 ('state', '!=', 'draft'),
-                                ('ref', '!=', False),
+                                ('ref', 'not in', (False, '')),
                                 ('assigned_sequence', '=', True)
                             ]
                         }"
