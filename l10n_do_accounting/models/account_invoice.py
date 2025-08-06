@@ -510,11 +510,15 @@ class AccountInvoice(models.Model):
                                 'The invoice ({}) to which this credit note refers is more than 30 days old ({}), therefore the ITBIS tax must be removed.'
                             ).format(inv.origin_out, delta_time.days)
                         )
-                    
-                    if round(inv.amount_total, 2) > round(origin_invoice.amount_total, 2):
+
+                    inv_amount_total_signed_abs = abs(inv.amount_total_signed) or 0.0
+                    org_amount_total_signed_abs = abs(origin_invoice.amount_total_signed) or 0.0
+
+                    # If the credit note amount is greater than the invoice amount
+                    if round(inv_amount_total_signed_abs, 2) > round(org_amount_total_signed_abs, 2):
                         raise UserError(_(
                                 'The amount of the credit note ({}) cannot be greater than the amount of the invoice ({}) to which it refers.'
-                            ).format(inv.amount_total, origin_invoice.amount_total)
+                            ).format(inv_amount_total_signed_abs, org_amount_total_signed_abs)
                         )
 
         res = super(AccountInvoice, self)._post(soft)
