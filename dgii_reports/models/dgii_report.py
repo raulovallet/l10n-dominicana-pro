@@ -1797,10 +1797,12 @@ class DgiiReport(models.Model):
                         it1_lines[30]['amount'] - \
                         it1_lines[31]['amount'] - \
                         it1_lines[32]['amount']
-
+                        
             it1_lines[33]['amount'] = it1_line_33_34 if it1_line_33_34 > 0 else 0
-            it1_lines[34]['amount'] = sum([it1_lines[box]['amount'] for box in range(27, 33)]) \
-                if it1_line_33_34 < 0 else 0
+            it1_lines[34]['amount'] = 0
+            if it1_line_33_34 < 0:
+                it1_lines[34]['amount'] = sum([it1_lines[box]['amount'] for box in range(27, 33)]) \
+                    if it1_lines[26]['amount'] == 0 else abs(it1_line_33_34)
 
             # IT1IV
             it1_lines_35 = rec._get_move_lines_it1('I35')
