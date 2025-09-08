@@ -3,7 +3,7 @@
 # copyright (c) 2025 jenrax SRL
 # All Rights Reserved
 
-from odoo import models, api, _
+from odoo import models, api, _, tools
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.base_vat.models.res_partner import _ref_vat
 
@@ -23,10 +23,9 @@ except (ImportError, IOError) as err:
     _logger.debug(str(err))
 
 
-
 class Partner(models.Model):
     _inherit = 'res.partner'
-    
+
     def check_vat_do(self, vat):
         return rnc.is_valid(vat) or cedula.is_valid(vat)
 
@@ -34,64 +33,67 @@ class Partner(models.Model):
     def create(self, vals_list):
         for val in vals_list:
             is_from_vat = val.get('vat', False)
+            rnc_value = val.get('vat', '') if is_from_vat else val.get('name', '')
+            rnc_value = rnc_value.replace('-', '') if rnc_value else rnc_value
 
-            rnc = val.get('vat', '') if is_from_vat else val.get('name', '')
-            rnc = rnc.replace('-', '') if rnc else rnc
+            if val.get('country_id', False) == self.env.ref('base.do').id and rnc_value and rnc_value.isdigit():
+                is_company = bool(val.get('is_company', False))
 
-            if val.get('country_id', False) == self.env.ref('base.do').id and rnc and rnc.isdigit():
-                
+                # 🔍 Validación según tipo de partner
+                if is_company and len(rnc_value) != 9:
+                    raise UserError(_('For companies, the RNC must have 9 digits.'))
+                elif not is_company and len(rnc_value) != 11:
+                    raise UserError(_('For individuals, the ID (Cédula) must have 11 digits.'))
+
                 contact_exist = self.env['res.partner'].search([
-                    ('vat', '=', rnc),
+                    ('vat', '=', rnc_value),
                     ('company_id', 'in', (val.get('company_id', False), False))
                 ], limit=1)
-                
+
                 if contact_exist:
-                    raise UserError(_('The contact %s already exists with the %s: %s.') % (contact_exist.name, _('ID') if len(rnc) == 11 else _('RNC'), rnc))
-                
+                    raise UserError(_('The contact %s already exists with the %s: %s.') % (
+                        contact_exist.name,
+                        _('ID') if len(rnc_value) == 11 else _('RNC'),
+                        rnc_value
+                    ))
+
                 try:
-                    name = self.get_name_from_dgii(rnc)
-                    
+                    name = self.get_name_from_dgii(rnc_value)
                     if name:
-                        val.update({
-                            'name': name,
-                            'vat': rnc
-                        })
-
+                        val.update({'name': name, 'vat': rnc_value})
                     elif not name and val.get('vat', False):
-
                         raise UserError(_(
-                            'This RNC or Cedula (%s) could not be found, please confirm the RNC or Cedula number.\
-                            If it is a system search error, enter manually the full company name and the RNC / Cedula \
-                            in the field labeled RNC for companies and Cedula for individuals for force create the contact.'
-                        ) % (rnc))
-                        
+                            'This RNC or Cedula (%s) could not be found. '
+                            'If it is a system search error, enter manually the full name '
+                            'and the RNC/Cédula to force create the contact.'
+                        ) % (rnc_value))
                 except Exception as e:
-                    
                     if not is_from_vat:
                         raise ValidationError(e)
-                    
                     _logger.error(e)
 
         res = super(Partner, self).create(vals_list)
-
         res._compute_sale_fiscal_type_id()
-        
         return res
 
     def write(self, vals):
-
         if vals.get('vat', False):
             dominican_company_parnters = self.filtered(
                 lambda p: p.country_id and p.country_id.code == 'DO' and not p.parent_id)
-                
+
             for partner in dominican_company_parnters:
+                is_company = partner.is_company
+                vat_value = vals['vat'].replace('-', '')
+
+                if is_company and len(vat_value) != 9:
+                    raise UserError(_('For companies, the RNC must have 9 digits.'))
+                elif not is_company and len(vat_value) != 11:
+                    raise UserError(_('For individuals, the ID (Cédula) must have 11 digits.'))
 
                 try:
-                    name = self.get_name_from_dgii(vals['vat'])
-
+                    name = self.get_name_from_dgii(vat_value)
                     if name:
                         vals['name'] = name
-
                 except Exception as e:
                     _logger.error(e)
 
